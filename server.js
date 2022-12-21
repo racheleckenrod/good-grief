@@ -61,7 +61,8 @@ io.on('connection', socket => {
 });
 
 // broadcast updates
-setInterval(() => io.emit('time', "about time"), 1000)
+let testing =  new Date().toTimeString()
+setInterval(() => io.emit('time', `abou ${testing} time`), 1000)
 setInterval(() => io.emit('timeData', new Date().toTimeString()), 1000);
 
 //Use .env file in config folder
