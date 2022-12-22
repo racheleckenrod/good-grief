@@ -19,16 +19,15 @@
         <!-- <script src="/socket.io/socket.io.js"></script> -->
 
         <script defer src="http://localhost:2899/socket.io/socket.io.js"></script>
-        <script defer src="script.js"></script>
-        <!-- <script>
-            let socket = io();
-            let el;
+        <!-- <script defer src="/js/mainJS.js"></script> -->
 
-            socket.on('time', (timeString) => {
-                el = document.getElementById('server-time');
-                el.innerHTML = 'Server time: ' + timeString;
-            });
-          </script> -->
+        <!-- <script src="/assets/js/jquery.min.js"></script>
+<script src="/assets/js/jquery.dropotron.min.js"></script>
+<script src="/assets/js/browser.min.js"></script>
+<script src="/assets/js/breakpoints.min.js"></script>
+<script src="/assets/js/util.js"></script>
+<script src="/assets/js/main.js"></script> -->
+     
 	</head>
 	<body class="homepage">
 		<div id="page-wrapper">
@@ -49,7 +48,7 @@
 								<li>
 									<a href="/chat">Chat Rooms</a>
 									<ul>
-										<li><a href="/chat/room">I have lost a child.</a></li>
+										<li><a href="/chat/room/?room=child">I have lost a child.</a></li>
 										<li><a href="/chat/room">I have lost a parent.</a></li>
 										<li><a href="#">I have lost my spouse/partner.</a></li>
 										<li><a href="#">I have lost a sibling.</a></li>
@@ -155,6 +154,36 @@
                         </div>
                     </div>
                 </div>
+                <main class="join-main">
+                    <form action="/chat/room">
+                        <div class="form-control">
+                            <label for="username">Username</label>
+                            <input
+                                type="text"
+                                name="username"
+                                id="username"
+                                placeholder="Enter username..."
+                                required
+                            />
+                        </div>
+                        <div class="form-control">
+                            <label for="room">Room</label>
+                            <h3>I am grieving a </h3>
+                            <select name="room" id="room">
+                                <option value="Parent">Parent</option>
+                                <option value="Child">Child</option>
+                                <option value="Sibling">Sibling</option>
+                                <option value="Spouse">Spouse/Partner</option>
+                                <option value="Friend">Friend</option>
+                                <option value="Tragedy">Tragedy</option>
+                                <option value="Terminal">Terminal Diagnosis</option>
+                                <option value="Other">Other</option>
+                                
+                            </select>
+                        </div>
+                        <button type="submit" class="btn">Join Chat</button>
+                    </form>
+                </main>
                 <ul class="actions special">
                     <li><a href="#" class="button style1 large">Get Started</a></li>
                     <li><a href="#" class="button style2 large">More Info</a></li>
@@ -265,12 +294,17 @@
 
 <!-- Scripts -->
 <!-- <script src="/socket.io/socket.io.js"></script> -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>  
+
 <script src="/assets/js/jquery.min.js"></script>
 <script src="/assets/js/jquery.dropotron.min.js"></script>
 <script src="/assets/js/browser.min.js"></script>
 <script src="/assets/js/breakpoints.min.js"></script>
 <script src="/assets/js/util.js"></script>
 <script src="/assets/js/main.js"></script>
+
+
 
 </body>
 </html>

@@ -35,35 +35,23 @@ const mainRoutes = require("./routes/main");
 const postRoutes = require("./routes/posts");
 const commentRoutes = require("./routes/comments");
 const chatRoutes = require("./routes/chat")
+const chatsController = require("./controllers/chats")
 
+const myURL = new URL('https://example.org/?abc=123');
+console.log(myURL.searchParams.get('abc'));
 
-
-// From Heroku:
-// const { Server } = require('ws');
-
-// const PORT = process.env.PORT ;
-// const INDEX = '/index.html';
-
-// const server = express()  
-// we already have const app = express(), so will try to use that instead of creating another variable set to the same thing. see github.com/heroku-examples/node-websockets/blob/main/server.js
-
-// app.use((req, res) => res.sendFile('chat/room.ejs', {root: __dirname }))
-
-// create a Socket.io server
-// const server = http.createServer(app);
-// const io = socketio(server);
 
 // handle connections
-io.on('connection', socket => {
-  console.log('Client connected', new Date().toTimeString());
-  socket.emit('timeClock', "It's about time");
-  socket.on('disconnect', () => console.log('Client disconnected'));
-});
+// io.on('connection', socket => {
+//   // console.log('Client connected', new Date().toTimeString());
+//   socket.emit('timeClock', "It's about time");
+//   socket.on('disconnect', () => console.log('Client disconnected'));
+// });
 
 // broadcast updates
-let testing =  new Date().toTimeString()
-setInterval(() => io.emit('time', `abou ${testing} time`), 1000)
-setInterval(() => io.emit('timeData', new Date().toTimeString()), 1000);
+// let testing =  new Date().toTimeString()
+// setInterval(() => io.emit('time', `abou ${testing} time`), 1000)
+// setInterval(() => io.emit('timeData', new Date().toTimeString()), 1000);
 
 //Use .env file in config folder
 
@@ -112,13 +100,88 @@ app.use(passport.session());
 //Use flash messages for errors, info, ect...
 app.use(flash());
 
+
+// for chat
+const {
+  userJoin,
+  getCurrentUser,
+  userLeave,
+  getRoomUsers,
+} = require("./utils/users");
+
+const botName = "Grief Support Bot";
+
+// run when client connects
+io.on("connection", (socket) => {
+  const myURL = new URL('https://example.org/?abc=123');
+console.log(myURL.searchParams.get('abc'));
+  console.log('New WS Connection', socket.id, socket.handshake.headers.referer);
+  socket.on("joinRoom", ({ username, room }) => {
+    console.log('test')
+    const user = userJoin(socket.id, username, room);
+    console.log('gee',user)
+    socket.join(user.room);
+
+//     // Welcome current user
+    socket.emit("message", formatMessage(botName, "Welcome to Live Grief Support!"));
+
+//     // Broadcast when a user connects
+    socket.broadcast
+      .to(user.room)
+      .emit(
+        "message",  formatMessage(botName,`${user.username} has joined the chat`)
+//         formatMessage(botName, `${user.username} has joined the chat`)
+      );
+
+//     // Send users and room info
+    io.to(user.room).emit("roomUsers", {
+      room: user.room,
+      users: getRoomUsers(user.room),
+    });
+  });
+
+//   // Listen for chatMessage
+  socket.on("chatMessage", (msg) => {
+    const user = getCurrentUser(socket.id);
+       
+    io.to(user.room).emit("message", formatMessage(user.username, msg));
+  });
+
+
+  // run when client disconnects
+  socket.on("disconnect", () => {
+    // io.emit("message",  formatMessage(botName,'a user has left the chat'))
+    const user = userLeave(socket.id);
+
+    if (user) {
+      io.to(user.room).emit(
+        "message",
+        formatMessage(botName, `${user.username} has left the chat`)
+      );
+
+//       // Send users and room info
+      io.to(user.room).emit("roomUsers", {
+        room: user.room,
+        users: getRoomUsers(user.room),
+      });
+    }
+  });
+});
+
+
+
+
 //Setup Routes For Which The Server Is Listening
 app.use("/", mainRoutes);
 app.use("/post", postRoutes);
 app.use("/comment", commentRoutes);
+app.get("/chat/:room", chatsController.getRoom);
 app.use("/chat", chatRoutes);
-// app.get("/chat",(req, res) => 
-// render('lobby.ejs', {  }))
+// app.get("/chat",function(req, res, next) {
+//   console.log("hhh",req.user.userName, req.query )
+//   res.render('lobby.ejs', {username : req.user.userName, room: "POP"});
+// });
+
 
 //Server Running
 app.listen(process.env.PORT, () => {
