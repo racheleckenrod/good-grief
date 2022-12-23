@@ -14,6 +14,11 @@ const room = document.getElementById('room-name');
 const username = document.getElementById('users');
 
 const socket = io();
+console.log(socket, socket.connected, socket.id)
+
+socket.on("connection", (socket) => {
+  console.log('New WS Connection', socket.id,socket.handshake.headers.referer);
+})
 
 // // Join chatroom
 socket.emit('joinRoom', { username, room });
