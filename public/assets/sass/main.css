@@ -1184,6 +1184,7 @@ form select,
 form textarea {
   transition: all .25s ease-in-out;
   -webkit-appearance: none;
+  appearance: none;
   display: block;
   border: 0;
   background: #eee;

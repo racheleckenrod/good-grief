@@ -330,6 +330,7 @@
 		textarea {
 			@include vendor('transition', 'all .25s ease-in-out');
 			-webkit-appearance: none;
+            appearance: none;
 			display: block;
 			border: 0;
 			background: #eee;
@@ -509,8 +510,8 @@
 			padding-left: 0.5em;
 		}
 
-		&.style1 {
-		}
+		// &.style1 {
+		// }
 
 		&.style2 {
 			list-style: none;
@@ -1026,8 +1027,8 @@
 
 /* Main */
 
-	#main {
-	}
+	// #main {
+	// }
 
 /* Footer */
 

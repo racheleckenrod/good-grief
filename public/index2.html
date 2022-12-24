@@ -2,7 +2,7 @@
   <head>
     <script src="https://cdn.socket.io/4.5.0/socket.io.min.js" integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k" crossorigin="anonymous"></script>
     <script>
-      let socket = io('http://localhost:3333');
+      let socket = io('http://localhost:2899');
       let el;
 
       socket.on('time', (timeString) => {
@@ -12,6 +12,6 @@
     </script>
   </head>
   <body>
-    <p id="server-time"></p>
+    <p id="server-time">wow</p>
   </body>
 </html>
