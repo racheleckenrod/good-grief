@@ -1,15 +1,20 @@
-// const socket = io('http://localhost:2899')
+// const io = require("socket.io");
 
-let timeClock 
+// const socket = io('http://localhost:3333')
+console.log("script.js")
+let timeClock ;
 
-// socket.on('timeClock', data => {
-//     console.log(data)
-//     timeClock = document.getElementById('time').innerHTML = data
+io.on("connection", (socket) => {
+    console.log('New WS Connection', "script", "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer)});
+
+io.on('timeClock', data => {
+    console.log(data,"Personal")
+    timeClock = document.getElementById('time').innerHTML = data
    
-// })
+})
 
-// socket.on('timeData', (timeString2) => {
-//     el = document.getElementById('currently');
-//     el.innerHTML = 'Current time: ' + timeString2;
-// })
+io.on('timeData', (timeString2) => {
+    el = document.getElementById('currently');
+    el.innerHTML = 'Current time: ' + timeString2;
+})
 

@@ -16,6 +16,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<link rel="stylesheet" href="/assets/css/style.css" />
+        <script type="server" src="script.js"></script>
         <!-- <script src="/socket.io/socket.io.js"></script> -->
 
         <!-- <script defer src="http://localhost:2899/socket.io/socket.io.js"></script> -->
@@ -88,7 +89,7 @@
 
         <!-- Image -->
             <a href="#" class="image featured">
-                <img src="images/pic01.jpg" alt="" />
+                <img src="/images/pic01.jpg" alt="" />
             </a>
 
         <!-- Features -->
@@ -106,7 +107,7 @@
                     <div class="row">
                         <div class="col-6 col-12-medium">
                             <section>
-                                <a href="/chat/room"><h3 class="icon fa-comment">I have lost a child.</h3></a>
+                                <a href="/chat/room/room?username=<%= user.userName %>&room=child"><h3 class="icon fa-comment">I have lost a child.</h3></a>
                                 <p>Eget mattis at, laoreet vel et velit aliquam diam ante, aliquet sit amet vulputate et magna feugiat laoreet vel velit lorem.</p>
                             </section>
                         </div>
@@ -154,7 +155,7 @@
                         </div>
                     </div>
                 </div>
-                <main class="join-main">
+                <!-- <main class="join-main">
                     <form action="/chat/room">
                         <div class="form-control">
                             <label for="username">Username</label>
@@ -182,10 +183,10 @@
                             </select>
                         </div>
                         <button type="submit" class="btn">Join Chat</button>
-                    </form>
-                </main>
+                    </form> -->
+                <!-- </main> -->
                 <ul class="actions special">
-                    <li><a href="#" class="button style1 large">Get Started</a></li>
+                    <li><form action="/chat/room?room=child" method="post"><a class="button style1 large" value="child">join child</a></form></li>
                     <li><a href="#" class="button style2 large">More Info</a></li>
                 </ul>
             </section>

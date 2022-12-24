@@ -5,27 +5,33 @@ const userList = document.getElementById('users');
 
 // // Get username and room from URL
 // this is major point to change from old to new. instead of query parameters being passed in on the get request.. need a route that takes query params
-// const { username, room } = Qs.parse(location.search, {
-//   ignoreQueryPrefix: true,
-// });
+const { username, room } = Qs.parse(location.search, {
+  ignoreQueryPrefix: true,
+ 
+});
+console.log("room=", room, username)
 // my try at pulling the data into the chat
 
-const room = document.getElementById('room-name');
-const username = document.getElementById('users');
-
+// const room = document.getElementById('room-name');
+// const username = document.getElementById('users');
+console.log(username, "username")
 const socket = io();
-console.log(socket, socket.connected, socket.id)
+console.log("mainJS", socket, socket.connected, socket.id)
 
 socket.on("connection", (socket) => {
-  console.log('New WS Connection', socket.id,socket.handshake.headers.referer);
+  console.log("mainJS", socket, socket.connected, socket.id)
+  console.log('New WS Connection', socket, socket.id,socket.handshake.headers.referer);
 })
 
 // // Join chatroom
 socket.emit('joinRoom', { username, room });
+console.log("joinRoom", username, room)
 
 // // Get room and users
 socket.on('roomUsers', ({ room, users }) => {
+  console.log("bigtest")
   outputRoomName(room);
+  console.log("output", room)
   outputUsers(users);
 });
 
@@ -81,6 +87,7 @@ function outputMessage(message) {
 
 // // Add room name to DOM
 function outputRoomName(room) {
+  console.log("output test")
   roomName.innerText = room;
 }
 
