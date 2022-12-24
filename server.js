@@ -9,16 +9,9 @@ const io = socketio(server);
 const cors = require('cors')
 require("dotenv").config({ path: "./config/.env" });
 const PORT = process.env.PORT;
-// const PORT2 = 2899;
-// app.use(cors())
-// const io = require("socket.io")(PORT2, {
-//   cors: {
-//     origin: `http://localhost:${process.env.PORT}`,
-//     methods: ["GET", "POST"],
-//     credentials: true
-//   }
-// });
-// const socket = io('http://localhost:3333')
+
+
+
 
 const mongoose = require("mongoose");
 const passport = require("passport");
@@ -45,8 +38,6 @@ require("./config/passport")(passport);
 connectDB();
 
 
-
-
 //Static Folder
 app.use(express.static(path.join(__dirname, "public")));
 // server.use(express.static("public"))
@@ -70,7 +61,7 @@ app.use(methodOverride("_method"));
 // Setup Sessions - stored in MongoDB
 app.use(
   session({
-    secret: "goPackers",
+    secret: "keyboard cat",
     resave: false,
     saveUninitialized: false,
     store: new MongoStore({ mongooseConnection: mongoose.connection }),
@@ -111,6 +102,7 @@ const botName = "Grief Support Bot";
 //   io.adapter(createAdapter(pubClient, subClient));
 // })();
 
+
 // // // Run when client connects
 io.on("connection", (socket) => {
   console.log('New WS Connection', "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer);
@@ -121,10 +113,12 @@ io.on("connection", (socket) => {
     console.log("pkkkkkkkk", user)
     socket.join(user.room);
 
-// //     // Welcome current user
+
+// Welcome current user
     socket.emit("message", formatMessage(botName, "Welcome to Live Grief Support!"));
 
-// //     // Broadcast when a user connects
+// Broadcast when a user connects
+
     socket.broadcast
       .to(user.room)
       .emit(
@@ -132,23 +126,29 @@ io.on("connection", (socket) => {
 //         formatMessage(botName, `${user.username} has joined the chat`)
       );
 
-// //     // Send users and room info
+
+//     // Send users and room info
+
     io.to(user.room).emit("roomUsers", {
       room: user.room,
       users: getRoomUsers(user.room),
     });
   });
 
-// //   // Listen for chatMessage
+
+//   // Listen for chatMessage
+
   socket.on("chatMessage", (msg) => {
     const user = getCurrentUser(socket.id);
        
     io.to(user.room).emit("message", formatMessage(user.username, msg));
   });
 
-// //   // Runs when client disconnects
+
+// Runs when client disconnects
   socket.on("disconnect", () => {
     io.emit("message",  formatMessage(botName,'a user has left the chat'))
+
     const user = userLeave(socket.id);
 
     if (user) {
@@ -157,7 +157,9 @@ io.on("connection", (socket) => {
         formatMessage(botName, `${user.username} has left the chat`)
       );
 
+
       // Send users and room info
+
       io.to(user.room).emit("roomUsers", {
         room: user.room,
         users: getRoomUsers(user.room),
@@ -180,7 +182,14 @@ app.use("/chat", chatRoutes);
 // app.get("/chat",function(req, res, next) {
 //   console.log("hhh",req.user.userName, req.query )
 //   res.render('lobby.ejs', {username : req.user.userName, room: "POP"});
+
+
+
+
+
+
 // });
+
 
 
 
