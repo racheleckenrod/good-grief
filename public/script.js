@@ -1,4 +1,3 @@
-// const io = require("socket.io");
 
 // const socket = io('http://localhost:3333')
 console.log("script.js")
