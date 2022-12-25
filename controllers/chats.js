@@ -5,7 +5,7 @@ module.exports = {
     },
     getRoom: (req, res, next) => {
       console.log("from getRoom",req.user,req.user.userName, req.params)
-      res.render("chatRoom.ejs", { user: req.user, room: req.params });
+      res.render("chatRoom.ejs", { user: req.user });
       // res.render("chatRoom.ejs", {  }(req));
 
     },

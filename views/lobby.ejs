@@ -11,7 +11,7 @@
 		rel="icon"
 		type="image/png"
 		sizes="32x32"
-		href="images/favicon.png"  />
+		href="images/favicon.png?v=6"  />
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
@@ -49,24 +49,24 @@
 								<li>
 									<a href="/chat">Chat Rooms</a>
 									<ul>
-										<li><a href="/chat/room/?room=child">I have lost a child.</a></li>
-										<li><a href="/chat/room">I have lost a parent.</a></li>
-										<li><a href="#">I have lost my spouse/partner.</a></li>
-										<li><a href="#">I have lost a sibling.</a></li>
-										<li><a href="#">I have lost a friend</a></li>
-										<li><a href="#">I have lost someone to suicide.</a></li>
-										<li><a href="#">I have a terminal diagnosis.</a></li>
+										<li><a href="/chat/room/room?username=<%= user.userName %>&room=Child">I have lost a child.</a></li>
+										<li><a href="/chat/room/room?username=<%= user.userName %>&room=Parent">I have lost a parent.</a></li>
+										<li><a href="/chat/room/room?username=<%= user.userName %>&room=Spouse%2FPartner">I have lost my spouse/partner.</a></li>
+										<li><a href="/chat/room/room?username=<%= user.userName %>&room=Sibling">I have lost a sibling.</a></li>
+										<li><a href="/chat/room/room?username=<%= user.userName %>&room=Friend">I have lost a friend</a></li>
+										<li><a href="/chat/room/room?username=<%= user.userName %>&room=Suicide">I have lost someone to suicide.</a></li>
+										<li><a href="/chat/room/room?username=<%= user.userName %>&room=Terminal">I have a terminal diagnosis.</a></li>
 										<li>
 											<a href="#">Community tragedy.</a>
 											<ul>
-												<li><a href="#">Natural Disaster</a></li>
-												<li><a href="#">Act of Human Violence</a></li>
-												<li><a href="#">Global Pandemic</a></li>
-												<li><a href="#">Poverty</a></li>
-												<li><a href="#">War</a></li>
+												<li><a href="/chat/room/room?username=<%= user.userName %>&room=Natural%20Disaster">Natural Disaster</a></li>
+												<li><a href="/chat/room/room?username=<%= user.userName %>&room=Act%20of%20Violence">Act of Human Violence</a></li>
+												<li><a href="/chat/room/room?username=<%= user.userName %>&room=Global%20Pandemic">Global Pandemic</a></li>
+												<li><a href="/chat/room/room?username=<%= user.userName %>&room=Poverty">Poverty</a></li>
+												<li><a href="/chat/room/room?username=<%= user.userName %>&room=War">War</a></li>
 											</ul>
 										</li>
-										<li><a href="#">My grief is different</a></li>
+										<li><a href="/chat/room/room?username=<%= user.userName %>&room=Different">My grief is different</a></li>
 										
 									</ul>
 								</li>
@@ -107,86 +107,57 @@
                     <div class="row">
                         <div class="col-6 col-12-medium">
                             <section>
-                                <a href="/chat/room/room?username=<%= user.userName %>&room=child"><h3 class="icon fa-comment">I have lost a child.</h3></a>
+                                <a href="/chat/room/room?username=<%= user.userName %>&room=Child"><h3 class="icon fa-comment">I have lost a child.</h3></a>
                                 <p>Eget mattis at, laoreet vel et velit aliquam diam ante, aliquet sit amet vulputate et magna feugiat laoreet vel velit lorem.</p>
                             </section>
                         </div>
                         <div class="col-6 col-12-medium">
                             <section>
-                                <a href="/chat/room"><h3 class="icon solid fa-sync">I have lost a parent.</h3></a>
+                                <a href="/chat/room/room?username=<%= user.userName %>&room=Parent"><h3 class="icon solid fa-sync">I have lost a parent.</h3></a>
                                 <p>Eget mattis at, laoreet vel et velit aliquam diam ante, aliquet sit amet vulputate et magna feugiat laoreet vel velit lorem.</p>
                             </section>
                         </div>
                         <div class="col-6 col-12-medium">
                             <section>
-                                <a href="/chat/room"><h3 class="icon fa-image">I have lost my spouse/partner.</h3></a>
+                                <a href="/chat/room/room?username=<%= user.userName %>&room=Spouse%2FPartner"><h3 class="icon fa-image">I have lost my Spouse/Partner.</h3></a>
                                 <p>Eget mattis at, laoreet vel et velit aliquam diam ante, aliquet sit amet vulputate et magna feugiat laoreet vel velit lorem.</p>
                             </section>
                         </div>
                         <div class="col-6 col-12-medium">
                             <section>
-                                <a href="/chat/room"><h3 class="icon solid fa-cog">I have lost a sibling.</h3></a>
+                                <a href="/chat/room/room?username=<%= user.userName %>&room=Sibling"><h3 class="icon solid fa-cog">I have lost a sibling.</h3></a>
                                 <p>Eget mattis at, laoreet vel et velit aliquam diam ante, aliquet sit amet vulputate et magna feugiat laoreet vel velit lorem.</p>
                             </section>
                         </div>
                         <div class="col-6 col-12-medium">
                             <section>
-                                <a href="/chat/room"><h3 class="icon solid fa-wrench">I have lost a loved one to suicide.</h3></a>
+                                <a href="/chat/room/room?username=<%= user.userName %>&room=Suicide"><h3 class="icon solid fa-wrench">I have lost a loved one to suicide.</h3></a>
                                 <p>Eget mattis at, laoreet vel et velit aliquam diam ante, aliquet sit amet vulputate et magna feugiat laoreet vel velit lorem.</p>
                             </section>
                         </div>
                         <div class="col-6 col-12-medium">
                             <section>
-                                <a href="/chat/room"><h3 class="icon solid fa-check">I have lost a friend.</h3></a>
+                                <a href="/chat/room/room?username=<%= user.userName %>&room=Friend"><h3 class="icon solid fa-check">I have lost a friend.</h3></a>
                                 <p>Eget mattis at, laoreet vel et velit aliquam diam ante, aliquet sit amet vulputate et magna feugiat laoreet vel velit lorem.</p>
                             </section>
                         </div>
                         <div class="col-6 col-12-medium">
                             <section>
-                                <a href="/chat/room"><h3 class="icon solid fa-check">I am suffering from a community tragedy.</h3></a>
+                                <a href="/chat/room/room?username=<%= user.userName %>&room=Community%20Tragedy"><h3 class="icon solid fa-check">I am suffering from a community tragedy.</h3></a>
                                 <p>Eget mattis at, laoreet vel et velit aliquam diam ante, aliquet sit amet vulputate et magna feugiat laoreet vel velit lorem.</p>
                             </section>
                         </div>
                         <div class="col-6 col-12-medium">
                             <section>
-                                <a href="/chat/room"><h3 class="icon solid fa-check">My grief is different.</h3></a>
+                                <a href="/chat/room/room?username=<%= user.userName %>&room=Different"><h3 class="icon solid fa-check">My grief is different.</h3></a>
                                 <p>Eget mattis at, laoreet vel et velit aliquam diam ante, aliquet sit amet vulputate et magna feugiat laoreet vel velit lorem.</p>
                             </section>
                         </div>
                     </div>
                 </div>
-                <!-- <main class="join-main">
-                    <form action="/chat/room">
-                        <div class="form-control">
-                            <label for="username">Username</label>
-                            <input
-                                type="text"
-                                name="username"
-                                id="username"
-                                placeholder="Enter username..."
-                                required
-                            />
-                        </div>
-                        <div class="form-control">
-                            <label for="room">Room</label>
-                            <h3>I am grieving a </h3>
-                            <select name="room" id="room">
-                                <option value="Parent">Parent</option>
-                                <option value="Child">Child</option>
-                                <option value="Sibling">Sibling</option>
-                                <option value="Spouse">Spouse/Partner</option>
-                                <option value="Friend">Friend</option>
-                                <option value="Tragedy">Tragedy</option>
-                                <option value="Terminal">Terminal Diagnosis</option>
-                                <option value="Other">Other</option>
-                                
-                            </select>
-                        </div>
-                        <button type="submit" class="btn">Join Chat</button>
-                    </form> -->
-                <!-- </main> -->
+               
                 <ul class="actions special">
-                    <li><form action="/chat/room?room=child" method="post"><a class="button style1 large" value="child">join child</a></form></li>
+                    <li><form action="/chat/room?" method="post"><a class="button style1 large" value="child">join child</a></form></li>
                     <li><a href="#" class="button style2 large">More Info</a></li>
                 </ul>
             </section>

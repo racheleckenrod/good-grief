@@ -11,7 +11,7 @@
 		rel="icon"
 		type="image/png"
 		sizes="32x32"
-		href="images/favicon.png"  />
+		href="images/favicon.png?v=6"  />
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
@@ -26,7 +26,7 @@
 					<!-- Logo -->
 						<div id="logo">
 							<h1><a href="/">Live Grief Support</a></h1>
-							<p>A special place to honor our loved ones.</p>
+							<p>A special place to honor our loved ones.</p>					
 						</div>
 
 					<!-- Nav -->
@@ -36,29 +36,39 @@
 								<li>
 									<a href="/chat">Chat Rooms</a>
 									<ul>
-										<li><a href="/chat/room?room=child">I have lost a child.</a></li>
-										<li><a href="/chat/room">I have lost a parent.</a></li>
-										<li><a href="#">I have lost my spouse/partner.</a></li>
-										<li><a href="#">I have lost a sibling.</a></li>
-										<li><a href="#">I have lost a friend</a></li>
-										<li><a href="#">I have lost someone to suicide.</a></li>
-										<li><a href="#">I have a terminal diagnosis.</a></li>
+										<% if (!user) {%>
+											<li><a href="/login">Login</a></li>
+											<li><a href="/signup">Sign Up</a></li>
+										<% } else {%>
+											<li><a href="/chat/room/room?username=<%= user.userName %>&room=Child">I have lost a child.</a></li>
+										<li><a href="/chat/room/room?username=<%= user.userName %>&room=Parent">I have lost a parent.</a></li>
+										<li><a href="/chat/room/room?username=<%= user.userName %>&room=Spouse%2FPartner">I have lost my spouse/partner.</a></li>
+										<li><a href="/chat/room/room?username=<%= user.userName %>&room=Sibling">I have lost a sibling.</a></li>
+										<li><a href="/chat/room/room?username=<%= user.userName %>&room=Friend">I have lost a friend</a></li>
+										<li><a href="/chat/room/room?username=<%= user.userName %>&room=Suicide">I have lost someone to suicide.</a></li>
+										<li><a href="/chat/room/room?username=<%= user.userName %>&room=Terminal">I have a terminal diagnosis.</a></li>
 										<li>
 											<a href="#">Community tragedy.</a>
 											<ul>
-												<li><a href="#">Natural Disaster</a></li>
-												<li><a href="#">Act of Human Violence</a></li>
-												<li><a href="#">Global Pandemic</a></li>
-												<li><a href="#">Poverty</a></li>
-												<li><a href="#">War</a></li>
+												<li><a href="/chat/room/room?username=<%= user.userName %>&room=Natural%20Disaster">Natural Disaster</a></li>
+												<li><a href="/chat/room/room?username=<%= user.userName %>&room=Act%20of%20Violence">Act of Human Violence</a></li>
+												<li><a href="/chat/room/room?username=<%= user.userName %>&room=Global%20Pandemic">Global Pandemic</a></li>
+												<li><a href="/chat/room/room?username=<%= user.userName %>&room=Poverty">Poverty</a></li>
+												<li><a href="/chat/room/room?username=<%= user.userName %>&room=War">War</a></li>
 											</ul>
 										</li>
-										<li><a href="#">My grief is different</a></li>
+										<li><a href="/chat/room/room?username=<%= user.userName %>&room=Different">My grief is different</a></li>
+										
+
+											<%}
+										
+										
+										%>
 										
 									</ul>
 								</li>
                                 <li><a href="/profile">Profile</a></li>
-								<li><a href="/post/:id">New Post</a></li>
+								<li><a href="/post/newPost/:id">New Post</a></li>
 								<li><a href="/feed">Community</a></li>
 								<li><a href="/logout">Logout</a></li>
 							</ul>
@@ -66,6 +76,6 @@
 
 				</section>
          </div>
-    </body>
-</html>
+    
+
             
