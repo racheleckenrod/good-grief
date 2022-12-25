@@ -30,7 +30,7 @@ a {
 
 .btn {
 	cursor: pointer;
-	padding: 18px;
+	/* padding: 18px; */
 	/* background: var(--light-color); */
 	/* color: var(--dark-color-a); */
 	border: 0;

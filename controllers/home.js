@@ -6,7 +6,7 @@ module.exports = {
       try {
         const posts = await Post.find().populate('user').sort({ likes: "desc" }).lean();
         const comments = await Comment.find().sort({ createdAt: "asc" }).lean()
-        res.render("index.ejs", { posts: posts, comments: comments } );
+        res.render("index.ejs", { posts: posts, comments: comments,  user: req.user } );
       } catch (err) {
         console.log(err)
       }

@@ -7,8 +7,9 @@ module.exports = {
   getProfile: async (req, res) => {
     try {
       const posts = await Post.find({ user: req.user.id });
+      const likedPosts = await Post.find({ user: req.user.id }).sort({likes: "desc"}).lean();
       console.log(posts)
-      res.render("profile.ejs", { posts: posts, user: req.user });
+      res.render("profile.ejs", { posts: posts, user: req.user, likedPosts: likedPosts });
     } catch (err) {
       console.log(err);
     }

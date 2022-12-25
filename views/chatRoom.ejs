@@ -44,26 +44,26 @@ Free for personal and commercial use under the CCA 3.0 license (html5up.net/lice
                                          <li>
                                              <a href="/chat">Chat Rooms</a>
                                              <ul>
-                                                 <li><a href="/chat/room/?username=rachel&room=Parent">I have lost a child.</a></li>
-                                                 <li><a href="/chat/room">I have lost a parent.</a></li>
-                                                 <li><a href="#">I have lost my spouse/partner.</a></li>
-                                                 <li><a href="#">I have lost a sibling.</a></li>
-                                                 <li><a href="#">I have lost a friend</a></li>
-                                                 <li><a href="#">I have lost someone to suicide.</a></li>
-                                                 <li><a href="#">I have a terminal diagnosis.</a></li>
-                                                 <li>
-                                                     <a href="#">Community tragedy.</a>
-                                                     <ul>
-                                                         <li><a href="#">Natural Disaster</a></li>
-                                                         <li><a href="#">Act of Human Violence</a></li>
-                                                         <li><a href="#">Global Pandemic</a></li>
-                                                         <li><a href="#">Poverty</a></li>
-                                                         <li><a href="#">War</a></li>
-                                                     </ul>
-                                                 </li>
-                                                 <li><a href="#">My grief is different</a></li>
-                                                 
-                                             </ul>
+                                                <li><a href="/chat/room/room?username=<%= user.userName %>&room=Child">I have lost a child.</a></li>
+                                                <li><a href="/chat/room/room?username=<%= user.userName %>&room=Parent">I have lost a parent.</a></li>
+                                                <li><a href="/chat/room/room?username=<%= user.userName %>&room=Spouse%2FPartner">I have lost my spouse/partner.</a></li>
+                                                <li><a href="/chat/room/room?username=<%= user.userName %>&room=Sibling">I have lost a sibling.</a></li>
+                                                <li><a href="/chat/room/room?username=<%= user.userName %>&room=Friend">I have lost a friend</a></li>
+                                                <li><a href="/chat/room/room?username=<%= user.userName %>&room=Suicide">I have lost someone to suicide.</a></li>
+                                                <li><a href="/chat/room/room?username=<%= user.userName %>&room=Terminal">I have a terminal diagnosis.</a></li>
+                                                <li>
+                                                    <a href="#">Community tragedy.</a>
+                                                    <ul>
+                                                        <li><a href="/chat/room/room?username=<%= user.userName %>&room=Natural%20Disaster">Natural Disaster</a></li>
+                                                        <li><a href="/chat/room/room?username=<%= user.userName %>&room=Act%20of%20Violence">Act of Human Violence</a></li>
+                                                        <li><a href="/chat/room/room?username=<%= user.userName %>&room=Global%20Pandemic">Global Pandemic</a></li>
+                                                        <li><a href="/chat/room/room?username=<%= user.userName %>&room=Poverty">Poverty</a></li>
+                                                        <li><a href="/chat/room/room?username=<%= user.userName %>&room=War">War</a></li>
+                                                    </ul>
+                                                </li>
+                                                <li><a href="/chat/room/room?username=<%= user.userName %>&room=Different">My grief is different</a></li>
+                                                
+                                            </ul>
                                          </li>
                                          <li><a href="/profile">Profile</a></li>
                                          <li><a href="/post/:id">New Post</a></li>
@@ -89,9 +89,9 @@ Free for personal and commercial use under the CCA 3.0 license (html5up.net/lice
                 <main class="chat-main">
                     <div class="chat-sidebar">
                     <h3><i class="fas fa-dove"></i> Room Name:</h3>
-                    <h2 id="room-name"> <%= `${room}` %></h2>
+                    <h2 id="room-name"></h2>
                     <h3><i class="fas fa-hand-holding-heart"></i> Group Members</h3>
-                    <ul id="users"><%= `${user}` %></ul>
+                    <ul id="users"></ul>
                     </div>
                     <div class="chat-messages"></div>
                 </main>
