@@ -9,16 +9,7 @@ const io = socketio(server);
 const cors = require('cors')
 require("dotenv").config({ path: "./config/.env" });
 const PORT = process.env.PORT;
-// const PORT2 = 2899;
-// app.use(cors())
-// const io = require("socket.io")(PORT2, {
-//   cors: {
-//     origin: `http://localhost:${process.env.PORT}`,
-//     methods: ["GET", "POST"],
-//     credentials: true
-//   }
-// });
-// const socket = io('http://localhost:3333')
+
 
 const mongoose = require("mongoose");
 const passport = require("passport");
@@ -98,8 +89,8 @@ const {
 
 
 
-// Set static folder
-app.use(express.static("public"));
+// Set static folder-- already done above but in a different way.. Need both??
+// app.use(express.static("public"));
 
 
 const botName = "Grief Support Bot";
@@ -116,8 +107,8 @@ io.on("connection", (socket) => {
   console.log('New WS Connection', "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer);
 
 
-  socket.on("joinRoom", ({ username, room }) => {
-    const user = userJoin(socket.id, username, room);
+  socket.on("joinRoom", ({ username, room, _id }) => {
+    const user = userJoin(socket.id, username, room, _id);
     console.log("pkkkkkkkk", user)
     socket.join(user.room);
 
