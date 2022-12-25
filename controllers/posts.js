@@ -15,14 +15,17 @@ module.exports = {
       console.log(err);
     }
   },
-  showProfile: async (user, res) => {
+  showProfile: async (req, res) => {
+    console.log("showprofile", req.params)
     try {
       // const { id } = req.params.id
-      const user = await User.find( {userName: user} )
-      console.log("yessss","KOKOK")
-      const posts = await Post.find({ user: user.id });
-      const likedPosts = await Post.find({ user: user.id }).sort({likes: "desc"}).lean();
-      res.render("profile.ejs", { posts: posts, user: user, likedPosts: likedPosts });
+      const user = await User.find( { _id: req.params.id } )
+      console.log("yessss",user,"KOKOK")
+      const posts = await Post.find({ user: req.params.id });
+      const likedPosts = await Post.find({ user: req.params.id }).sort({likes: "desc"}).lean();
+      const comments = await Comment.find().sort({ createdAt: "asc" }).lean()
+
+      res.render("userProfile.ejs", { posts: posts, user: req.user, comments: comments, likedPosts: likedPosts });
     } catch (err) {
       console.log(err, "STOP!!");
     }

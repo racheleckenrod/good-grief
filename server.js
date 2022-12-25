@@ -10,6 +10,7 @@ const cors = require('cors')
 require("dotenv").config({ path: "./config/.env" });
 const PORT = process.env.PORT;
 
+app.use(cors())
 
 const mongoose = require("mongoose");
 const passport = require("passport");
