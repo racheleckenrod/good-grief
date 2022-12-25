@@ -9,6 +9,8 @@ router.get("/:id", ensureAuth, postsController.getPost);
 
 router.post("/createPost", upload.single("file"), postsController.createPost);
 
+router.get("/newPost/:id", ensureAuth, postsController.getNewPost);
+
 router.put("/likePost/:id", postsController.likePost);
 
 router.get("/editPostPage/:id", postsController.editPostPage);

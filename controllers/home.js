@@ -10,6 +10,18 @@ module.exports = {
       } catch (err) {
         console.log(err)
       }
+    },
+    getWelcome: async (req, res) => {
+      try{
+        const posts = await Post.find({ user: req.user.id });
+        const likedPosts = await Post.find({ user: req.user.id }).sort({likes: "desc"}).lean();
+        const comments = await Comment.find().sort({ createdAt: "asc" }).lean()
+        console.log(posts)
+        res.render("welcome.ejs", { posts: posts, comments: comments, user: req.user, likedPosts: likedPosts });
+      }catch (err) {
+        console.log(err)
+      }
+
     }
 }
 
