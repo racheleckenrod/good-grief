@@ -19,13 +19,15 @@ module.exports = {
     console.log("showprofile", req.params)
     try {
       // const { id } = req.params.id
-      const user = await User.find( { _id: req.params.id } )
-      console.log("yessss",user,"KOKOK")
-      const posts = await Post.find({ user: req.params.id });
-      const likedPosts = await Post.find({ user: req.params.id }).sort({likes: "desc"}).lean();
-      const comments = await Comment.find().sort({ createdAt: "asc" }).lean()
+      const chatUser = await User.findOne( { _id: req.params.id } )
+      console.log("yessss",chatUser,"KOKOK")
+      const posts = await Post.find({ user: chatUser });
+      console.log("yep", posts, "yoyoyo")
+      const likedPosts = await Post.find({ user: chatUser}).sort({likes: "desc"}).lean();
 
-      res.render("userProfile.ejs", { posts: posts, user: req.user, comments: comments, likedPosts: likedPosts });
+      const comments = await Comment.find().sort({ createdAt: "asc" }).lean()
+      console.log(likedPosts.length, comments.length, "length of likedPost and comments")
+      res.render("userProfile.ejs", { posts: posts, user: req.user, chatUser: chatUser, comments: comments, likedPosts: likedPosts });
     } catch (err) {
       console.log(err, "STOP!!");
     }
@@ -35,17 +37,30 @@ module.exports = {
     try {
       const posts = await Post.find().populate('user').sort({ createdAt: "desc" }).lean();
       const comments = await Comment.find().sort({ createdAt: "asc" }).lean()
+      console.log(posts,comments, "from getFeed")
 
       res.render("feed.ejs", { posts: posts, comments: comments, user: req.user });
-      console.log(comments, posts)
+      // console.log(comments, posts, "toooo much")
+    } catch (err) { 
+      console.log(err);
+    }
+  },
+  getTestFeed: async (req, res) => {
+    try {
+      const posts = await Post.find().populate('user').sort({ createdAt: "desc" }).lean();
+      const comments = await Comment.find().sort({ createdAt: "asc" }).lean()
+    
+      res.render("feed.ejs", { posts: posts, comments: comments, user: req.user });
+      console.log("testFeed" ,posts)
     } catch (err) { 
       console.log(err);
     }
   },
   getPost: async (req, res) => {
     try {
-      const post = await Post.findById(req.params.id);
+      const post = await Post.findById(req.params.id).populate('user');
       const comments = await Comment.find({post: req.params.id}).sort({ createdAt: "desc" }).lean();
+      console.log(post,comments, "from getPost")
       res.render("post.ejs", { post: post, user: req.user, comments: comments });
     } catch (err) {
       console.log(err);

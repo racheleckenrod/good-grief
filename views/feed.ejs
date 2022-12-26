@@ -19,14 +19,13 @@
       <div class="">Likes: <%= posts[i].likes %></div>
       <div class="">Posted by:<%=posts[i].user.userName%></div>
       <ul class="actions">
-        <li><a href="#" class="button style1">Learn More</a></li>
+        <li><a href="/profile/<%= `${posts[i].user._id}`%>" class="button style1">See Profile</a></li>
       </ul>
       <h4>Comments:</h4>
       <% for(var j=0; j<comments.length; j++) {%>
         <% if( comments[j].post  == `${posts[i]._id}` ) {%>
         <p><%= comments[j].comment %></p>
-       <!-- <% console.log(posts[i]._id )%>
-       <% console.log(comments[j].post )%> -->
+   
      
        <%}%>
        <% } %>

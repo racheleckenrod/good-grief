@@ -59,6 +59,7 @@ app.use(logger("dev"));
 //Use forms for put / delete
 app.use(methodOverride("_method"));
 
+
 // Setup Sessions - stored in MongoDB
 app.use(
   session({
@@ -72,6 +73,7 @@ app.use(
 // Passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
+
 
 //Use flash messages for errors, info, ect...
 app.use(flash());

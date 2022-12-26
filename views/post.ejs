@@ -1,7 +1,9 @@
 <%- include('partials/header') -%>
 
 <section id="intro" class="wrapper style3">
-  <div class="title"><%= post.title %></div>
+  <div class="title"><%= post.title %><br>
+    Posted By:<%= post.user.userName %></div>
+
   <div class="container">
 
 <div class="container">
@@ -10,20 +12,16 @@
       <h2></h2>
       <img class="image fit featured" src="<%= post.image%>" />
       <div class="row p-5 justify-content-between">
+      <div class="">
+        <p><%= post.caption %></p>
+      </div>
         <form
-          class="col-3"
-          action="/post/likePost/<%= post.id %>?_method=PUT"
-          method="POST"
-        >
-          <button class="btn style1 fa fa-heart" type="submit"></button>
-        </form>
-          <!-- <form
           class="col-1"
           action="/post/likePost/<%= post.id %>?_method=PUT"
           method="POST"
         >
           <button class="btn style1 fa fa-heart" type="submit"></button>
-        </form> -->
+        </form>
         <h3 class="col-3">Likes: <%= post.likes %></h3>
         <%if(post.user == user.id){ %>
         <form
@@ -44,9 +42,6 @@
         <%}%>
       </div>
     
-      <div class="">
-        <p><%= post.caption %></p>
-      </div>
   </div>
     <div class="container">
       <div class="row">
