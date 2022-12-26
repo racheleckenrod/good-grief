@@ -20,7 +20,7 @@ module.exports = {
       const posts = await Post.find({ user: req.user.id });
       const likedPosts = await Post.find({ user: req.user.id }).sort({likes: "desc"}).lean();
       console.log(posts)
-      res.render("profile.ejs", { posts: posts, user: req.user, likedPosts: likedPosts });
+      res.render("editProfile.ejs", { posts: posts, user: req.user, likedPosts: likedPosts });
     } catch (err) {
       console.log(err);
     }
@@ -120,7 +120,7 @@ module.exports = {
   },
   editPostPage:  async (req, res) => {
     try {
-      const post = await Post.findById(req.params.id);
+      const post = await Post.findById(req.params.id).populate('user');
       const comments = await Comment.find({post: req.params.id}).sort({ createdAt: "desc" }).lean();
       res.render("edit.ejs", { post: post, user: req.user, comments: comments });
     } catch (err) {
