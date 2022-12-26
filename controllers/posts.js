@@ -15,6 +15,16 @@ module.exports = {
       console.log(err);
     }
   },
+  getEditProfile: async (req, res) => {
+    try {
+      const posts = await Post.find({ user: req.user.id });
+      const likedPosts = await Post.find({ user: req.user.id }).sort({likes: "desc"}).lean();
+      console.log(posts)
+      res.render("profile.ejs", { posts: posts, user: req.user, likedPosts: likedPosts });
+    } catch (err) {
+      console.log(err);
+    }
+  },
   showProfile: async (req, res) => {
     console.log("showprofile", req.params)
     try {
@@ -36,7 +46,7 @@ module.exports = {
   getFeed: async (req, res) => {
     try {
       const posts = await Post.find().populate('user').sort({ createdAt: "desc" }).lean();
-      const comments = await Comment.find().sort({ createdAt: "asc" }).lean()
+      const comments = await Comment.find().populate('user').sort({ createdAt: "asc" }).lean()
       console.log(posts,comments, "from getFeed")
 
       res.render("feed.ejs", { posts: posts, comments: comments, user: req.user });
@@ -59,7 +69,7 @@ module.exports = {
   getPost: async (req, res) => {
     try {
       const post = await Post.findById(req.params.id).populate('user');
-      const comments = await Comment.find({post: req.params.id}).sort({ createdAt: "desc" }).lean();
+      const comments = await Comment.find({post: req.params.id}).populate('user').sort({ createdAt: "desc" }).lean();
       console.log(post,comments, "from getPost")
       res.render("post.ejs", { post: post, user: req.user, comments: comments });
     } catch (err) {

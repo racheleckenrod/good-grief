@@ -17,7 +17,7 @@
       <h3><a href="#"><%=posts[i].title%></a></h3>
       <p><%=posts[i].caption%></p>
       <div class="">Likes: <%= posts[i].likes %></div>
-      <div class="">Posted by:<%=posts[i].user.userName%></div>
+      <div class=""><a href="/profile/<%= `${posts[i].user._id}`%>">Posted by:<%=posts[i].user.userName%></a></div>
       <ul class="actions">
         <li><a href="/profile/<%= `${posts[i].user._id}`%>" class="button style1">See Profile</a></li>
       </ul>
@@ -25,11 +25,9 @@
       <% for(var j=0; j<comments.length; j++) {%>
         <% if( comments[j].post  == `${posts[i]._id}` ) {%>
         <p><%= comments[j].comment %></p>
-   
-     
+        <a href="/profile/<%= `${comments[i].user._id}`%>">By: <%= comments[i].user.userName %></a>
        <%}%>
        <% } %>
-          </section>
       </div>
         <%}%>
        

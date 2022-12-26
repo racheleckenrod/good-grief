@@ -13,7 +13,7 @@ module.exports = {
     },
     getWelcome: async (req, res) => {
       try{
-        const posts = await Post.find({ user: req.user.id });
+        const posts = await Post.find({ user: req.user.id }).populate('user');
         const likedPosts = await Post.find({ user: req.user.id }).sort({likes: "desc"}).lean();
         const comments = await Comment.find().sort({ createdAt: "asc" }).lean()
         console.log(likedPosts, "likedPosts from getWelcome")
