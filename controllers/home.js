@@ -16,7 +16,7 @@ module.exports = {
         const posts = await Post.find({ user: req.user.id });
         const likedPosts = await Post.find({ user: req.user.id }).sort({likes: "desc"}).lean();
         const comments = await Comment.find().sort({ createdAt: "asc" }).lean()
-        console.log(posts)
+        console.log(likedPosts, "likedPosts from getWelcome")
         res.render("welcome.ejs", { posts: posts, comments: comments, user: req.user, likedPosts: likedPosts });
       }catch (err) {
         console.log(err)

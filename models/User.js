@@ -8,7 +8,8 @@ const UserSchema = new mongoose.Schema({
   greeting: { type: String, default: "We can honor our dead by living our best lives." },
   profilePicture: {type: String, default: "https://source.unsplash.com/random/?flowers"},
   about: String,
-  story: String
+  story: String,
+  viewUser: {type: Boolean, default: true},
 });
 
 // Password hash middleware.

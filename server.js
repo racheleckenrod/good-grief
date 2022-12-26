@@ -10,8 +10,7 @@ const cors = require('cors')
 require("dotenv").config({ path: "./config/.env" });
 const PORT = process.env.PORT;
 
-
-
+app.use(cors())
 
 const mongoose = require("mongoose");
 const passport = require("passport");
@@ -58,6 +57,7 @@ app.use(logger("dev"));
 //Use forms for put / delete
 app.use(methodOverride("_method"));
 
+
 // Setup Sessions - stored in MongoDB
 app.use(
   session({
@@ -71,6 +71,7 @@ app.use(
 // Passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
+
 
 //Use flash messages for errors, info, ect...
 app.use(flash());
@@ -89,8 +90,8 @@ const {
 
 
 
-// Set static folder
-app.use(express.static("public"));
+// Set static folder-- already done above but in a different way.. Need both??
+// app.use(express.static("public"));
 
 
 const botName = "Grief Support Bot";
@@ -108,8 +109,8 @@ io.on("connection", (socket) => {
   console.log('New WS Connection', "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer);
 
 
-  socket.on("joinRoom", ({ username, room }) => {
-    const user = userJoin(socket.id, username, room);
+  socket.on("joinRoom", ({ username, room, _id }) => {
+    const user = userJoin(socket.id, username, room, _id);
     console.log("pkkkkkkkk", user)
     socket.join(user.room);
 

@@ -5,12 +5,14 @@ const userList = document.getElementById('users');
 
 // // Get username and room from URL
 // this is major point to change from old to new. instead of query parameters being passed in on the get request.. need a route that takes query params
-const { username, room } = Qs.parse(location.search, {
+const { username, room, _id } = Qs.parse(location.search, {
   ignoreQueryPrefix: true,
  
 });
-console.log("room=", room, username)
+console.log("room=", room, username, _id)
 // my try at pulling the data into the chat
+
+
 
 // const room = document.getElementById('room-name');
 // const username = document.getElementById('users');
@@ -18,14 +20,16 @@ console.log(username, "username")
 const socket = io();
 console.log("mainJS", socket, socket.connected, socket.id)
 
-socket.on("connection", (socket) => {
-  console.log("mainJS", socket, socket.connected, socket.id)
-  console.log('New WS Connection', socket, socket.id,socket.handshake.headers.referer);
-})
+// socket.on("connection", (socket) => {
+//   console.log("mainJS", socket, socket.connected, socket.id)
+//   console.log('New WS mainJS Connection', socket, socket.id,socket.handshake.headers.referer);
+// })
+
+const id = socket.id
 
 // // Join chatroom
-socket.emit('joinRoom', { username, room });
-console.log("joinRoom", username, room)
+socket.emit('joinRoom', { id, username, room, _id });
+console.log("joinRoom", id, username, room, _id)
 
 // // Get room and users
 socket.on('roomUsers', ({ room, users }) => {
@@ -44,7 +48,7 @@ socket.on('message', (message) => {
   chatMessages.scrollTop = chatMessages.scrollHeight;
 });
 
-// // Message submit
+// // Message submit- prevent default stops page reload
 chatForm.addEventListener('submit', (e) => {
   e.preventDefault();
 
@@ -93,14 +97,17 @@ function outputRoomName(room) {
 
 // // Add users to DOM
 function outputUsers(users) {
+  console.log("outputUsers", users)
   userList.innerHTML = `
-  ${users.map(user => `<li class="profile" >${user.username}</li>`).join('')}
+  ${users.map(user => `<li class="${user.username}" >${user.username}</li>`).join('')}
   `;
+
+  // Add event listeners to names to connect to their profile page
   users.forEach((user) => {
     console.log("first")
-    document.querySelector('.profile').addEventListener('click', () => {
-      window.location = `/profile/${user.username}`
-      console.log("forEach")
+    document.querySelector(`.${user.username}`).addEventListener('click', () => {
+      console.log("forEach", user.username, user._id)
+       window.location = `/profile/${user._id}`
     })
 //     const li = document.createElement('li');
 //     li.innerText = user.username;
