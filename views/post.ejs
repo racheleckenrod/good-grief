@@ -4,7 +4,7 @@
   <div class="title"><%= post.title %><br>
     Posted By:<%= post.user.userName %></div>
 
-  <div class="container">
+  <!-- <div class="container"> -->
 
 <div class="container">
   <div class="row justify-content-center mt-5">
@@ -20,27 +20,27 @@
           action="/post/likePost/<%= post.id %>?_method=PUT"
           method="POST"
         >
-          <button class="btn style1 fa fa-heart" type="submit"></button>
+          <button class="btn style1 fa fa-heart" type="submit">like post</button>
         </form>
         <h3 class="col-3">Likes: <%= post.likes %></h3>
-        <%if(post.user == user.id){ %>
+        <%if(post.user.id == user.id){ %>
         <form
           action="/post/deletePost/<%= post.id %>?_method=DELETE"
           method="POST"
           class="col-3"
         >
-          <button class="btn style1 fa fa-trash" type="submit"></button>
+          <button class="btn style1 fa fa-trash" type="submit">delete post</button>
         </form>
         <form
         action="/post/editPostPage/<%= post.id %>"
       
         class="col-3"
       >
-        <button class="btn style1" type="submit">edit</button>
+        <button class="btn style1" type="submit">edit Post</button>
       </form>
 
         <%}%>
-      </div>
+    </div>
     
   </div>
     <div class="container">
@@ -50,6 +50,8 @@
           <% for(var i=0; i<comments.length; i++) {%>
             <li class="col-6 ">
              <h4>"<%= comments[i].comment%>"</h4>
+             <a href="/profile/<%= `${comments[i].user._id}`%>">By: <%= comments[i].user.userName %></a>
+             <p>At: <%= comments[i].createdAt %></p>
             <form
             class=""
             action="/comment/likeComment/<%= comments[i]._id %>?_method=PUT"
@@ -59,13 +61,13 @@
           </form>
           <p class="p-3">Comment Likes: <%= comments[i].likes %></p>
         </li>
-            <%if(comments[i].user == user.id){ %>
+            <%if(comments[i].user._id == user.id){ %>
               <form
                 action="/comment/deleteComment/<%= comments[i]._id %>?_method=DELETE"
                 method="POST"
                 class="col-3"
               >
-                <button class="btn style1 fa fa-trash" type="submit"></button>
+                <button class="btn style1 fa fa-trash" type="submit">delete my comment</button>
               </form>
 
              
