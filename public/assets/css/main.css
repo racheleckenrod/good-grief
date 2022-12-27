@@ -2691,6 +2691,7 @@ input, select, textarea {
 					font-size: 0.85em;
 					letter-spacing: 0.15em;
 					text-decoration: none;
+					overflow-x: scroll;
 					height: 44px;
 					line-height: 44px;
 					border-top: solid 1px rgba(255, 255, 255, 0.05);
