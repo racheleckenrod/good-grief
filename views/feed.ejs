@@ -17,7 +17,10 @@
       <h3><a href="#"><%=posts[i].title%></a></h3>
       <p><%=posts[i].caption%></p>
       <h2 class="">Post Likes: <%= posts[i].likes %></h2>
-      <div class=""><a href="/profile/<%= `${posts[i].user._id}`%>">Posted by:<%=posts[i].user.userName%></a></div>
+      <div class=""><a href="/profile/<%= `${posts[i].user._id}`%>">Posted by:<%=posts[i].user.userName%></a>
+        <p>At:<%= posts[i].createdAt.toLocaleTimeString()%> on <%= posts[i].createdAt.toLocaleDateString() %></p>
+      </p>
+      </div>
       <ul class="actions">
         <li><a href="/profile/<%= `${posts[i].user._id}`%>" class="button style1">See Profile</a></li>
         <li><a href="/post/<%= `${posts[i]._id}`%>" class="button style1">  See      Post  </a></li>
@@ -27,6 +30,7 @@
         <% if( comments[j].post  == `${posts[i]._id}` ) {%>
         <span><%= comments[j].comment %></span>
         <a href="/profile/<%= `${comments[i].user._id}`%>">By: <%= comments[i].user.userName %></a>
+        <p>At:<%= comments[i].createdAt.toLocaleTimeString()%> on  <%= comments[i].createdAt.toLocaleDateString() %></p>
        <%}%>
        <% } %>
       </div>
