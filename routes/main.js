@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const upload = require("../middleware/multer");
 const authController = require("../controllers/auth");
 const homeController = require("../controllers/home");
 const postsController = require("../controllers/posts");
@@ -10,6 +11,9 @@ router.get("/", homeController.getIndex);
 router.get("/profile/:id", postsController.showProfile);
 router.get("/profile", ensureAuth, postsController.getProfile);
 router.get("/editProfile", ensureAuth, postsController.getEditProfile);
+router.put("/editProfile/:id", postsController.editProfile)
+router.post("/profilePicture", upload.single("file"), postsController.createProfile);
+
 
 router.get("/welcome", ensureAuth, homeController.getWelcome);
 router.get("/feed", ensureAuth, postsController.getFeed);

@@ -6,10 +6,11 @@ const User = require("../models/User");
 
 module.exports = {
   getProfile: async (req, res) => {
+    console.log(req.user, req.user.profilePicture)
     try {
       const posts = await Post.find({ user: req.user.id });
       const likedPosts = await Post.find({ user: req.user.id }).sort({likes: "desc"}).lean();
-      console.log(posts)
+      // console.log(posts)
       res.render("profile.ejs", { posts: posts, user: req.user, likedPosts: likedPosts });
     } catch (err) {
       console.log(err);
@@ -19,8 +20,73 @@ module.exports = {
     try {
       const posts = await Post.find({ user: req.user.id });
       const likedPosts = await Post.find({ user: req.user.id }).sort({likes: "desc"}).lean();
-      console.log(posts)
+      console.log(req.user)
       res.render("editProfile.ejs", { posts: posts, user: req.user, likedPosts: likedPosts });
+    } catch (err) {
+      console.log(err);
+    }
+  },
+  editProfile: async (req, res) => {
+   console.log(req.user, "editProfile")
+    try {
+
+      //   if(req.params ){
+
+       
+      //   // Upload image to cloudinary
+      //   const result = await cloudinary.uploader.upload(req.file.path);
+      //   console.log(result)
+      //   req.user.profilePicture = result.secure_url
+      // }
+      await User.findOneAndUpdate(
+        { _id: req.params.id },
+      
+        
+          {...req.body }
+         
+      
+      );
+      console.log("Updated editProfile() User",req.body );
+      res.redirect(`/profile`);
+    } catch (err) {
+      console.log(err);
+    }
+  },
+  createProfile: async (req, res) => {
+   
+    try {
+
+      let user = await User.findById(req.params.id)
+
+      const result = await cloudinary.uploader.upload(req.file.path);
+        const data = {
+          profilePicture: result.secure_url || user.profilePicture
+        };
+        user = await User.findOneAndUpdate(req.params.id, data, {
+          new: true
+        });
+        // res.json(user);
+      
+        // Upload image to cloudinary
+        // const result = await cloudinary.uploader.upload(req.file.path);
+        // console.log(result)
+
+         //   // Upload image to cloudinary
+        // const { result } = await cloudinary.uploader.upload(req.file.path);
+        // console.log(result, req.user.profilePicture )
+        // req.user.profilePicture = result.secure_url
+        // console.log(req.user.profilePicture)
+      // // }
+
+      // await User.findOneAndUpdate(
+      //   { _id: req.params.id },
+      //   {  profilePicture: result.secure_url} ,
+     
+         
+      
+      // );
+      console.log("Updated createProfile User", req.user.profilePicture );
+      res.redirect(`/Profile`);
     } catch (err) {
       console.log(err);
     }
@@ -31,11 +97,11 @@ module.exports = {
       // const { id } = req.params.id
       const chatUser = await User.findOne( { _id: req.params.id } )
       console.log("yessss",chatUser,"KOKOK")
-      const posts = await Post.find({ user: chatUser });
+      const posts = await Post.find({ user: chatUser }).populate('user');
       console.log("yep", posts, "yoyoyo")
       const likedPosts = await Post.find({ user: chatUser}).sort({likes: "desc"}).lean();
 
-      const comments = await Comment.find().sort({ createdAt: "asc" }).lean()
+      const comments = await Comment.find().populate('user').sort({ createdAt: "asc" }).lean()
       console.log(likedPosts.length, comments.length, "length of likedPost and comments")
       res.render("userProfile.ejs", { posts: posts, user: req.user, chatUser: chatUser, comments: comments, likedPosts: likedPosts });
     } catch (err) {
