@@ -148,7 +148,7 @@
               </ul>
            
          
-          <h3><a href="#"><%=`${posts[i].title}`%></a></h3>
+          <h3><a href="/post/<%= posts[i]._id%>"><%=`${posts[i].title}`%></a></h3>
           <p><%=`${posts[i].caption}`%></p>
           <ul class="actions">
             <li><a href="/post/<%= posts[i]._id %>" class="button style1">Comment</a></li>

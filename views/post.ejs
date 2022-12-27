@@ -51,13 +51,13 @@
             <li class="col-6 ">
              <h4>"<%= comments[i].comment%>"</h4>
              <a href="/profile/<%= `${comments[i].user._id}`%>">By: <%= comments[i].user.userName %></a>
-             <p>At: <%= comments[i].createdAt %></p>
+             <p>At: <%= comments[i].createdAt.toLocaleTimeString() %> on <%= comments[i].createdAt.toLocaleDateString() %></p>
             <form
             class=""
             action="/comment/likeComment/<%= comments[i]._id %>?_method=PUT"
             method="POST"
             >
-            <button class="btn style1 fa fa-heart" type="submit"></button>
+            <button class="btn style1 fa fa-heart" type="submit">Like Comment</button>
           </form>
           <p class="p-3">Comment Likes: <%= comments[i].likes %></p>
         </li>
@@ -76,18 +76,23 @@
           </ul>
       </div>
      
-      <h2 class="">Add a Comment</h2>
-      <form action="/comment/createComment/<%=post._id%>" method="POST">
-        <div class="">
-            <label for="comment" class="form-label">Comment</label>
-            <input type="text" class="form-control" id="comment" name="comment">
-        </div>
-        
-        <button type="submit" class="button style1">Submit</button>
-      </form>
+      <h2>Add a Comment</h2>
+      <div class="card">
+        <form action="/comment/createComment/<%=post._id%>" method="POST">
+          <div class="">
+              <label for="comment" class="form-label">Comment</label>
+              <input type="text" class="form-control" id="comment" name="comment">
+          </div>
+          
+          <button type="submit" class="button style1">Submit+</button>
+        </form>
+      </div>
+     
     </div>
     <div class="">
       <a class="button style3" href="/profile/<%= post.user._id %>">Return to Profile</a>
+      <div class=""></div>
+      <a class="button style3" href="/chat">Return to Lobby</a>
       <div class=""></div>
       <a class="button style3" href="/feed">Return to Feed</a>
       <div class=""></div>

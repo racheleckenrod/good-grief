@@ -2674,6 +2674,7 @@ input, select, textarea {
 				height: 100%;
 				left: 0;
 				overflow-y: auto;
+				overflow-x: scroll;
 				position: fixed;
 				top: 0;
 				width: 275px;
