@@ -51,7 +51,7 @@
             <li class="col-6 ">
              <h4>"<%= comments[i].comment%>"</h4>
              <a href="/profile/<%= `${comments[i].user._id}`%>">By: <%= comments[i].user.userName %></a>
-             <p>At: <%= comments[i].createdAt %></p>
+         
             <form
             class=""
             action="/comment/likeComment/<%= comments[i]._id %>?_method=PUT"

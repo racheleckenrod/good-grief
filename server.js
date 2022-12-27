@@ -4,6 +4,7 @@ const express = require("express");
 const socketio = require("socket.io");
 const formatMessage = require("./utils/messages");
 const app = express();
+// const moment = require("moment");
 const server = http.createServer(app);
 const io = socketio(server);
 const cors = require('cors')
@@ -51,6 +52,11 @@ app.set('socketio', io);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+// // moment to format time
+// app.use((req, res, next) => {
+//   res.locals.moment = moment
+// })
+
 //Logging
 app.use(logger("dev"));
 
@@ -61,7 +67,7 @@ app.use(methodOverride("_method"));
 // Setup Sessions - stored in MongoDB
 app.use(
   session({
-    secret: "keyboard cat",
+    secret: "goPackers",
     resave: false,
     saveUninitialized: false,
     store: new MongoStore({ mongooseConnection: mongoose.connection }),
