@@ -53,18 +53,20 @@ module.exports = {
     }
   },
   createProfile: async (req, res) => {
-   
+   console.log("createProfile")
     try {
 
       let user = await User.findById(req.params.id)
-
+      console.log(user, "second")
       const result = await cloudinary.uploader.upload(req.file.path);
+      console.log(result, user)
         const data = {
           profilePicture: result.secure_url || user.profilePicture
         };
         user = await User.findOneAndUpdate(req.params.id, data, {
           new: true
         });
+        console.log("after user", user)
         // res.json(user);
       
         // Upload image to cloudinary
@@ -98,7 +100,7 @@ module.exports = {
       const chatUser = await User.findOne( { _id: req.params.id } )
       console.log("yessss",chatUser,"KOKOK")
       const posts = await Post.find({ user: chatUser }).populate('user');
-      console.log("yep", posts, "yoyoyo")
+      // console.log("yep", posts, "yoyoyo")
       const likedPosts = await Post.find({ user: chatUser}).sort({likes: "desc"}).lean();
 
       const comments = await Comment.find().populate('user').sort({ createdAt: "asc" }).lean()
