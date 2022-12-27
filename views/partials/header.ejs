@@ -36,10 +36,7 @@
 								<li>
 									<a href="/chat">Chat Rooms</a>
 									<ul>
-										<% if (!user) {%>
-											<li><a href="/login">Login</a></li>
-											<li><a href="/signup">Sign Up</a></li>
-										<% } else {%>
+										<% if(typeof user !== 'undefined') {%>
 											<li><a href="/chat/room/room?username=<%= user.userName %>&room=Child&user._id=<%=_id%>">I have lost a child.</a></li>
 											<li><a href="/chat/room/room?username=<%= user.userName %>&room=Parent&user._id=<%=_id%>">I have lost a parent.</a></li>
 											<li><a href="/chat/room/room?username=<%= user.userName %>&room=Spouse%2FPartner&_id=<%=_id%>">I have lost my spouse/partner.</a></li>
@@ -60,10 +57,14 @@
 										<li><a href="/chat/room/room?username=<%= user.userName %>&room=Different&_id=<%=_id%>">My grief is different</a></li>
 										
 
-											<%}
-										
+										<%}else {%>
+											<li><a href="/login">Login</a></li>
+											<li><a href="/signup">Sign Up</a></li>
+										<% } 
+											
 										
 										%>
+										
 										
 									</ul>
 								</li>
