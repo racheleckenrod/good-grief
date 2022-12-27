@@ -104,7 +104,7 @@ function outputUsers(users) {
 
   // Add event listeners to names to connect to their profile page
   users.forEach((user) => {
-    console.log("first")
+    console.log("first", user)
     document.querySelector(`.${user.username}`).addEventListener('click', () => {
       console.log("forEach", user.username, user._id)
        window.location = `/profile/${user._id}`

@@ -40,24 +40,24 @@
 											<li><a href="/login">Login</a></li>
 											<li><a href="/signup">Sign Up</a></li>
 										<% } else {%>
-											<li><a href="/chat/room/room?username=<%= user.userName %>&room=Child">I have lost a child.</a></li>
-										<li><a href="/chat/room/room?username=<%= user.userName %>&room=Parent">I have lost a parent.</a></li>
-										<li><a href="/chat/room/room?username=<%= user.userName %>&room=Spouse%2FPartner">I have lost my spouse/partner.</a></li>
-										<li><a href="/chat/room/room?username=<%= user.userName %>&room=Sibling">I have lost a sibling.</a></li>
-										<li><a href="/chat/room/room?username=<%= user.userName %>&room=Friend">I have lost a friend</a></li>
-										<li><a href="/chat/room/room?username=<%= user.userName %>&room=Suicide">I have lost someone to suicide.</a></li>
-										<li><a href="/chat/room/room?username=<%= user.userName %>&room=Terminal">I have a terminal diagnosis.</a></li>
-										<li>
-											<a href="#">Community tragedy.</a>
-											<ul>
-												<li><a href="/chat/room/room?username=<%= user.userName %>&room=Natural%20Disaster">Natural Disaster</a></li>
-												<li><a href="/chat/room/room?username=<%= user.userName %>&room=Act%20of%20Violence">Act of Human Violence</a></li>
-												<li><a href="/chat/room/room?username=<%= user.userName %>&room=Global%20Pandemic">Global Pandemic</a></li>
-												<li><a href="/chat/room/room?username=<%= user.userName %>&room=Poverty">Poverty</a></li>
-												<li><a href="/chat/room/room?username=<%= user.userName %>&room=War">War</a></li>
-											</ul>
-										</li>
-										<li><a href="/chat/room/room?username=<%= user.userName %>&room=Different">My grief is different</a></li>
+											<li><a href="/chat/room/room?username=<%= user.userName %>&room=Child&user._id=<%=_id%>">I have lost a child.</a></li>
+											<li><a href="/chat/room/room?username=<%= user.userName %>&room=Parent&user._id=<%=_id%>">I have lost a parent.</a></li>
+											<li><a href="/chat/room/room?username=<%= user.userName %>&room=Spouse%2FPartner&_id=<%=_id%>">I have lost my spouse/partner.</a></li>
+											<li><a href="/chat/room/room?username=<%= user.userName %>&room=Sibling&_id=<%=_id%>">I have lost a sibling.</a></li>
+											<li><a href="/chat/room/room?username=<%= user.userName %>&room=Friend&_id=<%=_id%>">I have lost a friend</a></li>
+											<li><a href="/chat/room/room?username=<%= user.userName %>&room=Suicide&_id=<%=_id%>">I have lost someone to suicide.</a></li>
+											<li><a href="/chat/room/room?username=<%= user.userName %>&room=Terminal&_id=<%=_id%>">I have a terminal diagnosis.</a></li>
+											<li>
+												<a href="#">Community tragedy.</a>
+												<ul>
+													<li><a href="/chat/room/room?username=<%= user.userName %>&room=Natural%20Disaster&_id=<%=_id%>">Natural Disaster</a></li>
+													<li><a href="/chat/room/room?username=<%= user.userName %>&room=Act%20of%20Violence&_id=<%=_id%>">Act of Human Violence</a></li>
+													<li><a href="/chat/room/room?username=<%= user.userName %>&room=Global%20Pandemic&_id=<%=_id%>">Global Pandemic</a></li>
+													<li><a href="/chat/room/room?username=<%= user.userName %>&room=Poverty&_id=<%=_id%>">Poverty</a></li>
+													<li><a href="/chat/room/room?username=<%= user.userName %>&room=War&_id=<%=_id%>">War</a></li>
+												</ul>
+											</li>
+										<li><a href="/chat/room/room?username=<%= user.userName %>&room=Different&_id=<%=_id%>">My grief is different</a></li>
 										
 
 											<%}

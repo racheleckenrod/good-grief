@@ -10,8 +10,9 @@ module.exports = {
     try {
       const posts = await Post.find({ user: req.user.id });
       const likedPosts = await Post.find({ user: req.user.id }).sort({likes: "desc"}).lean();
+      const _id = req.user._id
       // console.log(posts)
-      res.render("profile.ejs", { posts: posts, user: req.user, likedPosts: likedPosts });
+      res.render("profile.ejs", { posts: posts, user: req.user, likedPosts: likedPosts, _id: _id });
     } catch (err) {
       console.log(err);
     }
@@ -20,8 +21,9 @@ module.exports = {
     try {
       const posts = await Post.find({ user: req.user.id });
       const likedPosts = await Post.find({ user: req.user.id }).sort({likes: "desc"}).lean();
+      const _id = req.user._id
       console.log(req.user)
-      res.render("editProfile.ejs", { posts: posts, user: req.user, likedPosts: likedPosts });
+      res.render("editProfile.ejs", { posts: posts, user: req.user, likedPosts: likedPosts, _id: _id });
     } catch (err) {
       console.log(err);
     }
@@ -57,6 +59,7 @@ module.exports = {
     try {
 
       let user = await User.findById(req.params.id)
+      const _id = req.user._id
       console.log(user, "second")
       const result = await cloudinary.uploader.upload(req.file.path);
       console.log(result, user)
@@ -88,7 +91,7 @@ module.exports = {
       
       // );
       console.log("Updated createProfile User", req.user.profilePicture );
-      res.redirect(`/Profile`);
+      res.redirect(`/profile`);
     } catch (err) {
       console.log(err);
     }
@@ -102,10 +105,10 @@ module.exports = {
       const posts = await Post.find({ user: chatUser }).populate('user');
       // console.log("yep", posts, "yoyoyo")
       const likedPosts = await Post.find({ user: chatUser}).sort({likes: "desc"}).lean();
-
+      const _id = req.user._id
       const comments = await Comment.find().populate('user').sort({ createdAt: "asc" }).lean()
       console.log(likedPosts.length, comments.length, "length of likedPost and comments")
-      res.render("userProfile.ejs", { posts: posts, user: req.user, chatUser: chatUser, comments: comments, likedPosts: likedPosts });
+      res.render("userProfile.ejs", { posts: posts, user: req.user, chatUser: chatUser, comments: comments, likedPosts: likedPosts, _id: _id });
     } catch (err) {
       console.log(err, "STOP!!");
     }
@@ -116,8 +119,9 @@ module.exports = {
       const posts = await Post.find().populate('user').sort({ createdAt: "desc" }).lean();
       const comments = await Comment.find().populate('user').sort({ createdAt: "asc" }).lean()
       console.log(posts,comments, "from getFeed")
+      const _id = req.user._id
 
-      res.render("feed.ejs", { posts: posts, comments: comments, user: req.user });
+      res.render("feed.ejs", { posts: posts, comments: comments, user: req.user, _id: _id });
       // console.log(comments, posts, "toooo much")
     } catch (err) { 
       console.log(err);
@@ -138,8 +142,9 @@ module.exports = {
     try {
       const post = await Post.findById(req.params.id).populate('user');
       const comments = await Comment.find({post: req.params.id}).populate('user').sort({ createdAt: "desc" }).lean();
+      const _id = req.user._id
       console.log(post,comments, "from getPost")
-      res.render("post.ejs", { post: post, user: req.user, comments: comments });
+      res.render("post.ejs", { post: post, user: req.user, comments: comments, _id: _id });
     } catch (err) {
       console.log(err);
     }
@@ -147,7 +152,8 @@ module.exports = {
   getNewPost:  async (req, res) => {
     try {
       const posts = await Post.find({ user: req.user.id });
-      res.render("newPost.ejs", { posts: posts, user: req.user });
+      const _id = req.user._id
+      res.render("newPost.ejs", { posts: posts, user: req.user, _id: _id });
     } catch (err) {
       console.log(err);
     }
@@ -190,7 +196,8 @@ module.exports = {
     try {
       const post = await Post.findById(req.params.id).populate('user');
       const comments = await Comment.find({post: req.params.id}).sort({ createdAt: "desc" }).lean();
-      res.render("edit.ejs", { post: post, user: req.user, comments: comments });
+      const _id = req.user._id
+      res.render("edit.ejs", { post: post, user: req.user, comments: comments, _id: _id });
     } catch (err) {
       console.log(err)
     }

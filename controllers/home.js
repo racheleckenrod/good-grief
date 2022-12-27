@@ -6,7 +6,8 @@ module.exports = {
       try {
         const posts = await Post.find().populate('user').sort({ likes: "desc" }).lean();
         const comments = await Comment.find().sort({ createdAt: "asc" }).lean()
-        res.render("index.ejs", { posts: posts, comments: comments,  user: req.user } );
+        const _id = req.user._id
+        res.render("index.ejs", { posts: posts, comments: comments,  user: req.user, _id: req.user._id} );
       } catch (err) {
         console.log(err)
       }
@@ -16,8 +17,9 @@ module.exports = {
         const posts = await Post.find({ user: req.user.id }).populate('user');
         const likedPosts = await Post.find({ user: req.user.id }).sort({likes: "desc"}).lean();
         const comments = await Comment.find().sort({ createdAt: "asc" }).lean()
+        const _id = req.user._id
         console.log(likedPosts, "likedPosts from getWelcome")
-        res.render("welcome.ejs", { posts: posts, comments: comments, user: req.user, likedPosts: likedPosts });
+        res.render("welcome.ejs", { posts: posts, comments: comments, user: req.user, _id: _id, likedPosts: likedPosts });
       }catch (err) {
         console.log(err)
       }
