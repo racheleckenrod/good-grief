@@ -16,12 +16,58 @@
                       <h2><%= user.greeting%></h2>
                       <p>Please enjoy your visit. The greeting above is customizable.</p>
                     </header>
+                    <div class="col-12 mt-5">
+                        <h2>Edit your post</h2>
+                        <form action="/editProfile/<%= user.id %>?_method=PUT"  method="POST">
+                          <div class="mb-3">
+                              <label for="greeting" class="form-label">Greeting:</label>
+                              <input type="text" class="form-control" id="greeting" value="<%= user.greeting %>" name="greeting">
+                          </div>
+                          <button type="submit" class="button style1 large">Submit</button>
+                        </form>
+                      </div>
+                    
                     <a href="#" class="image featured">
-                      <img src="<%= user.profilePicture%>" alt="profile picture" />
+                      <img src="<%= user.profilePicture %>" alt="profile picture" />
                     </a>
+
+
+                     
+
+                    <div class="col-12 mt-5">
+                        <h2>Choose your Profile Picture</h2>
+                        <form action="/profilePicture" enctype="multipart/form-data" method="POST">
+                            <div class="mb-3">
+                                <label for="imgUpload" class="form-label">Image</label>
+                                <input type="file" class="form-control" id="imageUpload" name="file">
+                            </div>
+                          <!-- <div class="mb-3">
+                              <label for="title" class="form-label">Title</label>
+                              <input type="text" class="form-control" id="title" name="title">
+                          </div> -->
+                          <!-- <div class="mb-3">
+                            <label for="caption" class="form-label">Caption</label>
+                            <textarea class="form-control" id="caption" name="caption"></textarea>
+                          </div> -->
+                       
+                      
+                          <button type="submit" class="button style1 large" value="Upload">Submit</button>
+                          <div class=""></div>
+                          </div>
+                        </form>
+                    
+                    <div class="col-12 mt-5">
+                        <h2>Edit your Profile</h2>
+                        <form action="/editProfile/<%= user.id %>?_method=PUT"  method="POST">
+                          <div class="mb-3">
+                              <label for="story" class="form-label">My Story</label>
+                              <textarea class="form-control" id="story" value="<%= user.story %>" name="story"><%= user.story %></textarea>
+                          </div>
+                          <button type="submit" class="button style1 large">Submit</button>
+                        </form>
+                    </div>
                     <p>My Story.</p>
                     <p><%= user.story %></p>
-                      
                   
                   
                     <header>
@@ -62,11 +108,26 @@
               <!-- Sidebar -->
                 <div id="sidebar">
                   <section class="box">
+                    <div class="col-12 mt-5">
+                        <h2>Edit your Profile</h2>
+                        <form action="/editProfile/<%= user.id %>?_method=PUT"  method="POST">
+                          <div class="mb-3">
+                              <label for="about" class="form-label">About Me</label>
+                              <textarea class="form-control" id="about" value="<%= user.story %>" name="about"><%= user.about %></textarea>
+                          </div>
+                          <!-- <div class="mb-3">
+                            <label for="caption" class="form-label">Caption</label>
+                            <textarea class="form-control" id="caption" name="caption"></textarea>
+                          </div> -->
+                         
+                          <button type="submit" class="button style1 large">Submit</button>
+                        </form>
+                      </div>
                     <header>
                       <h2>About Me:</h2>
                     </header>
                     <p><%= user.about %></p>
-                    <a href="/profile" class="button style1">Submitll profile</a>
+                    <a href="/profile" class="button style1">Back to Profile</a>
                   </section>
                   <section class="box">
                     <header>
@@ -147,7 +208,6 @@
                 </li>
               </ul>
            
-         
           <h3><a href="#"><%=`${posts[i].title}`%></a></h3>
           <p><%=`${posts[i].caption}`%></p>
           <ul class="actions">

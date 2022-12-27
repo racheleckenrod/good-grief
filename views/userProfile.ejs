@@ -128,26 +128,31 @@
   <div class="title">In Loving Memory</div>
   <div class="container">
     <div class="row aln-center">
-        
-      
-       
-          <% for(var i=0; i<posts.length; i++) {%>
+
+        <% for(var i=0; i<posts.length; i++) {%>
+
             <div class="col-4 col-12-medium">
-            <section class="highlight">
-            <ul class="actions">
-              <li><a href="/post/<%= posts[i]._id%>">
-                <img class="image fit featured" src="<%= posts[i].image%>">
-              </a></li>
-            </ul>
-         
-          <h3><a href="#"><%=`${posts[i].title}`%></a></h3>
-          <p><%=`${posts[i].caption}`%></p>
+              <section class="highlight">
+            <a href="/post/<%= `${posts[i]._id}`%>"  class="image featured">
+              <img src= "<%= posts[i].image%>">
+            </a>
+          <h3><a href="#"><%=posts[i].title%></a></h3>
+          <p><%=posts[i].caption%></p>
+          <div class="">Likes: <%= posts[i].likes %></div>
+          <div class=""><a href="/profile/<%= `${posts[i].user._id}`%>">Posted by:<%=posts[i].user.userName%></a></div>
           <ul class="actions">
-            <li><a href="/post/<%= posts[i]._id %>" class="button style1">Comment</a></li>
+            <li><a href="/profile/<%= `${posts[i].user._id}`%>" class="button style1">See Profile</a></li>
           </ul>
-        </section>
-      </div>
-          <% } %>
+          <h4>Comments:</h4>
+          <% for(var j=0; j<comments.length; j++) {%>
+            <% if( comments[j].post  == `${posts[i]._id}` ) {%>
+            <p><%= comments[j].comment %></p>
+            <a href="/profile/<%= `${comments[i].user._id}`%>">By: <%= comments[i].user.userName %></a>
+           <%}%>
+           <% } %>
+          </div>
+            <%}%>
+           
        
       </div>
      
