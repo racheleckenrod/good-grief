@@ -96,6 +96,7 @@ a {
 	background-color: var(--light-color);
 	border-radius: 5px;
 	overflow-wrap: break-word;
+	color: var(--dark-color-a);
 }
 
 .chat-messages .message .meta {

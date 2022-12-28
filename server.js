@@ -112,17 +112,17 @@ const botName = "Grief Support Bot";
 
 // // // Run when client connects
 io.on("connection", (socket) => {
-  console.log('New WS Connection', "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer);
+  console.log('New WS server.js Connection', "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer);
 
 
   socket.on("joinRoom", ({ username, room, _id }) => {
     const user = userJoin(socket.id, username, room, _id);
-    console.log("pkkkkkkkk", user)
+    // console.log("pkkkkkkkk", user)
     socket.join(user.room);
 
 
 // Welcome current user
-    socket.emit("message", formatMessage(botName, "Welcome to Live Grief Support!"));
+    socket.emit("message", formatMessage(botName, `Welcome to Live Grief Support, ${user.username}!`));
 
 // Broadcast when a user connects
 
@@ -182,7 +182,7 @@ app.use("/feedback", mainRoutes);
 app.use("/", mainRoutes);
 app.use("/post", postRoutes);
 app.use("/comment", commentRoutes);
-app.post("/chat/:room", chatsController.getRoom);
+// app.post("/chat/:room", chatsController.getRoom);
 app.use("/chat/:room", chatRoutes);
 
 app.use("/chat", chatRoutes);

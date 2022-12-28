@@ -18,6 +18,7 @@ console.log("room=", room, username, _id)
 // const username = document.getElementById('users');
 console.log(username, "username")
 const socket = io();
+const id = socket.id;
 console.log("mainJS", socket, socket.connected, socket.id)
 
 // socket.on("connection", (socket) => {
@@ -25,7 +26,7 @@ console.log("mainJS", socket, socket.connected, socket.id)
 //   console.log('New WS mainJS Connection', socket, socket.id,socket.handshake.headers.referer);
 // })
 
-const id = socket.id
+
 
 // // Join chatroom
 socket.emit('joinRoom', { id, username, room, _id });
@@ -33,6 +34,8 @@ console.log("joinRoom", id, username, room, _id)
 
 // // Get room and users
 socket.on('roomUsers', ({ room, users }) => {
+  console.log("mainJS2", socket, socket.connected, socket.id)
+
   console.log("bigtest")
   outputRoomName(room);
   console.log("output", room)
@@ -91,7 +94,7 @@ function outputMessage(message) {
 
 // // Add room name to DOM
 function outputRoomName(room) {
-  console.log("output test")
+  console.log("output test", socket, socket.connected, socket.id)
   roomName.innerText = room;
 }
 
