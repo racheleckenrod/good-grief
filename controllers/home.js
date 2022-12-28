@@ -3,16 +3,26 @@ const Comment = require("../models/Comment")
 
 module.exports = {
     getIndex: async (req, res) => {
+      if(!req.user){
+        try {
+          const posts = await Post.find().populate('user').sort({ likes: "desc" }).lean();
+          const comments = await Comment.find().sort({ createdAt: "asc" }).lean()
+          res.render("guestIndex.ejs", { posts: posts, comments: comments, });
+        } catch (err) {
+          console.log(err)
+        }
       
+    } else {
       try {
         // console.log("OK", req.user._id)
         const posts = await Post.find().populate('user').sort({ likes: "desc" }).lean();
         const comments = await Comment.find().sort({ createdAt: "asc" }).lean()
         
-        res.render("index.ejs", { posts: posts, comments: comments,  user: req.user,  } );
+        res.render("index.ejs", { posts: posts, comments: comments,  user: req.user, _id: req.user._id } );
       } catch (err) {
         console.log(err)
       }
+    }
     },
     getWelcome: async (req, res) => {
       try{

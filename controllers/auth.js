@@ -46,7 +46,7 @@ exports.postLogin = (req, res, next) => {
 };
 
 exports.logout = (req, res) => {
-  const username = req.user.userName
+  const username = "unknown" || req.user.userName
   req.logout(() => {
     console.log(`User ${username} has logged out.`)
   })
