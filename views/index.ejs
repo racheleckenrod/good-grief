@@ -1,4 +1,11 @@
-<%- include('partials/header') -%>
+<% if (typeof user !== "undefined") { %>
+    <%- include('partials/header') -%>
+  <% } else { %> 
+	<%- include('partials/guestHeader') -%>
+  <% } %>
+
+
+
 
 
 
