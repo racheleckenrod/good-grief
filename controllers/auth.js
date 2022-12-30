@@ -69,6 +69,7 @@ exports.getSignup = (req, res) => {
 };
 
 exports.postSignup = (req, res, next) => {
+  console.log("calling exports.postSignup")
   const validationErrors = [];
   if (!validator.isEmail(req.body.email))
     validationErrors.push({ msg: "Please enter a valid email address." });
@@ -118,4 +119,44 @@ exports.postSignup = (req, res, next) => {
       });
     }
   );
+};
+
+exports.postFeedback = (req, res, next) => {
+  console.log("exports.postFeedback")
+  const validationErrors = [];
+  if (!validator.isEmail(req.body.email))
+    validationErrors.push({ msg: "Please enter a valid email address." });
+
+  if (!validator.isLength(req.body.userName, { min: 1 }))
+  validationErrors.push({
+    msg: "Please enter your name.",
+  });
+
+  if (validationErrors.length) {
+    req.flash("errors", validationErrors);
+    return res.redirect("/#footer");
+  }
+  req.body.email = validator.normalizeEmail(req.body.email, {
+    gmail_remove_dots: false,
+  });
+
+  // if (req.user || req.guest){
+  //   console.log("what's next?", req.user, req.guest)
+  //   // return next();
+    
+  // }
+
+  // const guest = new Guest({
+  //   guestName: req.body.userName,
+  //   email: req.body.email,
+  // });
+console.log("?????????")
+  // guest.save((err) => {
+  //   console.log("saveguest", guest)
+  //   if (err) {
+  //     return next(err);
+  //   }
+  // });
+
+
 };
