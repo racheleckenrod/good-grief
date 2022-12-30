@@ -4,10 +4,21 @@ const upload = require("../middleware/multer");
 const authController = require("../controllers/auth");
 const homeController = require("../controllers/home");
 const postsController = require("../controllers/posts");
-const { ensureAuth, ensureGuest } = require("../middleware/auth");
+const { ensureAuth, ensureGuest, ensureFeedback } = require("../middleware/auth");
 
 //Main Routes - simplified for now
 router.get("/", homeController.getIndex);
+
+// router.post("/feedback", ensureFeedback, homeController.postFeedback)
+router.post('/feedback', function(req, res) {
+    if(!req.user){
+        res.redirect(307, '/feedbackGuest');
+    }else {
+        res.redirect(307, '/feedbackUser');
+    }
+  });
+router.post("/feedbackGuest", homeController.postGuestFeedback)
+router.post("/feedbackUser", ensureAuth, homeController.postUserFeedback)
 router.get("/profile/:id", postsController.showProfile);
 router.get("/profile", ensureAuth, postsController.getProfile);
 router.get("/editProfile", ensureAuth, postsController.getEditProfile);
