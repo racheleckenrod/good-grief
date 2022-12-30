@@ -82,10 +82,7 @@ app.use(passport.session());
 //Use flash messages for errors, info, ect...
 app.use(flash());
 
-// const createAdapter = require("@socket.io/redis-adapter").createAdapter;
-// const redis = require("redis");
-// require("dotenv").config();
-// const { createClient } = redis;
+
 const {
   userJoin,
   getCurrentUser,
@@ -102,14 +99,6 @@ const {
 
 const botName = "Grief Support Bot";
 
-// (async () => {
-//   pubClient = createClient({ url: "redis://127.0.0.1:6379" });
-//   await pubClient.connect();
-//   subClient = pubClient.duplicate();
-//   io.adapter(createAdapter(pubClient, subClient));
-// })();
-
-
 // // // Run when client connects
 io.on("connection", (socket) => {
   console.log('New WS server.js Connection', "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer);
@@ -125,13 +114,12 @@ io.on("connection", (socket) => {
     socket.emit("message", formatMessage(botName, `Welcome to Live Grief Support, ${user.username}!`));
 
 // Broadcast when a user connects
-
     socket.broadcast
       .to(user.room)
       .emit(
         "message",  formatMessage(botName,`${user.username} has joined the chat`)
-//         formatMessage(botName, `${user.username} has joined the chat`)
       );
+
 
 
 //     // Send users and room info
@@ -140,8 +128,9 @@ io.on("connection", (socket) => {
       room: user.room,
       users: getRoomUsers(user.room),
     });
-  });
+    console.log(botName, room, getRoomUsers(user.room))
 
+  });
 
 //   // Listen for chatMessage
 
@@ -153,15 +142,16 @@ io.on("connection", (socket) => {
 
 
 // Runs when client disconnects
-  socket.on("disconnect", () => {
+  socket.on("disconnect", (reason) => {
     // io.emit("message",  formatMessage(botName,'a user has left the chat'))
-
     const user = userLeave(socket.id);
+    console.log(`${user} disconnected from ${user.room} because reason: ${reason}`)
+
 
     if (user) {
       io.to(user.room).emit(
         "message",
-        formatMessage(botName, `${user.username} has left the chat`)
+        formatMessage(botName, `${user.username} has left the chat because: ${reason}`)
       );
 
 
@@ -175,8 +165,7 @@ io.on("connection", (socket) => {
   });
 });
 
-// this route for the feedback form in the footers
-// app.use("/feedback", mainRoutes);
+
 
 //Setup Routes For Which The Server Is Listening
 app.use("/", mainRoutes);
