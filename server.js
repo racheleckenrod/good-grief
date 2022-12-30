@@ -99,6 +99,18 @@ const {
 
 const botName = "Grief Support Bot";
 
+// handle connections
+io.on('connection', socket => {
+  console.log('Client connected', new Date().toTimeString());
+  socket.emit('timeClock', "It's about time");
+  socket.on('disconnect', () => console.log('Client disconnected'));
+});
+
+// broadcast updates
+setInterval(() => io.emit('time', "about time"), 1000)
+setInterval(() => io.emit('timeData', new Date().toTimeString()), 1000);
+
+
 // // // Run when client connects
 io.on("connection", (socket) => {
   console.log('New WS server.js Connection', "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer);
