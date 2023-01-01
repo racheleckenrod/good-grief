@@ -10,7 +10,7 @@ function userJoin(id, username, room, _id) {
 
   users.push(user);
 
-  console.log("ho hum", users)
+  // console.log("ho hum", users)
   
   return user;
  
@@ -34,6 +34,11 @@ function userLeave(id) {
 // // Get room users
 function getRoomUsers(room) {
   return users.filter(user => user.room === room);
+}
+
+// get all users for lobby info
+function getAllUsers(room)  {
+  return users
 }
 
 module.exports = {

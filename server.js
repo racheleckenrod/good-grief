@@ -88,8 +88,10 @@ const {
   getCurrentUser,
   userLeave,
   getRoomUsers,
+  getAllUsers,
 } = require("./utils/users");
 
+const rooms = ["Child", "Parent", "Spouse/Partner", "Sibling", "Suicide", "Friend", "Community Tragety", "Different"]
 
 
 
@@ -99,23 +101,27 @@ const {
 
 const botName = "Grief Support Bot";
 
-// handle connections
+// handle connections -lobby 
 io.on('connection', socket => {
-  console.log('Client connected', new Date().toTimeString());
-  socket.emit('timeClock', "It's about time");
+  console.log('Client connected', new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
+  socket.emit('timeClock', `It's about time... Connected = ${socket.connected}`);
+  socket.join(rooms)
+  console.log(rooms)
+
   socket.on('disconnect', () => console.log('Client disconnected'));
 });
-
-// broadcast updates
-setInterval(() => io.emit('time', "about time"), 1000)
-setInterval(() => io.emit('timeData', new Date().toTimeString()), 1000);
-
+  // broadcast updates
+  setInterval(() => io.emit('time', "about time"), 1000)
+  setInterval(() => io.emit('timeData', new Date().toLocaleTimeString()), 1000);
 
 // // // Run when client connects
 io.on("connection", (socket) => {
   console.log('New WS server.js Connection', "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer);
 
-
+  // socket.on("lobbyJoin", () => {
+  //   socket.join("Child", "Parent")
+  // })
+  
   socket.on("joinRoom", ({ username, room, _id }) => {
     const user = userJoin(socket.id, username, room, _id);
     // console.log("pkkkkkkkk", user)
@@ -125,9 +131,13 @@ io.on("connection", (socket) => {
 // Welcome current user
     socket.emit("message", formatMessage(botName, `Welcome to Live Grief Support, ${user.username}!`));
 
+    socket.emit("messageLobby", formatMessage(botName, `message to lobby`));
+    socket.emit("numOfUsers", formatMessage(botName, `message of confusion to lobby`));
+
 // Broadcast when a user connects
     socket.broadcast
       .to(user.room)
+      .to("lobby")
       .emit(
         "message",  formatMessage(botName,`${user.username} has joined the chat`)
       );
@@ -136,20 +146,26 @@ io.on("connection", (socket) => {
 
 //     // Send users and room info
 
-    io.to(user.room).emit("roomUsers", {
+    io.to(user.room).to("lobby").emit("roomUsers", {
       room: user.room,
       users: getRoomUsers(user.room),
     });
     console.log(botName, room, getRoomUsers(user.room))
 
+
   });
+
+
+
+
+
 
 //   // Listen for chatMessage
 
   socket.on("chatMessage", (msg) => {
     const user = getCurrentUser(socket.id);
        
-    io.to(user.room).emit("message", formatMessage(user.username, msg));
+    io.to(user.room).emit("message", formatMessage(user.username, msg, user.room));
   });
 
 

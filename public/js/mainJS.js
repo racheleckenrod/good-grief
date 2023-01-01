@@ -12,20 +12,10 @@ const { username, room, _id } = Qs.parse(location.search, {
 console.log("room=", room, username, _id)
 // my try at pulling the data into the chat
 
-
-
-// const room = document.getElementById('room-name');
-// const username = document.getElementById('users');
-console.log(username, "username")
+// console.log(username, "username")
 const socket = io();
 const id = socket.id;
-console.log("mainJS", socket, socket.connected, socket.id)
-
-// socket.on("connection", (socket) => {
-//   console.log("mainJS", socket, socket.connected, socket.id)
-//   console.log('New WS mainJS Connection', socket, socket.id,socket.handshake.headers.referer);
-// })
-
+// console.log("mainJS", socket, socket.connected, socket.id)
 
 
 // // Join chatroom
@@ -120,11 +110,11 @@ function outputUsers(users) {
 
 // //Prompt the user before leave chat room
 document.getElementById('leave-btn').addEventListener('click', () => {
-  const leaveRoom = confirm('Are you sure you want to leave the chatroom?');
-  if (leaveRoom) {
+  // const leaveRoom = confirm('Are you sure you want to leave the chatroom?');
+  // if (leaveRoom) {
     window.location = '../';
-  } else {
-  }
+  // } else {
+  // }
 });
 
 
