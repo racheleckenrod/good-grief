@@ -15,6 +15,7 @@ console.log("room=", room, username, _id)
 // console.log(username, "username")
 const socket = io();
 const id = socket.id;
+const lobbySocket = io("/lobby2")
 // console.log("mainJS", socket, socket.connected, socket.id)
 
 

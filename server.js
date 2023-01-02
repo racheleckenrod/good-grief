@@ -91,7 +91,7 @@ const {
   getAllUsers,
 } = require("./utils/users");
 
-const rooms = ["Child", "Parent", "Spouse/Partner", "Sibling", "Suicide", "Friend", "Community Tragety", "Different"]
+const rooms = ["Child", "Parent"]
 
 
 
@@ -101,22 +101,32 @@ const rooms = ["Child", "Parent", "Spouse/Partner", "Sibling", "Suicide", "Frien
 
 const botName = "Grief Support Bot";
 
-// handle connections -lobby 
-io.on('connection', socket => {
-  console.log('Client connected', new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
-  socket.emit('timeClock', `It's about time... Connected = ${socket.connected}`);
-  socket.join(rooms)
-  console.log(rooms)
+ // broadcast updates
+ setInterval(() => io.emit('time', "about time"), 1000)
+ setInterval(() => io.emit('timeData', new Date().toLocaleTimeString()), 1000);
 
-  socket.on('disconnect', () => console.log('Client disconnected'));
-});
-  // broadcast updates
-  setInterval(() => io.emit('time', "about time"), 1000)
-  setInterval(() => io.emit('timeData', new Date().toLocaleTimeString()), 1000);
+// Custom namespace
+const lobby2 = io.of("/lobby2");
+
+lobby2.on("connection", (socket) => {
+  console.log("someone connected on lobby2", socket.id, socket.nsp.name);
+  socket.emit("hi", formatMessage("lobby2", "everyone!   "));
+
+
+// handle connections -lobby 
+// io.on('connection', socket => {
+  // console.log('Client connected', new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
+  socket.emit('timeClock', `It's about time... Connected = ${socket.connected}`);
+  // socket.join(rooms)
+  // console.log(rooms)
+
+ 
+
+ 
 
 // // // Run when client connects
-io.on("connection", (socket) => {
-  console.log('New WS server.js Connection', "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer);
+// io.on("connection", (socket) => {
+  // console.log('New WS server.js Connection', "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer);
 
   // socket.on("lobbyJoin", () => {
   //   socket.join("Child", "Parent")
@@ -124,7 +134,7 @@ io.on("connection", (socket) => {
   
   socket.on("joinRoom", ({ username, room, _id }) => {
     const user = userJoin(socket.id, username, room, _id);
-    // console.log("pkkkkkkkk", user)
+    console.log("pkkkkkkkk", user)
     socket.join(user.room);
 
 
@@ -197,7 +207,7 @@ io.on("connection", (socket) => {
     }
   });
 });
-
+// });
 
 
 //Setup Routes For Which The Server Is Listening

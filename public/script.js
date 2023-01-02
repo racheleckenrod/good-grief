@@ -2,8 +2,12 @@ const username = "admin "
 const room = "lobby"
 const _id = 123456789 
 
+const chatMessages = document.querySelector('.chat-messages')
+
 const socket = io();
 const id = socket.id;
+const lobbySocket = io("/lobby2")
+
 
 
 
@@ -12,9 +16,14 @@ let timeClock ;
 
 socket.emit('joinRoom', { id, username, room, _id });
 
-socket.emit("joinAll", () =>{
+// socket.emit("joinAll", () =>{
 
-})
+   
+// })
+
+lobbySocket.on('connection', (socket) => {
+console.log("lobby2", socket)
+
 
 
 socket.on("connection", (socket) => {
@@ -88,4 +97,7 @@ socket.on('timeData', (timeString2) => {
 })
 socket.on("numOfUsers", (message) =>{
     console.log(message)
+    outputMessage(message);
+
+})
 })
