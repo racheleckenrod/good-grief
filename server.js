@@ -101,22 +101,28 @@ const rooms = ["Child", "Parent"]
 
 const botName = "Grief Support Bot";
 
- // broadcast updates
- setInterval(() => io.emit('time', "about time"), 1000)
- setInterval(() => io.emit('timeData', new Date().toLocaleTimeString()), 1000);
+ 
 
 // Custom namespace
 const lobby2 = io.of("/lobby2");
 
+
+
 lobby2.on("connection", (socket) => {
-  console.log("someone connected on lobby2", socket.id, socket.nsp.name);
-  socket.emit("hi", formatMessage("lobby2", "everyone!   "));
+  console.log(`${socket.id} connected on lobby2`, socket, socket.nsp.name);
+  // broadcast updates
+// setInterval(() => io.emit('time', "about time"), 1000)
+setInterval(() => io.emit('timeData', new Date().toLocaleTimeString()), 1000);
+  io.emit("hi", formatMessage("lobby2", "hello everyone!   "));
+
+  // io.emit("hi", "hello everyone!   ");
+
 
 
 // handle connections -lobby 
 // io.on('connection', socket => {
-  // console.log('Client connected', new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
-  socket.emit('timeClock', `It's about time... Connected = ${socket.connected}`);
+  console.log('Client connected', new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
+  io.emit('timeClock', `It's about time... Connected = ${socket.connected} socket.id= ${socket.id}`);
   // socket.join(rooms)
   // console.log(rooms)
 
@@ -132,20 +138,20 @@ lobby2.on("connection", (socket) => {
   //   socket.join("Child", "Parent")
   // })
   
-  socket.on("joinRoom", ({ username, room, _id }) => {
+  io.on("joinRoom", ({ username, room, _id }) => {
     const user = userJoin(socket.id, username, room, _id);
     console.log("pkkkkkkkk", user)
     socket.join(user.room);
 
 
 // Welcome current user
-    socket.emit("message", formatMessage(botName, `Welcome to Live Grief Support, ${user.username}!`));
+    io.emit("message", formatMessage(botName, `Welcome to Live Grief Support, ${user.username}!`));
 
-    socket.emit("messageLobby", formatMessage(botName, `message to lobby`));
-    socket.emit("numOfUsers", formatMessage(botName, `message of confusion to lobby`));
+    io.emit("messageLobby", formatMessage(botName, `message to lobby`));
+    io.emit("numOfUsers", formatMessage(botName, `message of confusion to lobby`));
 
 // Broadcast when a user connects
-    socket.broadcast
+    io.broadcast
       .to(user.room)
       .to("lobby")
       .emit(
@@ -172,7 +178,7 @@ lobby2.on("connection", (socket) => {
 
 //   // Listen for chatMessage
 
-  socket.on("chatMessage", (msg) => {
+  io.on("chatMessage", (msg) => {
     const user = getCurrentUser(socket.id);
        
     io.to(user.room).emit("message", formatMessage(user.username, msg, user.room));
@@ -180,7 +186,7 @@ lobby2.on("connection", (socket) => {
 
 
 // Runs when client disconnects
-  socket.on("disconnect", (reason) => {
+  io.on("disconnect", (reason) => {
     // io.emit("message",  formatMessage(botName,'a user has left the chat'))
     const user = userLeave(socket.id);
     if(user) {
@@ -192,7 +198,7 @@ lobby2.on("connection", (socket) => {
 
 
     if (user) {
-      io.to(user.room).emit(
+      io.to(user.room).to("lobby").emit(
         "message",
         formatMessage(botName, `${user.username} has left the chat because: ${reason}`)
       );
