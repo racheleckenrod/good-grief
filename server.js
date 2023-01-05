@@ -26,7 +26,15 @@ const postRoutes = require("./routes/posts");
 const commentRoutes = require("./routes/comments");
 const chatRoutes = require("./routes/chat")
 const chatsController = require("./controllers/chats")
+const users = require("./utils/users")
 
+// new setup using sessionMiddleware for socket.io:
+const sessionMiddleware = session({
+  secret: "goPackers",
+  resave: false,
+  saveUninitialized: false,
+  store: new MongoStore({ mongooseConnection: mongoose.connection }),
+})
 
 //Use .env file in config folder
 require("dotenv").config({ path: "./config/.env" });
@@ -64,15 +72,18 @@ app.use(logger("dev"));
 app.use(methodOverride("_method"));
 
 
-// Setup Sessions - stored in MongoDB
-app.use(
-  session({
-    secret: "goPackers",
-    resave: false,
-    saveUninitialized: false,
-    store: new MongoStore({ mongooseConnection: mongoose.connection }),
-  })
-);
+// // Setup Sessions - stored in MongoDB
+// app.use(
+//   session({
+//     secret: "goPackers",
+//     resave: false,
+//     saveUninitialized: false,
+//     store: new MongoStore({ mongooseConnection: mongoose.connection }),
+//   })
+// );
+
+// continued set up of sessions with the sessionMiddleware:
+app.use(sessionMiddleware)
 
 // Passport middleware
 app.use(passport.initialize());
@@ -82,6 +93,38 @@ app.use(passport.session());
 //Use flash messages for errors, info, ect...
 app.use(flash());
 
+
+// Custom namespace
+const lobby2 = io.of("/lobby2");
+
+// convert a connect middleware to a Socket.IO middleware
+const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
+
+lobby2.use(wrap(sessionMiddleware));
+lobby2.use(wrap(passport.initialize()));
+lobby2.use(wrap(passport.session()));
+
+lobby2.use((socket, next) => {
+  if (socket.request.user) {
+    console.log(socket.request.user, "io.use socket")
+    next();
+  } else {
+    next(new Error('unauthorized by rachel'))
+  }
+});
+ 
+lobby2.on('connect', (socket) => {
+  console.log("TRYHANDSHAKE", socket.handshake.query.room)
+  console.log(`new connection ${socket.id} ${socket.request.user.userName}`);
+  socket.on("whoami", (cb) => {
+    cb(socket.request.user ? socket.request.user.username : "");
+  });
+
+  const session = socket.request.session;
+  console.log(`saving sid ${socket.id} in session ${session.id}`);
+  session.socketID = socket.id;
+  session.save();
+})
 
 const {
   userJoin,
@@ -103,13 +146,14 @@ const botName = "Grief Support Bot";
 
  
 
-// Custom namespace
-const lobby2 = io.of("/lobby2");
+
 
 
 
 lobby2.on("connection", (socket) => {
-  console.log(`${socket.id} connected on lobby2`, socket, socket.nsp.name);
+  console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.handshake.query['room']}`, socket.id, socket.nsp.name);
+  console.log(session, "LOBBY2");
+
   // broadcast updates
 // setInterval(() => io.emit('time', "about time"), 1000)
 setInterval(() => io.emit('timeData', new Date().toLocaleTimeString()), 1000);
@@ -127,6 +171,7 @@ setInterval(() => io.emit('timeData', new Date().toLocaleTimeString()), 1000);
   // console.log(rooms)
 
  
+  io.on("connection", (socket) => console.log("GOGOOGOG",socket.handshake.query.myParam));  // myValue
 
  
 

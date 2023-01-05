@@ -13,9 +13,9 @@ console.log("room=", room, username, _id)
 // my try at pulling the data into the chat
 
 // console.log(username, "username")
-const socket = io();
+const socket = io( { query: { myParam: 'myValue' } });
 const id = socket.id;
-const lobbySocket = io("/lobby2")
+const lobbySocket = io("/lobby2", { query: { myParam: 'myValue' } })
 // console.log("mainJS", socket, socket.connected, socket.id)
 
 

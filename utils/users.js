@@ -46,5 +46,6 @@ module.exports = {
   getCurrentUser,
   userLeave,
   getRoomUsers,
-  getAllUsers
+  getAllUsers,
+  users
 };
