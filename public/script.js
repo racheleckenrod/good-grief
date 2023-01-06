@@ -1,4 +1,6 @@
 const username = "admin "
+
+// maybe we can get the room name from the request
 const room = "lobby"
 const _id = 123456789 
 
@@ -47,7 +49,7 @@ socket.on('messageLobby', (message) => {
   
   });
 
-  function outputMessage(message, room) {
+  function outputMessage(message) {
     const div = document.createElement('div');
     div.classList.add('message');
     div.innerHTML = `<p class="meta">${message.username} <span>${message.time}</span></p>

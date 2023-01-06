@@ -91,7 +91,7 @@ const {
   getAllUsers,
 } = require("./utils/users");
 
-const rooms = ["Child", "Parent", "Spouse/Partner", "Sibling", "Suicide", "Friend", "Community Tragety", "Different"]
+const rooms = ["Child", "Parent", "Spouse/Partner", "Sibling", "Suicide", "Terminal", "Friend", "Community Tragety", "Different"]
 
 
 
