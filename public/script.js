@@ -24,12 +24,12 @@ socket.on("connection", (socket) => {
    
 });
 
-socket.on("numOfUsers", (message, room) =>{
+socket.on("numOfUsers", (message) =>{
     console.log(message, "numOfUsers");
     outputMessage(message)
 })
 
-socket.on("message", (message, room) => {
+socket.on("message", (message) => {
     console.log(message, "welcome?")
     outputMessage(message);
 
@@ -41,7 +41,7 @@ socket.on("message", (message, room) => {
 // // Message from server
 socket.on('messageLobby', (message) => {
     console.log(message, "messageLobby");
-    outputMessage(message, room);
+    outputMessage(message);
   
   //   // Scroll down
     chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -54,7 +54,7 @@ socket.on('messageLobby', (message) => {
     div.classList.add('message');
     div.innerHTML = `<p class="meta">${message.username} <span>${message.time}</span></p>
     <p class="text">
-      ${message.text}${room}
+      ${message.text}
     </p>`;
     document.querySelector(`.chat-messages `).appendChild(div);
 

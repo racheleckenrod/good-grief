@@ -108,14 +108,14 @@ io.on('connection', socket => {
   socket.join(rooms)
   console.log(rooms)
 
-  socket.on('disconnect', () => console.log('Client disconnected'));
-});
+//   socket.on('disconnect', () => console.log('Client disconnected'));
+// });
   // broadcast updates
   setInterval(() => io.emit('time', "about time"), 1000)
   setInterval(() => io.emit('timeData', new Date().toLocaleTimeString()), 1000);
 
 // // // Run when client connects
-io.on("connection", (socket) => {
+// io.on("connection", (socket) => {
   console.log('New WS server.js Connection', "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer);
 
   // socket.on("lobbyJoin", () => {
@@ -129,7 +129,7 @@ io.on("connection", (socket) => {
 
 
 // Welcome current user
-    socket.emit("message", formatMessage(botName, `Welcome to Live Grief Support, ${user.username}!`));
+    socket.emit("message", formatMessage(botName, `Welcome to ${user.room} Live Grief Support, ${user.username}!`));
 
     socket.emit("messageLobby", formatMessage(botName, `message to lobby`));
     socket.emit("numOfUsers", formatMessage(botName, `message of confusion to lobby`));
@@ -139,7 +139,7 @@ io.on("connection", (socket) => {
       .to(user.room)
       .to("lobby")
       .emit(
-        "message",  formatMessage(botName,`${user.username} has joined the chat`)
+        "message",  formatMessage(botName,`${user.username} has joined the ${user.room} chat`)
       );
 
 
