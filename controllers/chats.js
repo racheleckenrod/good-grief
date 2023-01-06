@@ -1,8 +1,9 @@
 module.exports = {
-    getLobby: (req, res) => {
+    getLobby: (req, res, next) => {
         console.log("lobby test", req.user.userName)
         const _id = req.user._id
       res.render("lobby.ejs", { user: req.user, _id: _id });
+      next()
     },
     getRoom: (req, res, next) => {
       console.log("from getRoom",req.user.userName, req.query._id, req.user._id, req.params.room)

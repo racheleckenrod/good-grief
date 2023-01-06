@@ -1,4 +1,5 @@
-const username = "admin "
+const username = document.getElementById('username').innerHTML
+const userlist = document.getElementById('users')
 
 // maybe we can get the room name from the request
 const room = "lobby"
@@ -23,12 +24,20 @@ socket.on("connection", (socket) => {
     console.log('New WS SCRIPT Connection', "script", "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer)
    
 });
+// // Get room and users
+// this should be replaced with getting the users from the sockets
+socket.on('roomUsers', ({ room, users }) => {
+    console.log("mainJS2", socket, socket.connected, socket.id)
+  
+    console.log("bigtest", room, users)
+    outputRoomName(room);
+    console.log("output", room)
+    outputUsers(users);
+    console.log("output", users)
 
-socket.on("numOfUsers", (message) =>{
-    console.log(message, "numOfUsers");
-    outputMessage(message)
-})
+  });
 
+// // // Message from server
 socket.on("message", (message) => {
     console.log(message, "welcome?")
     outputMessage(message);
@@ -37,15 +46,17 @@ socket.on("message", (message) => {
     //  chatMessages.scrollTop = chatMessages.scrollHeight;
 })
 
+socket.on("messageLobby", (message) => {
+    outputMessage(message)
+})
 
-// // Message from server
-socket.on('messageLobby', (message) => {
-    console.log(message, "messageLobby");
-    outputMessage(message);
-  
+socket.on("numOfUsers", (message) =>{
+    console.log(message, "numOfUsers");
+    outputMessage(message)
+
   //   // Scroll down
     chatMessages.scrollTop = chatMessages.scrollHeight;
-
+// 
   
   });
 
@@ -59,17 +70,7 @@ socket.on('messageLobby', (message) => {
     document.querySelector(`.chat-messages `).appendChild(div);
 
   }
-// // Get room and users
-socket.on('roomUsers', ({ room, users }) => {
-    console.log("mainJS2", socket, socket.connected, socket.id)
-  
-    // console.log("bigtest", room, users)
-    outputRoomName(room);
-    // console.log("output", room)
-    outputUsers(users);
-    // console.log("output", users)
 
-  });
 
   // // Add users to DOM
 function outputUsers(users) {
@@ -77,7 +78,27 @@ function outputUsers(users) {
     userList.innerHTML = `
     ${users.map(user => `<li class="${user.username}" >${user.username}</li>`).join('')}
     `;
-}
+
+//     // // Add users to DOM
+// function outputUsers(users) {
+//     console.log("outputUsers", users)
+//     userList.innerHTML = `
+//     ${users.map(user => `<li class="${user.username}" >${user.username}</li>`).join('')}
+//     `;
+  
+    // Add event listeners to names to connect to their profile page
+    users.forEach((user) => {
+      console.log("first", user)
+      document.querySelector(`.${user.username}`).addEventListener('click', () => {
+        console.log("forEach", user.username, user._id)
+         window.location = `/profile/${user._id}`
+      })
+  //     const li = document.createElement('li');
+  //     li.innerText = user.username;
+  //     userList.appendChild(li);
+    });
+  }
+
 socket.on('timeClock', data => {
     console.log(data,"Personal", "connected?", socket.connected)
     timeClock = document.getElementById('time').innerHTML = data
@@ -87,7 +108,4 @@ socket.on('timeClock', data => {
 socket.on('timeData', (timeString2) => {
     el = document.getElementById('currently');
     el.innerHTML = 'Current time: ' + timeString2;
-})
-socket.on("numOfUsers", (message) =>{
-    console.log(message)
 })

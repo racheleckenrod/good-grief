@@ -98,7 +98,7 @@
                     <h2>We have chat rooms centered around your loss.</h2>
                     <p id="currently"></p>
                     <p id="time"></p>
-                    <h1>Welcome</h1>
+                    <h1>Welcome, <span id="username"><%= user.userName %></span></h1>
                     <p id="currently"></p>
                
                     
@@ -113,7 +113,7 @@
                                     
                                     <ul id="users"></ul>
                                   
-                                    <div class="child chat-messages"></div>
+                                    <div class="chat-messages"></div>
                             </section>
                         </div>
                         <div class="col-6 col-12-medium">
@@ -121,9 +121,9 @@
                                 <a href="/chat/room/Parent/?_id=<%=_id%>"><h3 class="icon solid fa-sync">I have lost a parent.</h3></a>
                                 <p>Eget mattis at, laoreet vel et velit aliquam diam ante, aliquet sit amet vulputate et magna feugiat laoreet vel velit lorem.</p>
 
-                                <ul id="users"></ul>
+                              
 
-                                <div class="lobby chat-messages"></div>
+                                <div class="chat-messages"></div>
                             </section>
                         </div>
                         <div class="col-6 col-12-medium">
