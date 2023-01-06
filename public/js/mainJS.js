@@ -2,10 +2,12 @@ const chatForm = document.getElementById('chat-form');
 const chatMessages = document.querySelector('.chat-messages');
 const roomName = document.getElementById('room-name');
 const userList = document.getElementById('users');
+const username = document.getElementById('username').innerHTML;
+const room =  roomName.innerHTML
 
 // // Get username and room from URL
 // this is major point to change from old to new. instead of query parameters being passed in on the get request.. need a route that takes query params
-const { username, room, _id } = Qs.parse(location.search, {
+const { _id } = Qs.parse(location.search, {
   ignoreQueryPrefix: true,
  
 });

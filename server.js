@@ -194,7 +194,6 @@ io.on('connection', (socket) => {
       );
 
 
-
 //     // Send users and room info
 
     io.to(user.room).to("lobby").emit("roomUsers", {
@@ -203,12 +202,7 @@ io.on('connection', (socket) => {
     });
     console.log(botName, room, getRoomUsers(user.room))
 
-
   });
-
-
-
-
 
 
 //   // Listen for chatMessage
