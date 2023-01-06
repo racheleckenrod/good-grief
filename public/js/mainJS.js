@@ -2,10 +2,12 @@ const chatForm = document.getElementById('chat-form');
 const chatMessages = document.querySelector('.chat-messages');
 const roomName = document.getElementById('room-name');
 const userList = document.getElementById('users');
+const username = document.getElementById('username');
+const room =  document.getElementById('room-name');
 
 // // Get username and room from URL
 // this is major point to change from old to new. instead of query parameters being passed in on the get request.. need a route that takes query params
-const { username, room, _id } = Qs.parse(location.search, {
+const { _id } = Qs.parse(location.search, {
   ignoreQueryPrefix: true,
  
 });
@@ -13,18 +15,18 @@ console.log("room=", room, username, _id)
 // my try at pulling the data into the chat
 
 // console.log(username, "username")
-const socket = io( { query: { myParam: 'myValue' } });
+const socket = io();
 const id = socket.id;
-const lobbySocket = io("/lobby2", { query: { myParam: 'myValue' } })
+const lobbySocket = io("/lobby2", { query: { room: 'Child' } })
 // console.log("mainJS", socket, socket.connected, socket.id)
 
 
 // // Join chatroom
-lobbySocket.emit('joinRoom mainJS', { id, username, room, _id });
+lobbySocket.emit('joinRoom', { id, username, room, _id });
 console.log("joinRoom", id, username, room, _id)
 
 // // Get room and users
-lobbySocket.on('roomUsers mainJS', ({ room, users }) => {
+lobbySocket.on('roomUsers', ({ room, users }) => {
   console.log("mainJS2", socket, socket.connected, socket.id)
 
   console.log("bigtest")
@@ -103,9 +105,9 @@ function outputUsers(users) {
       console.log("forEach", user.username, user._id)
        window.location = `/profile/${user._id}`
     })
-//     const li = document.createElement('li');
-//     li.innerText = user.username;
-//     userList.appendChild(li);
+    const li = document.createElement('li');
+    li.innerText = user.username;
+    userList.appendChild(li);
   });
 }
 

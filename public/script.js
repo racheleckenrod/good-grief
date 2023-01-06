@@ -16,27 +16,27 @@ console.log("script.js", socket)
 let timeClock ;
 
 
-// socket.emit("joinAll", () =>{
+lobbySocket.emit("joinAll", () =>{
 
-// })
+})
 // lobbySocket.on('connect',(socket) => {
     // console.log(socket)
 // })
 
-socket.on('timeClock', data => {
+lobbySocket.on('timeClock', data => {
     console.log(data,"Personal", "connected?", socket.connected)
     timeClock = document.getElementById('time').innerHTML = data
    
 })
 
-socket.on('timeData', (timeString2) => {
+lobbySocket.on('timeData', (timeString2) => {
     el = document.getElementById('currently');
     el.innerHTML = 'Current time: ' + timeString2;
 })
 
 
 // // Message from server
-socket.on('hi', (message) => {
+lobbySocket.on('hi', (message) => {
     console.log(message, "messageLobby");
     outputMessage(message, room);
   
@@ -48,7 +48,7 @@ socket.on('hi', (message) => {
 
 
 
-socket.on("socket", (socket) => {
+lobbySocket.on("socket", (socket) => {
     console.log('New WS SCRIPT Connection', "script", "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer)
    
     socket.emit('whoami', (username) => {
