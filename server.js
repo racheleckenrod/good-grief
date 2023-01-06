@@ -27,6 +27,14 @@ const commentRoutes = require("./routes/comments");
 const chatRoutes = require("./routes/chat")
 const chatsController = require("./controllers/chats")
 
+// new setup using sessionMiddleware for socket.io:
+const sessionMiddleware = session({
+  secret: "goPackers",
+  resave: false,
+  saveUninitialized: false,
+  store: new MongoStore({ mongooseConnection: mongoose.connection }),
+})
+
 
 //Use .env file in config folder
 require("dotenv").config({ path: "./config/.env" });
@@ -64,15 +72,19 @@ app.use(logger("dev"));
 app.use(methodOverride("_method"));
 
 
-// Setup Sessions - stored in MongoDB
-app.use(
-  session({
-    secret: "goPackers",
-    resave: false,
-    saveUninitialized: false,
-    store: new MongoStore({ mongooseConnection: mongoose.connection }),
-  })
-);
+// // Setup Sessions - stored in MongoDB
+// commented out here because we are using wraping
+// app.use(
+//   session({
+//     secret: "goPackers",
+//     resave: false,
+//     saveUninitialized: false,
+//     store: new MongoStore({ mongooseConnection: mongoose.connection }),
+//   })
+// );
+
+// continued set up of sessions with the sessionMiddleware:
+app.use(sessionMiddleware)
 
 // Passport middleware
 app.use(passport.initialize());
@@ -101,12 +113,49 @@ const rooms = ["Child", "Parent", "Spouse/Partner", "Sibling", "Suicide", "Termi
 
 const botName = "Grief Support Bot";
 
+
+const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
+
+io.use(wrap(sessionMiddleware));
+io.use(wrap(passport.initialize()));
+io.use(wrap(passport.session()));
+
+
+io.use((socket, next) => {
+  if (socket.request.user) {
+    console.log(socket.request.user.userName, "io.use socket")
+    next();
+  } else {
+    next(new Error('unauthorized by rachel'))
+  }
+});
+ 
+io.on('connection', (socket) => {
+  console.log(`new connection ${socket.id} userName= ${socket.request.user.userName}`);
+  socket.on("whoami", (cb) => {
+    console.log("whoami")
+    cb(socket.request.user ? socket.request.user.userName : "");
+  });
+
+  const session = socket.request.session;
+  console.log(`saving sid ${socket.id} in session ${session.id} for userName ${socket.request.user.userName}`);
+  session.socketID = socket.id;
+  session.save();
+
 // handle connections -lobby 
-io.on('connection', socket => {
+// io.on('connection', socket => {
   console.log('Client connected', new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
   socket.emit('timeClock', `It's about time... Connected = ${socket.connected}`);
   socket.join(rooms)
   console.log(rooms)
+
+
+  // testing variables from baseloby
+  // handle connections -lobby 
+// io.on('connection', socket => {
+  console.log(`Client ${socket.request.user.userName} connected`, new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
+
+  // socket.emit('timeClock', `It's about time... Connected = ${socket.connected}`);
 
 //   socket.on('disconnect', () => console.log('Client disconnected'));
 // });
@@ -117,6 +166,8 @@ io.on('connection', socket => {
 // // // Run when client connects
 // io.on("connection", (socket) => {
   console.log('New WS server.js Connection', "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer);
+
+  console.log(`New WS server.js ${socket.request.user.userName} Connection socket.id= ${socket.id} ${socket.handshake.headers.referer}`);
 
   // socket.on("lobbyJoin", () => {
   //   socket.join("Child", "Parent")
@@ -182,7 +233,7 @@ io.on('connection', socket => {
 
 
     if (user) {
-      io.to(user.room).emit(
+      io.to(user.room).to("lobby").emit(
         "message",
         formatMessage(botName, `${user.username} has left the chat because: ${reason}`)
       );
@@ -190,7 +241,7 @@ io.on('connection', socket => {
 
       // Send users and room info
 
-      io.to(user.room).emit("roomUsers", {
+      io.to(user.room).to("lobby").emit("roomUsers", {
         room: user.room,
         users: getRoomUsers(user.room),
       });
