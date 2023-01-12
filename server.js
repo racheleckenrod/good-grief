@@ -140,6 +140,7 @@ io.on('connection', (socket) => {
   const session = socket.request.session;
   console.log(`saving sid ${socket.id} in session ${session.id} for userName ${socket.request.user.userName}`);
   session.socketID = socket.id;
+  session.room = socket.handshake.session
   session.save();
 
 // handle connections -lobby 
@@ -154,6 +155,10 @@ io.on('connection', (socket) => {
   // handle connections -lobby 
 // io.on('connection', socket => {
   console.log(`Client ${socket.request.user.userName} connected`, new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
+
+
+  console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.request.session.room}`, socket.id, session.socketID, socket.nsp.name);
+  console.log(session, "");
 
   // socket.emit('timeClock', `It's about time... Connected = ${socket.connected}`);
 
