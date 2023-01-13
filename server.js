@@ -131,16 +131,16 @@ io.use((socket, next) => {
 });
  
 io.on('connection', (socket) => {
-  console.log(`new connection ${socket.id} userName= ${socket.request.user.userName}`);
+  console.log(`io.on new connection ${socket.id} userName= ${socket.request.user.userName}, handshake= ${socket.handshake.headers.referer}`);
   socket.on("whoami", (cb) => {
     console.log("whoami")
     cb(socket.request.user ? socket.request.user.userName : "");
   });
 
   const session = socket.request.session;
-  console.log(`saving sid ${socket.id} in session ${session.id} for userName ${socket.request.user.userName}`);
+  console.log(`saving sid ${socket.id} in session ${session.id} for userName ${socket.request.user.userName} handshake= ${socket.handshake.headers.referer}`);
   session.socketID = socket.id;
-  session.room = socket.handshake.session
+  // session.room = user.room
   session.save();
 
 // handle connections -lobby 
@@ -181,7 +181,10 @@ io.on('connection', (socket) => {
   socket.on("joinRoom", ({ username, room, _id }) => {
     const user = userJoin(socket.id, username, room, _id);
     // console.log("pkkkkkkkk", user)
+    session.room = room
+    session.save()
     socket.join(user.room);
+    console.log("ooooo", session)
 
 
 // Welcome current user
