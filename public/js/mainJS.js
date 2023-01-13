@@ -29,7 +29,7 @@ socket.on('roomUsers', ({ room, users }) => {
   console.log("mainJS2", socket, socket.connected, socket.id)
 
   console.log("bigtest")
-  outputRoomName(room);
+  // outputRoomName(room);
   console.log("output", room)
   outputUsers(users);
   console.log(users)
@@ -69,7 +69,7 @@ chatForm.addEventListener('submit', (e) => {
 function outputMessage(message) {
   const div = document.createElement('div');
   div.classList.add('message');
-  div.classList.add(`${room}`);
+  // div.classList.add(`${room}`);
   div.innerHTML = `<p class="meta">${message.username} <span>${message.time}</span></p>
   <p class="text">
     ${message.text}
@@ -87,14 +87,14 @@ function outputMessage(message) {
 }
 
 // // Add room name to DOM
-function outputRoomName(room) {
-  console.log("output test", socket, socket.connected, socket.id)
-  roomName.innerText = room;
-}
+// function outputRoomName(room) {
+//   console.log("output test", socket, socket.connected, socket.id)
+//   roomName.innerText = room;
+// }
 
 // // Add users to DOM
 function outputUsers(users) {
-  console.log("outputUsers", users)
+  console.log("outputUsers", users, room)
   userList.innerHTML = `
   ${users.map(user => `<li class="${user.username}" >${user.username}</li>`).join('')}
   `;

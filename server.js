@@ -164,8 +164,8 @@ io.use((socket, next) => {
 // from socket.io documentation:
 // io.use(async (socket, next) => {
 //   try {
-//     const user = await fetchUser(socket);
-//     socket.user = user
+//     const sockets = await io.in("lobby").fetchSockets()
+
 //   }catch (err) {
 //     next( new Error("unknown user"))
 //   }
@@ -185,7 +185,7 @@ io.on('connection', (socket) => {
   const session = socket.request.session;
   console.log(`***saving sid ${socket.id} in session ${session.id} for userName ${socket.request.user.userName} room= ${socket.request.session.room}`);
   session.socketID = socket.id;
-  session.room = socket.request.session.room
+  // session.room = socket.request.session.room
   // session.save();
 
    
@@ -201,8 +201,8 @@ io.on('connection', (socket) => {
 // io.on('connection', socket => {
   // console.log('Client connected', new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
   socket.emit('timeClock', `It's about time... Connected = ${socket.connected}`);
-  socket.join(rooms)
-  console.log(rooms)
+  socket.join(socket.request.session.room)
+  console.log(rooms, socket.rooms)
 
 
   // handle connections -lobby 
