@@ -7,7 +7,7 @@ const _id = 123456789
 
 const socket = io();
 const id = socket.id;
-
+const lobbyNamespace = io("/lobby")
 
 
 console.log("script.js", socket)
@@ -15,13 +15,13 @@ let timeClock ;
 
 socket.emit('joinRoom', { id, username, room, _id });
 
-socket.emit("joinAll", () =>{
+// lobbyNamespace.emit("joinAll", () =>{
 
-})
+// })
 
 
-socket.on("connection", (socket) => {
-    console.log('New WS SCRIPT Connection', "script", "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer)
+lobbyNamespace.on("connection", (socket) => {
+    console.log('lobbyNamespace New WS SCRIPT Connection', "script", "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer)
    
 });
 // // Get room and users
