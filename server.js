@@ -138,10 +138,19 @@ io.on('connection', (socket) => {
   });
 
   const session = socket.request.session;
-  console.log(`saving sid ${socket.id} in session ${session.id} for userName ${socket.request.user.userName} handshake= ${socket.handshake.headers.referer}`);
+  console.log(`***saving sid ${socket.id} in session ${session.id} for userName ${socket.request.user.userName} room= ${socket.request.session.room}`);
   session.socketID = socket.id;
   // session.room = user.room
+  // session.save();
+
+   
+  console.log(`NEW ${  socket.request.session.room  } connection ${socket.id} ${socket.request.user.userName}`, socket.request.session, socket.request.session._id);
+  
+  console.log(`saving sid ${socket.id} in session ${session.id}`);
+  session.socketID = socket.id;
+  // session.room = 
   session.save();
+  console.log("TRYHANDSHAKE", socket.request.session.room,session.socketID)
 
 // handle connections -lobby 
 // io.on('connection', socket => {
@@ -218,7 +227,7 @@ io.on('connection', (socket) => {
   socket.on("chatMessage", (msg) => {
     const user = getCurrentUser(socket.id);
        
-    io.to(user.room).emit("message", formatMessage(user.username, msg, user.room));
+    io.to( socket.request.session.room).emit("message", formatMessage(user.username, msg, user.room));
   });
 
 

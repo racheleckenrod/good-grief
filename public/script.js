@@ -44,11 +44,11 @@ socket.on("message", (message) => {
 
      //   // Scroll down
     //  chatMessages.scrollTop = chatMessages.scrollHeight;
-})
+
 
 socket.on("messageLobby", (message) => {
     outputMessage(message)
-})
+
 
 socket.on("numOfUsers", (message) =>{
     console.log(message, "numOfUsers");
@@ -59,7 +59,8 @@ socket.on("numOfUsers", (message) =>{
 // 
   
   });
-
+})
+})
   function outputMessage(message) {
     const div = document.createElement('div');
     div.classList.add('message');
