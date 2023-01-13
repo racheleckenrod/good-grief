@@ -94,14 +94,44 @@ app.use(passport.session());
 //Use flash messages for errors, info, ect...
 app.use(flash());
 
+const users = [];
 
-const {
-  userJoin,
-  getCurrentUser,
-  userLeave,
-  getRoomUsers,
-  getAllUsers,
-} = require("./utils/users");
+
+// // Join user to chat
+function userJoin(id, username, room, _id) {
+    console.log("userjoin", id, username, room, _id)
+
+  const user = { id, username, room, _id };
+
+
+  users.push(user);
+
+  // console.log("ho hum", users)
+  
+  return user;
+ 
+}
+
+// // Get current user
+function getCurrentUser(id) {
+  console.log("getCurrentUser:", id, users)
+  return users.find(user => user.id === id);
+}
+
+// // User leaves chat
+function userLeave(id) {
+  const index = users.findIndex(user => user.id === id);
+
+  if (index !== -1) {
+    return users.splice(index, 1)[0];
+  }
+}
+
+// // Get room users
+function getRoomUsers(room) {
+  return users.filter(user => user.room === room);
+}
+
 
 const rooms = ["Child", "Parent", "Spouse/Partner", "Sibling", "Suicide", "Terminal", "Friend", "Community Tragety", "Different"]
 
@@ -124,50 +154,64 @@ io.use(wrap(passport.session()));
 io.use((socket, next) => {
   if (socket.request.user) {
     console.log(socket.request.user.userName, "io.use socket")
+    socket.user = socket.request.user.userName
     next();
   } else {
     next(new Error('unauthorized by rachel'))
   }
 });
  
+// from socket.io documentation:
+// io.use(async (socket, next) => {
+//   try {
+//     const user = await fetchUser(socket);
+//     socket.user = user
+//   }catch (err) {
+//     next( new Error("unknown user"))
+//   }
+// })
+
+
 io.on('connection', (socket) => {
-  console.log(`io.on new connection ${socket.id} userName= ${socket.request.user.userName}, handshake= ${socket.handshake.headers.referer}`);
+
+  console.log("Hee hee", socket.user, socket.rooms)
+  console.log(`io.on new connection ${socket.id} userName= ${socket.request.user.userName}, socket.handshake.header.referer= ${socket.handshake.headers.referer}`);
   socket.on("whoami", (cb) => {
     console.log("whoami")
     cb(socket.request.user ? socket.request.user.userName : "");
   });
 
+  // socket.data.username = socket.request.user.userName
   const session = socket.request.session;
   console.log(`***saving sid ${socket.id} in session ${session.id} for userName ${socket.request.user.userName} room= ${socket.request.session.room}`);
   session.socketID = socket.id;
-  // session.room = user.room
+  session.room = socket.request.session.room
   // session.save();
 
    
-  console.log(`NEW ${  socket.request.session.room  } connection ${socket.id} ${socket.request.user.userName}`, socket.request.session, socket.request.session._id);
+  // console.log(`NEW ${  socket.request.session.room  } connection ${socket.id} ${socket.request.user.userName}`, socket.request.session, socket.request.session._id);
   
-  console.log(`saving sid ${socket.id} in session ${session.id}`);
-  session.socketID = socket.id;
+  // console.log(`saving sid ${socket.id} in session ${session.id}`);
+  // session.socketID = socket.id;
   // session.room = 
   session.save();
   console.log("TRYHANDSHAKE", socket.request.session.room,session.socketID)
 
 // handle connections -lobby 
 // io.on('connection', socket => {
-  console.log('Client connected', new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
+  // console.log('Client connected', new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
   socket.emit('timeClock', `It's about time... Connected = ${socket.connected}`);
   socket.join(rooms)
   console.log(rooms)
 
 
-  // testing variables from baseloby
   // handle connections -lobby 
 // io.on('connection', socket => {
-  console.log(`Client ${socket.request.user.userName} connected`, new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
+  // console.log(`Client ${socket.request.user.userName} connected`, new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
 
 
-  console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.request.session.room}`, socket.id, session.socketID, socket.nsp.name);
-  console.log(session, "");
+  // console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.request.session.room}`, socket.id, session.socketID, socket.nsp.name);
+  // console.log(session, "");
 
   // socket.emit('timeClock', `It's about time... Connected = ${socket.connected}`);
 
@@ -179,9 +223,9 @@ io.on('connection', (socket) => {
 
 // // // Run when client connects
 // io.on("connection", (socket) => {
-  console.log('New WS server.js Connection', "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer);
+  // console.log('New WS server.js Connection', "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer);
 
-  console.log(`New WS server.js ${socket.request.user.userName} Connection socket.id= ${socket.id} ${socket.handshake.headers.referer}`);
+  // console.log(`New WS server.js ${socket.request.user.userName} Connection socket.id= ${socket.id} ${socket.handshake.headers.referer}`);
 
   // socket.on("lobbyJoin", () => {
   //   socket.join("Child", "Parent")
@@ -190,17 +234,17 @@ io.on('connection', (socket) => {
   socket.on("joinRoom", ({ username, room, _id }) => {
     const user = userJoin(socket.id, username, room, _id);
     // console.log("pkkkkkkkk", user)
-    session.room = room
-    session.save()
-    socket.join(user.room);
+    // session.room = room
+    // session.save()
+    socket.join(socket.request.session.room);
     console.log("ooooo", session)
 
 
 // Welcome current user
-    socket.emit("message", formatMessage(botName, `Welcome to ${user.room} Live Grief Support, ${user.username}!`));
+    socket.emit("message", formatMessage(botName, `Welcome to ${user.room} Live Grief Support, ${socket.request.user.userName}!`));
 
-    socket.emit("messageLobby", formatMessage(botName, `message to lobby`));
-    socket.emit("numOfUsers", formatMessage(botName, `message of confusion to lobby`));
+    socket.emit("messageLobby", formatMessage(botName, `welcome message to lobby`));
+    socket.emit("numOfUsers", formatMessage(botName, `num of users= ${socket.rooms}`));
 
 // Broadcast when a user connects
     socket.broadcast

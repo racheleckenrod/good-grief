@@ -44,11 +44,16 @@ socket.on("message", (message) => {
 
      //   // Scroll down
     //  chatMessages.scrollTop = chatMessages.scrollHeight;
+  })
 
 
 socket.on("messageLobby", (message) => {
-    outputMessage(message)
-
+    outputMessage(message);
+    
+       //   // Scroll down
+      //  chatMessages.scrollTop = chatMessages.scrollHeight;
+      
+  })
 
 socket.on("numOfUsers", (message) =>{
     console.log(message, "numOfUsers");
@@ -56,14 +61,14 @@ socket.on("numOfUsers", (message) =>{
 
   //   // Scroll down
     chatMessages.scrollTop = chatMessages.scrollHeight;
-// 
+
   
   });
-})
-})
+
   function outputMessage(message) {
     const div = document.createElement('div');
     div.classList.add('message');
+    div.classList.add(`${room}`);
     div.innerHTML = `<p class="meta">${message.username} <span>${message.time}</span></p>
     <p class="text">
       ${message.text}
@@ -109,4 +114,7 @@ socket.on('timeClock', data => {
 socket.on('timeData', (timeString2) => {
     el = document.getElementById('currently');
     el.innerHTML = 'Current time: ' + timeString2;
+
+     //   // Scroll down
+    //  chatMessages.scrollTop = chatMessages.scrollHeight;
 })
