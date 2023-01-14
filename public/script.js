@@ -26,7 +26,7 @@ lobbySocket.emit("joinAll", () =>{
 //     console.log("OOO", socket)
 // })
 
-lobbySocket.on('timeClock', data => {
+lobbySocket.on('timeClock', (data) => {
     console.log(data,"Personal", "connected?", socket.connected, room)
     timeClock = document.getElementById('time').innerHTML = data
    
@@ -41,9 +41,9 @@ lobbySocket.on('timeData', (timeString2) => {
 // // Message from server
 lobbySocket.on('hi', (message) => {
     console.log(message, "messageLobby");
-    outputMessage(message, room);
+    // outputMessage(message, room);
   
-  //   // Scroll down
+//   //   // Scroll down
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
   
@@ -51,16 +51,16 @@ lobbySocket.on('hi', (message) => {
 
 
 
-lobbySocket.on("socket", (socket) => {
-    console.log('New WS SCRIPT Connection', "script", "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer)
+// lobbySocket.on("socket", (socket) => {
+//     console.log('New WS SCRIPT Connection', "script", "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer)
    
-    socket.emit('whoami', (username) => {
-        console.log(username)
-    })
+//     // socket.emit('whoami', (username) => {
+//     //     console.log(username)
+//     // })
 
-    socket.emit('joinRoom', { id, username, room, _id });
+//     // socket.emit('joinRoom', { id, username, room, _id });
 
-});
+// });
 
 //   });
 
@@ -124,17 +124,5 @@ function outputUsers(users) {
     ${users.map(user => `<li class="${user.username}" >${user.username}</li>`).join('')}
     `;
 }
-// socket.on('timeClock', data => {
-//     console.log(data,"Personal", "connected?", socket.connected)
-//     timeClock = document.getElementById('time').innerHTML = data
-   
-// })
 
-// socket.on('timeData', (timeString2) => {
-//     el = document.getElementById('currently');
-//     el.innerHTML = 'Current time: ' + timeString2;
-// })
-// socket.on("numOfUsers", (message) =>{
-//     console.log(message)
-// })
 })

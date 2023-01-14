@@ -28,6 +28,17 @@ const chatRoutes = require("./routes/chat")
 const chatsController = require("./controllers/chats")
 const users = require("./utils/users")
 
+const {
+  userJoin,
+  getCurrentUser,
+  userLeave,
+  getRoomUsers,
+  getAllUsers,
+} = require("./utils/users");
+
+const rooms = ["Child", "Parent"]
+
+
 // new setup using sessionMiddleware for socket.io:
 const sessionMiddleware = session({
   secret: "goPackers",
@@ -60,27 +71,11 @@ app.set('socketio', io);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// // moment to format time
-// app.use((req, res, next) => {
-//   res.locals.moment = moment
-// })
-
 //Logging
 app.use(logger("dev"));
 
 //Use forms for put / delete
 app.use(methodOverride("_method"));
-
-
-// // Setup Sessions - stored in MongoDB
-// app.use(
-//   session({
-//     secret: "goPackers",
-//     resave: false,
-//     saveUninitialized: false,
-//     store: new MongoStore({ mongooseConnection: mongoose.connection }),
-//   })
-// );
 
 // continued set up of sessions with the sessionMiddleware:
 app.use(sessionMiddleware)
@@ -93,12 +88,11 @@ app.use(passport.session());
 //Use flash messages for errors, info, ect...
 app.use(flash());
 
+// convert a connect middleware to a Socket.IO middleware
+const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
 
 // Custom namespace
 const lobby2 = io.of("/lobby2");
-
-// convert a connect middleware to a Socket.IO middleware
-const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
 
 lobby2.use(wrap(sessionMiddleware));
 lobby2.use(wrap(passport.initialize()));
@@ -107,6 +101,7 @@ lobby2.use(wrap(passport.session()));
 lobby2.use((socket, next) => {
   if (socket.request.user) {
     console.log(socket.request.user.userName, "lobby2.use lobby2 socket")
+    socket.user = socket.request.user.userName
     next();
   } else {
     next(new Error('unauthorized by rachel'))
@@ -127,30 +122,6 @@ io.use((socket, next) => {
   }
 });
  
-lobby2.on('connect', (socket) => {
-  console.log("TRYHANDSHAKE", )
-  console.log(`new connection ${socket.id} ${socket.request.user.userName}`);
-  socket.on("whoami", (cb) => {
-    cb(socket.request.user ? socket.request.user.username : "");
-  });
-
-  const session = socket.request.session;
-  console.log(`saving sid ${socket.id} in session ${session.id}`);
-  session.socketID = socket.id;
-  session.save();
-})
-
-const {
-  userJoin,
-  getCurrentUser,
-  userLeave,
-  getRoomUsers,
-  getAllUsers,
-} = require("./utils/users");
-
-const rooms = ["Child", "Parent"]
-
-
 
 // Set static folder-- already done above but in a different way.. Need both??
 // app.use(express.static("public"));
@@ -160,26 +131,35 @@ const botName = "Grief Support Bot";
 
  
 
-
-
-
-
 lobby2.on("connection", (socket) => {
-  console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.handshake.query['room']}`, socket.id, socket.nsp.name);
-  console.log(session, "LOBBY2");
+  console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.request.params}`, socket.id, socket.nsp.name);
+  // console.log(session, "LOBBY2");
+
+  // lobby2.on('connect', (socket) => {
+    console.log(`new LOBBBBY2 connection ${socket.id} ${socket.request.user.userName}`);
+    // socket.on("whoami", (cb) => {
+    //   cb(socket.request.user ? socket.request.user.username : "");
+    // });
+  
+    const session = socket.request.session;
+    console.log(`lobby2 saving sid ${socket.id} in session ${session.id}`);
+    session.socketID = socket.id;
+    session.save();
+  // })
 
   // broadcast updates
-// setInterval(() => io.emit('time', "about time"), 1000)
+// setInterval(() => lobby2.emit('time', "about time"), 1000)
+  // lobby2.emit('timeClock', `It's about time... Connected = ${socket.connected} socket.id= ${socket.id}`);
 setInterval(() => lobby2.emit('timeData', new Date().toLocaleTimeString()), 1000);
 
   lobby2.emit("hi", "hello everyone!   ");
 
-
+  lobby2.emit("messageLobby", formatMessage(botName, `Welcome to Live Grief Support, ${socket.request.user.userName}!`));
 
 // handle connections -lobby 
 // io.on('connection', socket => {
   console.log('Client connected', new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
-  lobby2.emit('timeClock', `It's about time... Connected = ${socket.connected} socket.id= ${socket.id}`);
+  // lobby2.emit('timeClock', `It's about time... Connected = ${socket.connected} socket.id= ${socket.id}`);
   // socket.join(rooms)
   // console.log(rooms)
 });
