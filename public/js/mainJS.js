@@ -17,15 +17,16 @@ console.log("room=", room, username, _id)
 // console.log(username, "username")
 const socket = io();
 const id = socket.id;
+const lobbySocket = io("/lobby2", { query: { room: 'Child' } })
 // console.log("mainJS", socket, socket.connected, socket.id)
 
 
 // // Join chatroom
-socket.emit('joinRoom', { id, username, room, _id });
+lobbySocket.emit('joinRoom', { id, username, room, _id });
 console.log("joinRoom", id, username, room, _id)
 
 // // Get room and users
-socket.on('roomUsers', ({ room, users }) => {
+lobbySocket.on('roomUsers', ({ room, users }) => {
   console.log("mainJS2", socket, socket.connected, socket.id)
 
   console.log("bigtest")
@@ -106,9 +107,9 @@ function outputUsers(users) {
       console.log("forEach", user.username, user._id)
        window.location = `/profile/${user._id}`
     })
-//     const li = document.createElement('li');
-//     li.innerText = user.username;
-//     userList.appendChild(li);
+    const li = document.createElement('li');
+    li.innerText = user.username;
+    userList.appendChild(li);
   });
 }
 

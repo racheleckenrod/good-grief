@@ -3,38 +3,64 @@ const userlist = document.getElementById('users')
 
 // maybe we can get the room name from the request
 const room = "lobby"
-const _id = 123
+let _id = 123456789 
 
-const socket = io("/lobby");
+const roomName = document.getElementById('room-name');
+const userList = document.getElementById('users');
+const chatMessages = document.querySelector('.chat-messages');
+
+const socket = io();
+const lobbySocket = io('/lobby2')
 const id = socket.id;
-const lobbySocket = io("https://localhost:3333/lobby")
+
 
 
 console.log("script.js", socket, lobbySocket)
 let timeClock ;
 
-// socket.emit('joinRoom', { id, username, room, _id });
-  console.log("NewTEST")
-// lobbyNamespace.emit("joinAll", () =>{
 
+lobbySocket.emit("joinAll", () =>{
+
+})
+// lobbySocket.on('connect',(socket) => {
+    // console.log(socket)
 // })
 
-
-// lobbySocket.on("hello", (arg) => {
-//   console.log(arg)
-//     console.log('lobbyNamespace New WS SCRIPT Connection', "script", "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer)
+lobbySocket.on('timeClock', data => {
+    console.log(data,"Personal", "connected?", socket.connected)
+    timeClock = document.getElementById('time').innerHTML = data
    
-// });
-// // Get room and users
-// this should be replaced with getting the users from the sockets
-// socket.on('roomUsers', ({ room, users }) => {
-//     console.log("mainJS2", socket, socket.connected, socket.id)
+})
+
+lobbySocket.on('timeData', (timeString2) => {
+    el = document.getElementById('currently');
+    el.innerHTML = 'Current time: ' + timeString2;
+})
+
+
+// // Message from server
+lobbySocket.on('hi', (message) => {
+    console.log(message, "messageLobby");
+    outputMessage(message, room);
   
-//     console.log("bigtest", room, users)
-//     outputRoomName(room);
-//     console.log("output", room)
-//     outputUsers(users);
-//     console.log("output", users)
+  //   // Scroll down
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+  
+  });
+
+
+
+lobbySocket.on("socket", (socket) => {
+    console.log('New WS SCRIPT Connection', "script", "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer)
+   
+    socket.emit('whoami', (username) => {
+        console.log(username)
+    })
+
+    socket.emit('joinRoom', { id, username, room, _id });
+
+});
 
 //   });
 
@@ -50,23 +76,22 @@ let timeClock ;
 
 socket.on("messageLobby", (message) => {
     outputMessage(message);
-    
-       //   // Scroll down
-      //  chatMessages.scrollTop = chatMessages.scrollHeight;
-      
-  })
 
-socket.on("numOfUsers", (message) =>{
-    console.log(message, "numOfUsers");
-    outputMessage(message)
+     //   // Scroll down
+     chatMessages.scrollTop = chatMessages.scrollHeight;
+})
 
+
+// // Message from server
+socket.on('messageLobby', (message) => {
+    console.log(message, "messageLobby");
+    outputMessage(message, room);
+  
   //   // Scroll down
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
-  
-  });
 
-  function outputMessage(message) {
+  function outputMessage(message, room) {
     const div = document.createElement('div');
     div.classList.add('message');
     div.classList.add(`${room}`);
@@ -77,35 +102,28 @@ socket.on("numOfUsers", (message) =>{
     document.querySelector(`.chat-messages `).appendChild(div);
 
   }
+// // Get room and users
+socket.on('roomUsers', ({ room, users }) => {
 
+    outputNumUsers(users)
+    console.log("mainJS2", users, socket.connected, socket.id)
+  
+    // console.log("bigtest", room, users)
+    outputRoomName(room);
+    // console.log("output", room)
+    outputUsers(users);
+    // console.log("output", users)
+    
+
+  });
 
   // // Add users to DOM
 function outputUsers(users) {
-    console.log("outputUsers", users)
+    console.log("outputUsers")
     userList.innerHTML = `
     ${users.map(user => `<li class="${user.username}" >${user.username}</li>`).join('')}
     `;
-
-//     // // Add users to DOM
-// function outputUsers(users) {
-//     console.log("outputUsers", users)
-//     userList.innerHTML = `
-//     ${users.map(user => `<li class="${user.username}" >${user.username}</li>`).join('')}
-//     `;
-  
-    // Add event listeners to names to connect to their profile page
-    users.forEach((user) => {
-      console.log("first", user)
-      document.querySelector(`.${user.username}`).addEventListener('click', () => {
-        console.log("forEach", user.username, user._id)
-         window.location = `/profile/${user._id}`
-      })
-  //     const li = document.createElement('li');
-  //     li.innerText = user.username;
-  //     userList.appendChild(li);
-    });
-  }
-
+}
 socket.on('timeClock', data => {
     console.log(data,"Personal", "connected?", socket.connected)
     timeClock = document.getElementById('time').innerHTML = data
@@ -115,7 +133,7 @@ socket.on('timeClock', data => {
 socket.on('timeData', (timeString2) => {
     el = document.getElementById('currently');
     el.innerHTML = 'Current time: ' + timeString2;
-
-     //   // Scroll down
-    //  chatMessages.scrollTop = chatMessages.scrollHeight;
+})
+socket.on("numOfUsers", (message) =>{
+    console.log(message)
 })

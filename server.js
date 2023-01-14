@@ -26,7 +26,15 @@ const postRoutes = require("./routes/posts");
 const commentRoutes = require("./routes/comments");
 const chatRoutes = require("./routes/chat")
 const chatsController = require("./controllers/chats")
+const users = require("./utils/users")
 
+// new setup using sessionMiddleware for socket.io:
+const sessionMiddleware = session({
+  secret: "goPackers",
+  resave: false,
+  saveUninitialized: false,
+  store: new MongoStore({ mongooseConnection: mongoose.connection }),
+})
 // new setup using sessionMiddleware for socket.io:
 const sessionMiddleware = session({
   secret: "goPackers",
@@ -54,7 +62,7 @@ app.use(express.static(path.join(__dirname, "public")));
 //Using EJS for views
 app.set("view engine", "ejs");
 
-app.set('socketio', io);
+// app.set('socketio', io);
 
 //Body Parsing
 app.use(express.urlencoded({ extended: true }));
@@ -68,6 +76,19 @@ app.use(express.json());
 //Logging
 app.use(logger("dev"));
 
+
+// supposedly to pass the req variables through
+// app.use(function(req, res, next){
+//   res.locals.user = req.user;
+//   // res.locals.authenticated = ! req.user.anonymous;
+//   next();
+// });
+
+const myLogger = function (req, res, next) {
+  console.log('LOGGED')
+  next()
+}
+app.use(myLogger)
 //Use forms for put / delete
 app.use(methodOverride("_method"));
 
@@ -94,107 +115,10 @@ app.use(passport.session());
 //Use flash messages for errors, info, ect...
 app.use(flash());
 
-const users = [];
 
-
-// // Join user to chat
-function userJoin(id, username, room, _id) {
-    console.log("userjoin", id, username, room, _id)
-
-  const user = { id, username, room, _id };
-
-
-  users.push(user);
-
-  // console.log("ho hum", users)
-  
-  return user;
- 
-}
-
-// // Get current user
-function getCurrentUser(id) {
-  console.log("getCurrentUser:", id, users)
-  return users.find(user => user.id === id);
-}
-
-// // User leaves chat
-function userLeave(id) {
-  const index = users.findIndex(user => user.id === id);
-
-  if (index !== -1) {
-    return users.splice(index, 1)[0];
-  }
-}
-
-// // Get room users
-function getRoomUsers(room) {
-  return users.filter(user => user.room === room);
-}
-
-
-const rooms = ["Child", "Parent", "Spouse/Partner", "Sibling", "Suicide", "Terminal", "Friend", "Community Tragety", "Different"]
-
-
-
-// Set static folder-- already done above but in a different way.. Need both??
-// app.use(express.static("public"));
-
-
-const botName = "Grief Support Bot";
-
-
-const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
-
-io.use(wrap(sessionMiddleware));
-io.use(wrap(passport.initialize()));
-io.use(wrap(passport.session()));
-
-
-io.use((socket, next) => {
-  if (socket.request.user) {
-    console.log(socket.request.user.userName, "io.use socket")
-    socket.user = socket.request.user.userName
-    next();
-  } else {
-    next(new Error('unauthorized by rachel'))
-  }
-});
- 
-// from socket.io documentation:
-// io.use(async (socket, next) => {
-//   try {
-//     const sockets = await io.in("lobby").fetchSockets()
-
-//   }catch (err) {
-//     next( new Error("unknown user"))
-//   }
-// })
-
-// Namespace
-const lobbyNamespace = io.of("/lobby");
-
-lobbyNamespace.use((socket, next) => {
-  if (socket.request.user) {
-    console.log(socket.request.user.userName, "io.use lobbyNamespace socket")
-    socket.user = socket.request.user.userName
-    next();
-  } else {
-    next(new Error('unauthorized by rachel'))
-  }
-});
-
-
-lobbyNamespace.on("connection", (socket) => {
-  console.log("LOBBBBBBY", socket.user)
-
-  // socket.emit("hello", "world")
-  socket.join(rooms)
-  console.log("LOBBBBBBY", socket.user)
-  console.log("Hee HOHO hee", socket.user, socket.rooms)
-
-})
-
+// Custom namespace
+const lobby2 = io.of("/lobby2");
+const parent = io.of("/lobby2/parent")
 
 io.on('connection', (socket) => {
 
@@ -244,10 +168,21 @@ io.on('connection', (socket) => {
   // broadcast updates
   setInterval(() => io.emit('time', "about time"), 1000)
   setInterval(() => io.emit('timeData', new Date().toLocaleTimeString()), 1000);
+// handle connections -lobby 
+// io.on('connection', socket => {
+  console.log('Client connected', new Date().toLocaleTimeString(), session.socketID, socket.handshake.headers.referer);
+  lobby2.emit('timeClock', `It's about time... Connected = ${socket.connected} socket.id= ${session.socketID}`);
+  // socket.join(rooms)
+  // console.log(rooms)
+
+ 
+  // io.on("connection", (socket) => console.log("GOGOOGOG", req.params.room ));  // myValue
+
+ 
 
 // // // Run when client connects
-// io.on("connection", (socket) => {
-  // console.log('New WS server.js Connection', "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer);
+// // io.on("connection", (socket) => {
+  // // console.log('New WS server.js Connection', "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer);
 
   // console.log(`New WS server.js ${socket.request.user.userName} Connection socket.id= ${socket.id} ${socket.handshake.headers.referer}`);
 
@@ -269,9 +204,20 @@ io.on('connection', (socket) => {
 
     socket.emit("messageLobby", formatMessage(botName, `welcome message to lobby`));
     socket.emit("numOfUsers", formatMessage(botName, `num of users= ${socket.rooms}`));
+  lobby2.on("joinRoom", ({ username, room, _id }) => {
+    const user = userJoin(session.socketID, username, session.room, _id);
+    console.log("pkkkkkkkk", user.room)
+    socket.join(user.room);
+
+
+// Welcome current user
+    io.emit("message", formatMessage(botName, `Welcome to Live Grief Support, ${user.username}!`));
+
+    io.emit("messageLobby", formatMessage(botName, `message to lobby`));
+    io.emit("numOfUsers", formatMessage(botName, `message of confusion to lobby`));
 
 // Broadcast when a user connects
-    socket.broadcast
+    io.broadcast
       .to(user.room)
       .to("lobby")
       .emit(
@@ -297,17 +243,157 @@ io.on('connection', (socket) => {
        
     io.to( socket.request.session.room).emit("message", formatMessage(user.username, msg, user.room));
   });
+io.on("chatMessage", (msg) => {
+  const user = getCurrentUser(socket.id);
+     
+  io.to(user.room).emit("message", formatMessage(user.username, msg, user.room));
+});
 
 
 // Runs when client disconnects
-  socket.on("disconnect", (reason) => {
-    // io.emit("message",  formatMessage(botName,'a user has left the chat'))
-    const user = userLeave(socket.id);
-    if(user) {
-      console.log(`${user.username} disconnected from ${user.room} because reason: ${reason}`)
-    }else{
-      console.log(`Disconnected because reason: ${reason}`)
-    }
+io.on("disconnect", (reason) => {
+  // io.emit("message",  formatMessage(botName,'a user has left the chat'))
+  const user = userLeave(socket.id);
+  if(user) {
+    console.log(`${user.username} disconnected from ${user.room} because reason: ${reason}`)
+  }else{
+    console.log(`Disconnected because reason: ${reason}`)
+  }
+ 
+
+
+  if (user) {
+    io.to(user.room).to("lobby").emit(
+      "message",
+      formatMessage(botName, `${user.username} has left the chat because: ${reason}`)
+    );
+
+
+    // Send users and room info
+
+    io.to(user.room).emit("roomUsers", {
+      room: user.room,
+      users: getRoomUsers(user.room),
+    });
+  }
+});
+// });
+})
+
+const {
+  userJoin,
+  getCurrentUser,
+  userLeave,
+  getRoomUsers,
+  getAllUsers,
+} = require("./utils/users");
+
+const rooms = ["Child", "Parent"]
+
+
+
+// Set static folder-- already done above but in a different way.. Need both??
+// app.use(express.static("public"));
+
+
+const botName = "Grief Support Bot";
+
+ 
+
+
+
+
+
+// lobby2.on("connection", (socket) => {
+//   console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.handshake.params}`, socket.id, socket.nsp.name);
+//   console.log(session, "LOBBY2");
+//   console.log("GOGOOGOG", socket.handshake._query)
+
+//   // broadcast updates
+// // setInterval(() => io.emit('time', "about time"), 1000)
+// setInterval(() => io.emit('timeData', new Date().toLocaleTimeString()), 1000);
+//   io.emit("hi", formatMessage("lobby2", "hello everyone!   "));
+
+//   // io.emit("hi", "hello everyone!   ");
+
+
+
+// // handle connections -lobby 
+// // io.on('connection', socket => {
+//   console.log('Client connected', new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
+//   io.emit('timeClock', `It's about time... Connected = ${socket.connected} socket.id= ${socket.id}`);
+//   // socket.join(rooms)
+//   // console.log(rooms)
+
+ 
+//   // io.on("connection", (socket) => console.log("GOGOOGOG", req.params.room ));  // myValue
+
+ 
+
+// // // // Run when client connects
+// // io.on("connection", (socket) => {
+//   // console.log('New WS server.js Connection', "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer);
+
+//   // socket.on("lobbyJoin", () => {
+//   //   socket.join("Child", "Parent")
+//   // })
+  
+//   io.on("joinRoom", ({ username, room, _id }) => {
+//     const user = userJoin(socket.id, username, room, _id);
+//     console.log("pkkkkkkkk", user)
+//     socket.join(user.room);
+
+
+// // Welcome current user
+//     io.emit("message", formatMessage(botName, `Welcome to Live Grief Support, ${user.username}!`));
+
+//     io.emit("messageLobby", formatMessage(botName, `message to lobby`));
+//     io.emit("numOfUsers", formatMessage(botName, `message of confusion to lobby`));
+
+// // Broadcast when a user connects
+//     io.broadcast
+//       .to(user.room)
+//       .to("lobby")
+//       .emit(
+//         "message",  formatMessage(botName,`${user.username} has joined the chat`)
+//       );
+
+
+
+// //     // Send users and room info
+
+//     io.to(user.room).to("lobby").emit("roomUsers", {
+//       room: user.room,
+//       users: getRoomUsers(user.room),
+//     });
+//     console.log(botName, room, getRoomUsers(user.room))
+
+
+//   });
+
+
+
+
+
+
+// //   // Listen for chatMessage
+
+//   io.on("chatMessage", (msg) => {
+//     const user = getCurrentUser(socket.id);
+       
+//     io.to(user.room).emit("message", formatMessage(user.username, msg, user.room));
+//   });
+
+
+// // Runs when client disconnects
+//   io.on("disconnect", (reason) => {
+//     // io.emit("message",  formatMessage(botName,'a user has left the chat'))
+//     const user = userLeave(socket.id);
+//     if(user) {
+//       console.log(`${user.username} disconnected from ${user.room} because reason: ${reason}`)
+//     }else{
+//       console.log(`Disconnected because reason: ${reason}`)
+//     }
    
 
 
@@ -328,6 +414,14 @@ io.on('connection', (socket) => {
   });
 });
 
+//       io.to(user.room).emit("roomUsers", {
+//         room: user.room,
+//         users: getRoomUsers(user.room),
+//       });
+//     }
+//   });
+// });
+// });
 
 
 //Setup Routes For Which The Server Is Listening
