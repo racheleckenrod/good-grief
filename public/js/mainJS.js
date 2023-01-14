@@ -17,8 +17,7 @@ console.log("room=", room, username, _id)
 // console.log(username, "username")
 const socket = io();
 const id = socket.id;
-// const lobbySocket = io("/lobby2", { query: { room: 'Child' } })
-// console.log("mainJS", socket, socket.connected, socket.id)
+console.log("mainJS", socket, socket.connected, socket.id)
 
 
 // // Join chatroom
@@ -87,7 +86,7 @@ function outputMessage(message) {
   document.querySelector('.chat-messages').appendChild(div);
 }
 
-// // Add room name to DOM
+// Add room name to DOM
 // function outputRoomName(room) {
 //   console.log("output test", socket, socket.connected, socket.id)
 //   roomName.innerText = room;

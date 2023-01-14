@@ -160,40 +160,40 @@ function getRoomUsers(room) {
 
 lobby2.on("connection", (socket) => {
   console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.request.params}`, socket.id, socket.nsp.name);
-  // console.log(session, "LOBBY2");
 
   // lobby2.on('connect', (socket) => {
-    console.log(`new LOBBBBY2 connection ${socket.id} ${socket.request.user.userName}`);
     // socket.on("whoami", (cb) => {
     //   cb(socket.request.user ? socket.request.user.username : "");
     // });
+    // })
   
     const session = socket.request.session;
-    console.log(`lobby2 saving sid ${socket.id} in session ${session.id}`);
+    console.log(`lobby2 saving ${socket.request.user.userName} sid ${socket.id} in session ${session.id}`);
     session.socketID = socket.id;
     session.save();
-  // })
+  
 
   // broadcast updates
-// setInterval(() => lobby2.emit('time', "about time"), 1000)
-  // lobby2.emit('timeClock', `It's about time... Connected = ${socket.connected} socket.id= ${socket.id}`);
+
 setInterval(() => lobby2.emit('timeData', new Date().toLocaleTimeString()), 1000);
 
   lobby2.emit("hi", "hello everyone!   ");
 
+  lobby2.emit("timeClock", `It's about time... Connected= ${socket.connected}, socketID: ${socket.id}`)
+
   lobby2.emit("messageLobby", formatMessage(botName, `Welcome to Live Grief Support, ${socket.request.user.userName}!`));
+
 
 // handle connections -lobby 
 // io.on('connection', socket => {
   console.log('Client connected', new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
-  // lobby2.emit('timeClock', `It's about time... Connected = ${socket.connected} socket.id= ${socket.id}`);
-  // socket.join(rooms)
-  // console.log(rooms)
+  socket.join(rooms)
+  console.log(socket.rooms)
 });
  
  
 
-// // // Run when client connects
+// // // Run when CHAT client connects
 io.on("connection", (socket) => {
   console.log('New WS server.js Connection', "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer);
 
@@ -202,18 +202,18 @@ io.on("connection", (socket) => {
   // io.on('connection', (socket) => {
 
     console.log("Hee hee", socket.user, socket.rooms)
-    console.log(`io.on new connection ${socket.id} userName= ${socket.request.user.userName}, socket.handshake.header.referer= ${socket.handshake.headers.referer}`);
-    socket.on("whoami", (cb) => {
-      console.log("whoami")
-      cb(socket.request.user ? socket.request.user.userName : "");
-    });
+    // console.log(`io.on new connection ${socket.id} userName= ${socket.request.user.userName}, socket.handshake.header.referer= ${socket.handshake.headers.referer}`);
+    // socket.on("whoami", (cb) => {
+    //   console.log("whoami")
+    //   cb(socket.request.user ? socket.request.user.userName : "");
+    // });
   
     // socket.data.username = socket.request.user.userName
     const session = socket.request.session;
     console.log(`***saving sid ${socket.id} in session ${session.id} for userName ${socket.request.user.userName} room= ${socket.request.session.room}`);
     session.socketID = socket.id;
-    // session.room = socket.request.session.room
-    // session.save();
+    session.room = socket.request.session.room
+    session.save();
   
      
     // console.log(`NEW ${  socket.request.session.room  } connection ${socket.id} ${socket.request.user.userName}`, socket.request.session, socket.request.session._id);
@@ -226,14 +226,9 @@ io.on("connection", (socket) => {
   
 
 // Welcome current user
-    io.emit("message", formatMessage(botName, `Welcome to Live Grief Support, ${socket.request.user.userName}!`));
+    io.emit("message", formatMessage(botName, `Welcome to Live Grief Support, ${socket.user}!`));
 
-    io.emit("numOfUsers", formatMessage(botName, `message of confusion to lobby`));
-
-
-
-
-
+    // io.emit("numOfUsers", formatMessage(botName, `message of confusion to lobby`));
 
 
   io.on("joinRoom", ({ username, room, _id }) => {
@@ -244,15 +239,14 @@ io.on("connection", (socket) => {
     // Broadcast when a user connects
     io.broadcast
       .to(user.room)
-      .to("lobby")
+      .to("/lobby2")
       .emit(
         "message",  formatMessage(botName,`${user.username} has joined the chat`)
       );
 
-
 //     // Send users and room info
 
-io.to(user.room).to("lobby").emit("roomUsers", {
+io.to(user.room).to("/lobby2").emit("roomUsers", {
   room: user.room,
   users: getRoomUsers(user.room),
 });
@@ -261,12 +255,13 @@ console.log(botName, room, getRoomUsers(user.room))
 
 });
 
+
 //   // Listen for chatMessage
 
   io.on("chatMessage", (msg) => {
     const user = getCurrentUser(socket.id);
-       
-    io.to(user.room).emit("message", formatMessage(user.username, msg, user.room));
+       console.log("chattting messsssage")
+    io.to(user.room).to("/lobby2").emit("message", formatMessage(user.username, msg, user.room));
   });
 
 

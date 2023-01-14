@@ -26,17 +26,29 @@ lobbySocket.emit("joinAll", () =>{
 //     console.log("OOO", socket)
 // })
 
-lobbySocket.on('timeClock', (data) => {
-    console.log(data,"Personal", "connected?", socket.connected, room)
-    timeClock = document.getElementById('time').innerHTML = data
+// lobbySocket.on('timeClock', (data) => {
+//     console.log(data,"Personal", "connected?", socket.connected, room)
+//     timeClock = document.getElementById('time').innerHTML = data
    
+// })
+
+// lobbySocket.on('timeData', (timeString2) => {
+//     el = document.getElementById('currently');
+//     el.innerHTML = 'Current time: ' + timeString2;
+// })
+
+
+lobbySocket.on('timeClock', data => {
+  console.log(data,"Personal", "connected?", lobbySocket.connected)
+  timeClock = document.getElementById('time').innerHTML = data
+ 
 })
 
 lobbySocket.on('timeData', (timeString2) => {
-    el = document.getElementById('currently');
-    el.innerHTML = 'Current time: ' + timeString2;
-})
+  el = document.getElementById('currently');
+  el.innerHTML = 'Current time: ' + timeString2;
 
+})
 
 // // Message from server
 lobbySocket.on('hi', (message) => {
