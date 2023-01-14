@@ -35,13 +35,7 @@ const sessionMiddleware = session({
   saveUninitialized: false,
   store: new MongoStore({ mongooseConnection: mongoose.connection }),
 })
-// new setup using sessionMiddleware for socket.io:
-const sessionMiddleware = session({
-  secret: "goPackers",
-  resave: false,
-  saveUninitialized: false,
-  store: new MongoStore({ mongooseConnection: mongoose.connection }),
-})
+
 
 
 //Use .env file in config folder
@@ -123,7 +117,7 @@ const parent = io.of("/lobby2/parent")
 io.on('connection', (socket) => {
 
   console.log("Hee hee", socket.user, socket.rooms)
-  console.log(`io.on new connection ${socket.id} userName= ${socket.request.user.userName}, socket.handshake.header.referer= ${socket.handshake.headers.referer}`);
+  // console.log(`io.on new connection ${socket.id} userName= ${socket.request.user.userName}, socket.handshake.header.referer= ${socket.handshake.headers.referer}`);
   socket.on("whoami", (cb) => {
     console.log("whoami")
     cb(socket.request.user ? socket.request.user.userName : "");
@@ -131,8 +125,8 @@ io.on('connection', (socket) => {
 
   // socket.data.username = socket.request.user.userName
   const session = socket.request.session;
-  console.log(`***saving sid ${socket.id} in session ${session.id} for userName ${socket.request.user.userName} room= ${socket.request.session.room}`);
-  session.socketID = socket.id;
+  // console.log(`***saving sid ${socket.id} in session ${session.id} for userName ${socket.request.user.userName} room= ${socket.request.session.room}`);
+  // session.socketID = socket.id;
   // session.room = socket.request.session.room
   // session.save();
 
@@ -142,15 +136,15 @@ io.on('connection', (socket) => {
   // console.log(`saving sid ${socket.id} in session ${session.id}`);
   // session.socketID = socket.id;
   // session.room = 
-  session.save();
-  console.log("TRYHANDSHAKE", socket.request.session.room,session.socketID)
+  // session.save();
+  // console.log("TRYHANDSHAKE", socket.request.session.room,session.socketID)
 
 // handle connections -lobby 
 // io.on('connection', socket => {
   // console.log('Client connected', new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
   socket.emit('timeClock', `It's about time... Connected = ${socket.connected}`);
-  socket.join(socket.request.session.room)
-  console.log(rooms, socket.rooms)
+  // socket.join(socket.request.session.room)
+  // console.log(rooms, socket.rooms)
 
 
   // handle connections -lobby 
@@ -170,8 +164,8 @@ io.on('connection', (socket) => {
   setInterval(() => io.emit('timeData', new Date().toLocaleTimeString()), 1000);
 // handle connections -lobby 
 // io.on('connection', socket => {
-  console.log('Client connected', new Date().toLocaleTimeString(), session.socketID, socket.handshake.headers.referer);
-  lobby2.emit('timeClock', `It's about time... Connected = ${socket.connected} socket.id= ${session.socketID}`);
+  // console.log('Client connected', new Date().toLocaleTimeString(), session.socketID, socket.handshake.headers.referer);
+  lobby2.emit('timeClock', `It's about time... Connected = ${socket.connected} socket.id= `);
   // socket.join(rooms)
   // console.log(rooms)
 
@@ -386,14 +380,14 @@ const botName = "Grief Support Bot";
 
 
 // // Runs when client disconnects
-//   io.on("disconnect", (reason) => {
-//     // io.emit("message",  formatMessage(botName,'a user has left the chat'))
-//     const user = userLeave(socket.id);
-//     if(user) {
-//       console.log(`${user.username} disconnected from ${user.room} because reason: ${reason}`)
-//     }else{
-//       console.log(`Disconnected because reason: ${reason}`)
-//     }
+  io.on("disconnect", (reason) => {
+    // io.emit("message",  formatMessage(botName,'a user has left the chat'))
+    const user = userLeave(socket.id);
+    if(user) {
+      console.log(`${user.username} disconnected from ${user.room} because reason: ${reason}`)
+    }else{
+      console.log(`Disconnected because reason: ${reason}`)
+    }
    
 
 
@@ -412,7 +406,7 @@ const botName = "Grief Support Bot";
       });
     }
   });
-});
+// });
 
 //       io.to(user.room).emit("roomUsers", {
 //         room: user.room,
@@ -435,7 +429,7 @@ app.use("/chat", chatRoutes);
 // app.get("/chat",function(req, res, next) {
 //   console.log("hhh",req.user.userName, req.query )
 //   res.render('lobby.ejs', {username : req.user.userName, room: "POP"});
-// });
+});
 
 
 

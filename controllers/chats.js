@@ -7,9 +7,9 @@ module.exports = {
     },
     getRoom: (req, res, next) => {
       console.log("from getRoom",req.user.userName, req.query._id, req.user._id, req.params.room)
-      var sess = req.session
+      // var sess = req.session
       const _id = req.user._id
-      sess.room = req.params.room
+      // sess.room = req.params.room
       // sess._id = req.query._id
 
       // console.log("getRoom _id=", _id)
