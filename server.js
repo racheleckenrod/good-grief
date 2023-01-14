@@ -36,7 +36,7 @@ const {
   getAllUsers,
 } = require("./utils/users");
 
-const rooms = ["Child", "Parent"]
+const rooms = ["Child", "Parent", "Spouse/Partner", "Sibling", "Suicide", "Terminal", "Friend", "Community Tragety", "Different"]
 
 
 // new setup using sessionMiddleware for socket.io:
