@@ -120,6 +120,7 @@ io.use(wrap(passport.session()));
 io.use((socket, next) => {
   if (socket.request.user) {
     console.log(socket.request.user.userName, "io.use socket")
+    socket.user = socket.request.user.userName
     next();
   } else {
     next(new Error('unauthorized by rachel'))
@@ -189,11 +190,33 @@ setInterval(() => lobby2.emit('timeData', new Date().toLocaleTimeString()), 1000
 io.on("connection", (socket) => {
   console.log('New WS server.js Connection', "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer);
 
-  // socket.on("lobbyJoin", () => {
-  //   socket.join("Child", "Parent")
-  // })
   
+  
+  // io.on('connection', (socket) => {
 
+    console.log("Hee hee", socket.user, socket.rooms)
+    console.log(`io.on new connection ${socket.id} userName= ${socket.request.user.userName}, socket.handshake.header.referer= ${socket.handshake.headers.referer}`);
+    socket.on("whoami", (cb) => {
+      console.log("whoami")
+      cb(socket.request.user ? socket.request.user.userName : "");
+    });
+  
+    // socket.data.username = socket.request.user.userName
+    const session = socket.request.session;
+    console.log(`***saving sid ${socket.id} in session ${session.id} for userName ${socket.request.user.userName} room= ${socket.request.session.room}`);
+    session.socketID = socket.id;
+    // session.room = socket.request.session.room
+    // session.save();
+  
+     
+    // console.log(`NEW ${  socket.request.session.room  } connection ${socket.id} ${socket.request.user.userName}`, socket.request.session, socket.request.session._id);
+    
+    // console.log(`saving sid ${socket.id} in session ${session.id}`);
+    // session.socketID = socket.id;
+    // session.room = 
+    session.save();
+    console.log("TRYHANDSHAKE", socket.request.session.room,session.socketID)
+  
 
 // Welcome current user
     io.emit("message", formatMessage(botName, `Welcome to Live Grief Support, ${socket.request.user.userName}!`));
