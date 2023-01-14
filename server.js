@@ -36,8 +36,6 @@ const sessionMiddleware = session({
   store: new MongoStore({ mongooseConnection: mongoose.connection }),
 })
 
-
-
 //Use .env file in config folder
 require("dotenv").config({ path: "./config/.env" });
 
@@ -56,7 +54,7 @@ app.use(express.static(path.join(__dirname, "public")));
 //Using EJS for views
 app.set("view engine", "ejs");
 
-// app.set('socketio', io);
+app.set('socketio', io);
 
 //Body Parsing
 app.use(express.urlencoded({ extended: true }));
@@ -70,25 +68,11 @@ app.use(express.json());
 //Logging
 app.use(logger("dev"));
 
-
-// supposedly to pass the req variables through
-// app.use(function(req, res, next){
-//   res.locals.user = req.user;
-//   // res.locals.authenticated = ! req.user.anonymous;
-//   next();
-// });
-
-const myLogger = function (req, res, next) {
-  console.log('LOGGED')
-  next()
-}
-app.use(myLogger)
 //Use forms for put / delete
 app.use(methodOverride("_method"));
 
 
 // // Setup Sessions - stored in MongoDB
-// commented out here because we are using wraping
 // app.use(
 //   session({
 //     secret: "goPackers",
@@ -112,166 +96,47 @@ app.use(flash());
 
 // Custom namespace
 const lobby2 = io.of("/lobby2");
-const parent = io.of("/lobby2/parent")
 
-io.on('connection', (socket) => {
+// convert a connect middleware to a Socket.IO middleware
+const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
 
-  console.log("Hee hee", socket.user, socket.rooms)
-  // console.log(`io.on new connection ${socket.id} userName= ${socket.request.user.userName}, socket.handshake.header.referer= ${socket.handshake.headers.referer}`);
+lobby2.use(wrap(sessionMiddleware));
+lobby2.use(wrap(passport.initialize()));
+lobby2.use(wrap(passport.session()));
+
+lobby2.use((socket, next) => {
+  if (socket.request.user) {
+    console.log(socket.request.user.userName, "lobby2.use lobby2 socket")
+    next();
+  } else {
+    next(new Error('unauthorized by rachel'))
+  }
+});
+
+io.use(wrap(sessionMiddleware));
+io.use(wrap(passport.initialize()));
+io.use(wrap(passport.session()));
+
+io.use((socket, next) => {
+  if (socket.request.user) {
+    console.log(socket.request.user.userName, "io.use socket")
+    next();
+  } else {
+    next(new Error('unauthorized by rachel'))
+  }
+});
+ 
+lobby2.on('connect', (socket) => {
+  console.log("TRYHANDSHAKE", )
+  console.log(`new connection ${socket.id} ${socket.request.user.userName}`);
   socket.on("whoami", (cb) => {
-    console.log("whoami")
-    cb(socket.request.user ? socket.request.user.userName : "");
+    cb(socket.request.user ? socket.request.user.username : "");
   });
 
-  // socket.data.username = socket.request.user.userName
   const session = socket.request.session;
-  // console.log(`***saving sid ${socket.id} in session ${session.id} for userName ${socket.request.user.userName} room= ${socket.request.session.room}`);
-  // session.socketID = socket.id;
-  // session.room = socket.request.session.room
-  // session.save();
-
-   
-  // console.log(`NEW ${  socket.request.session.room  } connection ${socket.id} ${socket.request.user.userName}`, socket.request.session, socket.request.session._id);
-  
-  // console.log(`saving sid ${socket.id} in session ${session.id}`);
-  // session.socketID = socket.id;
-  // session.room = 
-  // session.save();
-  // console.log("TRYHANDSHAKE", socket.request.session.room,session.socketID)
-
-// handle connections -lobby 
-// io.on('connection', socket => {
-  // console.log('Client connected', new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
-  socket.emit('timeClock', `It's about time... Connected = ${socket.connected}`);
-  // socket.join(socket.request.session.room)
-  // console.log(rooms, socket.rooms)
-
-
-  // handle connections -lobby 
-// io.on('connection', socket => {
-  // console.log(`Client ${socket.request.user.userName} connected`, new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
-
-
-  // console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.request.session.room}`, socket.id, session.socketID, socket.nsp.name);
-  // console.log(session, "");
-
-  // socket.emit('timeClock', `It's about time... Connected = ${socket.connected}`);
-
-//   socket.on('disconnect', () => console.log('Client disconnected'));
-// });
-  // broadcast updates
-  setInterval(() => io.emit('time', "about time"), 1000)
-  setInterval(() => io.emit('timeData', new Date().toLocaleTimeString()), 1000);
-// handle connections -lobby 
-// io.on('connection', socket => {
-  // console.log('Client connected', new Date().toLocaleTimeString(), session.socketID, socket.handshake.headers.referer);
-  lobby2.emit('timeClock', `It's about time... Connected = ${socket.connected} socket.id= `);
-  // socket.join(rooms)
-  // console.log(rooms)
-
- 
-  // io.on("connection", (socket) => console.log("GOGOOGOG", req.params.room ));  // myValue
-
- 
-
-// // // Run when client connects
-// // io.on("connection", (socket) => {
-  // // console.log('New WS server.js Connection', "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer);
-
-  // console.log(`New WS server.js ${socket.request.user.userName} Connection socket.id= ${socket.id} ${socket.handshake.headers.referer}`);
-
-  // socket.on("lobbyJoin", () => {
-  //   socket.join("Child", "Parent")
-  // })
-  
-  socket.on("joinRoom", ({ username, room, _id }) => {
-    const user = userJoin(socket.id, username, room, _id);
-    // console.log("pkkkkkkkk", user)
-    // session.room = room
-    // session.save()
-    socket.join(socket.request.session.room);
-    console.log("ooooo", session)
-
-
-// Welcome current user
-    socket.emit("message", formatMessage(botName, `Welcome to ${user.room} Live Grief Support, ${socket.request.user.userName}!`));
-
-    socket.emit("messageLobby", formatMessage(botName, `welcome message to lobby`));
-    socket.emit("numOfUsers", formatMessage(botName, `num of users= ${socket.rooms}`));
-  lobby2.on("joinRoom", ({ username, room, _id }) => {
-    const user = userJoin(session.socketID, username, session.room, _id);
-    console.log("pkkkkkkkk", user.room)
-    socket.join(user.room);
-
-
-// Welcome current user
-    io.emit("message", formatMessage(botName, `Welcome to Live Grief Support, ${user.username}!`));
-
-    io.emit("messageLobby", formatMessage(botName, `message to lobby`));
-    io.emit("numOfUsers", formatMessage(botName, `message of confusion to lobby`));
-
-// Broadcast when a user connects
-    io.broadcast
-      .to(user.room)
-      .to("lobby")
-      .emit(
-        "message",  formatMessage(botName,`${user.username} has joined the ${user.room} chat`)
-      );
-
-
-//     // Send users and room info
-
-    io.to(user.room).to("lobby").emit("roomUsers", {
-      room: user.room,
-      users: getRoomUsers(user.room),
-    });
-    console.log(botName, room, getRoomUsers(user.room))
-
-  });
-
-
-//   // Listen for chatMessage
-
-  socket.on("chatMessage", (msg) => {
-    const user = getCurrentUser(socket.id);
-       
-    io.to( socket.request.session.room).emit("message", formatMessage(user.username, msg, user.room));
-  });
-io.on("chatMessage", (msg) => {
-  const user = getCurrentUser(socket.id);
-     
-  io.to(user.room).emit("message", formatMessage(user.username, msg, user.room));
-});
-
-
-// Runs when client disconnects
-io.on("disconnect", (reason) => {
-  // io.emit("message",  formatMessage(botName,'a user has left the chat'))
-  const user = userLeave(socket.id);
-  if(user) {
-    console.log(`${user.username} disconnected from ${user.room} because reason: ${reason}`)
-  }else{
-    console.log(`Disconnected because reason: ${reason}`)
-  }
- 
-
-
-  if (user) {
-    io.to(user.room).to("lobby").emit(
-      "message",
-      formatMessage(botName, `${user.username} has left the chat because: ${reason}`)
-    );
-
-
-    // Send users and room info
-
-    io.to(user.room).emit("roomUsers", {
-      room: user.room,
-      users: getRoomUsers(user.room),
-    });
-  }
-});
-// });
+  console.log(`saving sid ${socket.id} in session ${session.id}`);
+  session.socketID = socket.id;
+  session.save();
 })
 
 const {
@@ -298,88 +163,84 @@ const botName = "Grief Support Bot";
 
 
 
-// lobby2.on("connection", (socket) => {
-//   console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.handshake.params}`, socket.id, socket.nsp.name);
-//   console.log(session, "LOBBY2");
-//   console.log("GOGOOGOG", socket.handshake._query)
+lobby2.on("connection", (socket) => {
+  console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.handshake.query['room']}`, socket.id, socket.nsp.name);
+  console.log(session, "LOBBY2");
 
-//   // broadcast updates
-// // setInterval(() => io.emit('time', "about time"), 1000)
-// setInterval(() => io.emit('timeData', new Date().toLocaleTimeString()), 1000);
-//   io.emit("hi", formatMessage("lobby2", "hello everyone!   "));
+  // broadcast updates
+// setInterval(() => io.emit('time', "about time"), 1000)
+setInterval(() => lobby2.emit('timeData', new Date().toLocaleTimeString()), 1000);
 
-//   // io.emit("hi", "hello everyone!   ");
+  lobby2.emit("hi", "hello everyone!   ");
 
 
 
-// // handle connections -lobby 
-// // io.on('connection', socket => {
-//   console.log('Client connected', new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
-//   io.emit('timeClock', `It's about time... Connected = ${socket.connected} socket.id= ${socket.id}`);
-//   // socket.join(rooms)
-//   // console.log(rooms)
-
+// handle connections -lobby 
+// io.on('connection', socket => {
+  console.log('Client connected', new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
+  lobby2.emit('timeClock', `It's about time... Connected = ${socket.connected} socket.id= ${socket.id}`);
+  // socket.join(rooms)
+  // console.log(rooms)
+});
  
-//   // io.on("connection", (socket) => console.log("GOGOOGOG", req.params.room ));  // myValue
-
  
 
-// // // // Run when client connects
-// // io.on("connection", (socket) => {
-//   // console.log('New WS server.js Connection', "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer);
+// // // Run when client connects
+io.on("connection", (socket) => {
+  console.log('New WS server.js Connection', "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer);
 
-//   // socket.on("lobbyJoin", () => {
-//   //   socket.join("Child", "Parent")
-//   // })
+  // socket.on("lobbyJoin", () => {
+  //   socket.join("Child", "Parent")
+  // })
   
-//   io.on("joinRoom", ({ username, room, _id }) => {
-//     const user = userJoin(socket.id, username, room, _id);
-//     console.log("pkkkkkkkk", user)
-//     socket.join(user.room);
 
 
-// // Welcome current user
-//     io.emit("message", formatMessage(botName, `Welcome to Live Grief Support, ${user.username}!`));
+// Welcome current user
+    io.emit("message", formatMessage(botName, `Welcome to Live Grief Support, ${socket.request.user.userName}!`));
 
-//     io.emit("messageLobby", formatMessage(botName, `message to lobby`));
-//     io.emit("numOfUsers", formatMessage(botName, `message of confusion to lobby`));
-
-// // Broadcast when a user connects
-//     io.broadcast
-//       .to(user.room)
-//       .to("lobby")
-//       .emit(
-//         "message",  formatMessage(botName,`${user.username} has joined the chat`)
-//       );
-
-
-
-// //     // Send users and room info
-
-//     io.to(user.room).to("lobby").emit("roomUsers", {
-//       room: user.room,
-//       users: getRoomUsers(user.room),
-//     });
-//     console.log(botName, room, getRoomUsers(user.room))
-
-
-//   });
+    io.emit("numOfUsers", formatMessage(botName, `message of confusion to lobby`));
 
 
 
 
 
 
-// //   // Listen for chatMessage
 
-//   io.on("chatMessage", (msg) => {
-//     const user = getCurrentUser(socket.id);
+  io.on("joinRoom", ({ username, room, _id }) => {
+    const user = userJoin(socket.id, username, room, _id);
+    console.log("pkkkkkkkk", user)
+    socket.join(user.room);
+
+    // Broadcast when a user connects
+    io.broadcast
+      .to(user.room)
+      .to("lobby")
+      .emit(
+        "message",  formatMessage(botName,`${user.username} has joined the chat`)
+      );
+
+
+//     // Send users and room info
+
+io.to(user.room).to("lobby").emit("roomUsers", {
+  room: user.room,
+  users: getRoomUsers(user.room),
+});
+console.log(botName, room, getRoomUsers(user.room))
+
+
+});
+
+//   // Listen for chatMessage
+
+  io.on("chatMessage", (msg) => {
+    const user = getCurrentUser(socket.id);
        
-//     io.to(user.room).emit("message", formatMessage(user.username, msg, user.room));
-//   });
+    io.to(user.room).emit("message", formatMessage(user.username, msg, user.room));
+  });
 
 
-// // Runs when client disconnects
+// Runs when client disconnects
   io.on("disconnect", (reason) => {
     // io.emit("message",  formatMessage(botName,'a user has left the chat'))
     const user = userLeave(socket.id);
@@ -400,22 +261,14 @@ const botName = "Grief Support Bot";
 
       // Send users and room info
 
-      io.to(user.room).to("lobby").emit("roomUsers", {
+      io.to(user.room).emit("roomUsers", {
         room: user.room,
         users: getRoomUsers(user.room),
       });
     }
   });
-// });
 
-//       io.to(user.room).emit("roomUsers", {
-//         room: user.room,
-//         users: getRoomUsers(user.room),
-//       });
-//     }
-//   });
-// });
-// });
+});
 
 
 //Setup Routes For Which The Server Is Listening
@@ -429,7 +282,7 @@ app.use("/chat", chatRoutes);
 // app.get("/chat",function(req, res, next) {
 //   console.log("hhh",req.user.userName, req.query )
 //   res.render('lobby.ejs', {username : req.user.userName, room: "POP"});
-});
+// });
 
 
 

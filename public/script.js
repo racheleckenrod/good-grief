@@ -9,25 +9,25 @@ const roomName = document.getElementById('room-name');
 const userList = document.getElementById('users');
 const chatMessages = document.querySelector('.chat-messages');
 
-const socket = io();
+// const socket = io();
 const lobbySocket = io('/lobby2')
-const id = socket.id;
+const id = lobbySocket.id;
 
 
 
-console.log("script.js", socket, lobbySocket)
+console.log("script.js", lobbySocket)
 let timeClock ;
 
 
 lobbySocket.emit("joinAll", () =>{
 
 })
-// lobbySocket.on('connect',(socket) => {
-    // console.log(socket)
+// lobbySocket.on('connection',(socket) => {
+//     console.log("OOO", socket)
 // })
 
 lobbySocket.on('timeClock', data => {
-    console.log(data,"Personal", "connected?", socket.connected)
+    console.log(data,"Personal", "connected?", socket.connected, room)
     timeClock = document.getElementById('time').innerHTML = data
    
 })
@@ -74,16 +74,16 @@ lobbySocket.on("socket", (socket) => {
 //   })
 
 
-socket.on("messageLobby", (message) => {
-    outputMessage(message);
+// lobbySocket.on("messageLobby", (message) => {
+//     outputMessage(message);
 
-     //   // Scroll down
-     chatMessages.scrollTop = chatMessages.scrollHeight;
-})
+//      //   // Scroll down
+//      chatMessages.scrollTop = chatMessages.scrollHeight;
+// })
 
 
 // // Message from server
-socket.on('messageLobby', (message) => {
+lobbySocket.on('messageLobby', (message) => {
     console.log(message, "messageLobby");
     outputMessage(message, room);
   
@@ -103,7 +103,7 @@ socket.on('messageLobby', (message) => {
 
   }
 // // Get room and users
-socket.on('roomUsers', ({ room, users }) => {
+lobbySocket.on('roomUsers', ({ room, users }) => {
 
     outputNumUsers(users)
     console.log("mainJS2", users, socket.connected, socket.id)
@@ -124,16 +124,17 @@ function outputUsers(users) {
     ${users.map(user => `<li class="${user.username}" >${user.username}</li>`).join('')}
     `;
 }
-socket.on('timeClock', data => {
-    console.log(data,"Personal", "connected?", socket.connected)
-    timeClock = document.getElementById('time').innerHTML = data
+// socket.on('timeClock', data => {
+//     console.log(data,"Personal", "connected?", socket.connected)
+//     timeClock = document.getElementById('time').innerHTML = data
    
-})
+// })
 
-socket.on('timeData', (timeString2) => {
-    el = document.getElementById('currently');
-    el.innerHTML = 'Current time: ' + timeString2;
-})
-socket.on("numOfUsers", (message) =>{
-    console.log(message)
+// socket.on('timeData', (timeString2) => {
+//     el = document.getElementById('currently');
+//     el.innerHTML = 'Current time: ' + timeString2;
+// })
+// socket.on("numOfUsers", (message) =>{
+//     console.log(message)
+// })
 })

@@ -17,16 +17,16 @@ console.log("room=", room, username, _id)
 // console.log(username, "username")
 const socket = io();
 const id = socket.id;
-const lobbySocket = io("/lobby2", { query: { room: 'Child' } })
+// const lobbySocket = io("/lobby2", { query: { room: 'Child' } })
 // console.log("mainJS", socket, socket.connected, socket.id)
 
 
 // // Join chatroom
-lobbySocket.emit('joinRoom', { id, username, room, _id });
+socket.emit('joinRoom', { id, username, room, _id });
 console.log("joinRoom", id, username, room, _id)
 
 // // Get room and users
-lobbySocket.on('roomUsers', ({ room, users }) => {
+socket.on('roomUsers', ({ room, users }) => {
   console.log("mainJS2", socket, socket.connected, socket.id)
 
   console.log("bigtest")
