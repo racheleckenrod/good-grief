@@ -197,76 +197,46 @@ setInterval(() => lobby2.emit('timeData', new Date().toLocaleTimeString()), 1000
 io.on("connection", (socket) => {
   console.log('New WS server.js Connection', "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer);
 
-  
-  
-  // io.on('connection', (socket) => {
 
-    console.log("Hee hee", socket.user, socket.rooms)
-    // console.log(`io.on new connection ${socket.id} userName= ${socket.request.user.userName}, socket.handshake.header.referer= ${socket.handshake.headers.referer}`);
-    // socket.on("whoami", (cb) => {
-    //   console.log("whoami")
-    //   cb(socket.request.user ? socket.request.user.userName : "");
-    // });
-  
-    // socket.data.username = socket.request.user.userName
-    const session = socket.request.session;
-    console.log(`***saving sid ${socket.id} in session ${session.id} for userName ${socket.request.user.userName} room= ${socket.request.session.room}`);
-    session.socketID = socket.id;
-    session.room = socket.request.session.room
-    session.save();
-  
-     
-    // console.log(`NEW ${  socket.request.session.room  } connection ${socket.id} ${socket.request.user.userName}`, socket.request.session, socket.request.session._id);
-    
-    // console.log(`saving sid ${socket.id} in session ${session.id}`);
-    // session.socketID = socket.id;
-    // session.room = 
-    session.save();
-    console.log("TRYHANDSHAKE", socket.request.session.room,session.socketID)
-  
-
-// Welcome current user
-    io.emit("message", formatMessage(botName, `Welcome to Live Grief Support, ${socket.user}!`));
-
-    // io.emit("numOfUsers", formatMessage(botName, `message of confusion to lobby`));
-
-
-  io.on("joinRoom", ({ username, room, _id }) => {
+  socket.on("joinRoom", ({ username, room, _id }) => {
     const user = userJoin(socket.id, username, room, _id);
-    console.log("pkkkkkkkk", user)
+    // console.log("pkkkkkkkk", user)
     socket.join(user.room);
 
-    // Broadcast when a user connects
-    io.broadcast
+
+// Welcome current user
+    socket.emit("message", formatMessage(botName, `Welcome to Live Grief Support, ${user.username}!`));
+
+// Broadcast when a user connects
+    socket.broadcast
       .to(user.room)
-      .to("/lobby2")
       .emit(
         "message",  formatMessage(botName,`${user.username} has joined the chat`)
       );
 
+
+
 //     // Send users and room info
 
-io.to(user.room).to("/lobby2").emit("roomUsers", {
-  room: user.room,
-  users: getRoomUsers(user.room),
-});
-console.log(botName, room, getRoomUsers(user.room))
+    io.to(user.room).emit("roomUsers", {
+      room: user.room,
+      users: getRoomUsers(user.room),
+    });
+    console.log(botName, room, getRoomUsers(user.room))
 
-
-});
-
+  });
 
 //   // Listen for chatMessage
 
-  io.on("chatMessage", (msg) => {
+  socket.on("chatMessage", (msg) => {
     const user = getCurrentUser(socket.id);
-       console.log("chattting messsssage")
-    io.to(user.room).to("/lobby2").emit("message", formatMessage(user.username, msg, user.room));
+       
+    io.to(user.room).emit("message", formatMessage(user.username, msg));
   });
 
 
 // Runs when client disconnects
-  io.on("disconnect", (reason) => {
+  socket.on("disconnect", (reason) => {
     // io.emit("message",  formatMessage(botName,'a user has left the chat'))
     const user = userLeave(socket.id);
     if(user) {
@@ -278,7 +248,7 @@ console.log(botName, room, getRoomUsers(user.room))
 
 
     if (user) {
-      io.to(user.room).to("lobby").emit(
+      io.to(user.room).emit(
         "message",
         formatMessage(botName, `${user.username} has left the chat because: ${reason}`)
       );
@@ -292,9 +262,7 @@ console.log(botName, room, getRoomUsers(user.room))
       });
     }
   });
-
 });
-
 
 //Setup Routes For Which The Server Is Listening
 app.use("/", mainRoutes);
