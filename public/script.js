@@ -3,48 +3,49 @@ const userlist = document.getElementById('users')
 
 // maybe we can get the room name from the request
 const room = "lobby"
-const _id = 123456789 
+const _id = 123
 
-const socket = io();
+const socket = io("/lobby");
 const id = socket.id;
-const lobbyNamespace = io("/lobby")
+const lobbySocket = io("https://localhost:3333/lobby")
 
 
-console.log("script.js", socket)
+console.log("script.js", socket, lobbySocket)
 let timeClock ;
 
-socket.emit('joinRoom', { id, username, room, _id });
-
+// socket.emit('joinRoom', { id, username, room, _id });
+  console.log("NewTEST")
 // lobbyNamespace.emit("joinAll", () =>{
 
 // })
 
 
-lobbyNamespace.on("connection", (socket) => {
-    console.log('lobbyNamespace New WS SCRIPT Connection', "script", "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer)
+// lobbySocket.on("hello", (arg) => {
+//   console.log(arg)
+//     console.log('lobbyNamespace New WS SCRIPT Connection', "script", "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer)
    
-});
+// });
 // // Get room and users
 // this should be replaced with getting the users from the sockets
-socket.on('roomUsers', ({ room, users }) => {
-    console.log("mainJS2", socket, socket.connected, socket.id)
+// socket.on('roomUsers', ({ room, users }) => {
+//     console.log("mainJS2", socket, socket.connected, socket.id)
   
-    console.log("bigtest", room, users)
-    outputRoomName(room);
-    console.log("output", room)
-    outputUsers(users);
-    console.log("output", users)
+//     console.log("bigtest", room, users)
+//     outputRoomName(room);
+//     console.log("output", room)
+//     outputUsers(users);
+//     console.log("output", users)
 
-  });
+//   });
 
 // // // Message from server
-socket.on("message", (message) => {
-    console.log(message, "welcome?")
-    outputMessage(message);
+// socket.on("message", (message) => {
+//     console.log(message, "welcome?")
+//     outputMessage(message);
 
-     //   // Scroll down
-    //  chatMessages.scrollTop = chatMessages.scrollHeight;
-  })
+//      //   // Scroll down
+//     //  chatMessages.scrollTop = chatMessages.scrollHeight;
+//   })
 
 
 socket.on("messageLobby", (message) => {

@@ -176,7 +176,7 @@ const lobbyNamespace = io.of("/lobby");
 
 lobbyNamespace.use((socket, next) => {
   if (socket.request.user) {
-    console.log(socket.request.user.userName, "io.use socket")
+    console.log(socket.request.user.userName, "io.use lobbyNamespace socket")
     socket.user = socket.request.user.userName
     next();
   } else {
@@ -186,8 +186,13 @@ lobbyNamespace.use((socket, next) => {
 
 
 lobbyNamespace.on("connection", (socket) => {
+  console.log("LOBBBBBBY", socket.user)
+
+  // socket.emit("hello", "world")
   socket.join(rooms)
-  console.log("LOBBBBBBY", socket.rooms)
+  console.log("LOBBBBBBY", socket.user)
+  console.log("Hee HOHO hee", socket.user, socket.rooms)
+
 })
 
 
