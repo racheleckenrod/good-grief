@@ -201,10 +201,10 @@ io.on("connection", (socket) => {
 // Broadcast when a user connects
     socket.broadcast
       .to(user.room)
+      .to("/lobby2")
       .emit(
         "message",  formatMessage(botName,`${user.username} has joined the chat`)
       );
-
 
 
 //     // Send users and room info
@@ -222,7 +222,7 @@ io.on("connection", (socket) => {
   socket.on("chatMessage", (msg) => {
     const user = getCurrentUser(socket.id);
        
-    io.to(user.room).emit("message", formatMessage(user.username, msg));
+    io.to(user.room).to("/lobby2").emit("message", formatMessage(user.username, msg));
   });
 
 
@@ -236,7 +236,6 @@ io.on("connection", (socket) => {
       console.log(`Disconnected because reason: ${reason}`)
     }
    
-
 
     if (user) {
       io.to(user.room).emit(
@@ -269,11 +268,4 @@ app.use("/chat", chatRoutes);
 // });
 
 
-
-
-
 server.listen(PORT, () => { console.log(`Server running on port ${PORT}`)});
-
-
-
-

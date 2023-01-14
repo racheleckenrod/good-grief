@@ -140,23 +140,4 @@ exports.postFeedback = (req, res, next) => {
     gmail_remove_dots: false,
   });
 
-  // if (req.user || req.guest){
-  //   console.log("what's next?", req.user, req.guest)
-  //   // return next();
-    
-  // }
-
-  // const guest = new Guest({
-  //   guestName: req.body.userName,
-  //   email: req.body.email,
-  // });
-console.log("?????????")
-  // guest.save((err) => {
-  //   console.log("saveguest", guest)
-  //   if (err) {
-  //     return next(err);
-  //   }
-  // });
-
-
 };

@@ -28,7 +28,7 @@ router.post("/profilePicture", upload.single("file"), postsController.createProf
 
 router.get("/welcome", ensureAuth, homeController.getWelcome);
 router.get("/feed", ensureAuth, postsController.getFeed);
-router.get("/testFeed", ensureAuth, postsController.getTestFeed);
+// router.get("/testFeed", ensureAuth, postsController.getTestFeed);
 
 router.get("/login", authController.getLogin);
 router.post("/login", authController.postLogin);
