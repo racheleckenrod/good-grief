@@ -28,14 +28,6 @@ const chatRoutes = require("./routes/chat")
 const chatsController = require("./controllers/chats")
 const users = require("./utils/users")
 
-const {
-  userJoin,
-  getCurrentUser,
-  userLeave,
-  getRoomUsers,
-  getAllUsers,
-} = require("./utils/users");
-
 const rooms = ["Child", "Parent", "Spouse/Partner", "Sibling", "Suicide", "Terminal", "Friend", "Community Tragety", "Different"]
 
 
@@ -123,11 +115,47 @@ io.use((socket, next) => {
 });
  
 
-// Set static folder-- already done above but in a different way.. Need both??
-// app.use(express.static("public"));
 
 
 const botName = "Grief Support Bot";
+
+const users = [];
+
+
+// // Join user to chat
+function userJoin(id, username, room, _id) {
+    console.log("userjoin", id, username, room, _id)
+
+  const user = { id, username, room, _id };
+
+
+  users.push(user);
+
+  // console.log("ho hum", users)
+  
+  return user;
+ 
+}
+
+// // Get current user
+function getCurrentUser(id) {
+  console.log("getCurrentUser:", id, users)
+  return users.find(user => user.id === id);
+}
+
+// // User leaves chat
+function userLeave(id) {
+  const index = users.findIndex(user => user.id === id);
+
+  if (index !== -1) {
+    return users.splice(index, 1)[0];
+  }
+}
+
+// // Get room users
+function getRoomUsers(room) {
+  return users.filter(user => user.room === room);
+}
 
  
 
