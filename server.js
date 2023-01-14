@@ -26,7 +26,6 @@ const postRoutes = require("./routes/posts");
 const commentRoutes = require("./routes/comments");
 const chatRoutes = require("./routes/chat")
 const chatsController = require("./controllers/chats")
-const users = require("./utils/users")
 
 const rooms = ["Child", "Parent", "Spouse/Partner", "Sibling", "Suicide", "Terminal", "Friend", "Community Tragety", "Different"]
 
