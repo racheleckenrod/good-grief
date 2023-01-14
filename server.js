@@ -27,8 +27,9 @@ const commentRoutes = require("./routes/comments");
 const chatRoutes = require("./routes/chat")
 const chatsController = require("./controllers/chats")
 
-const rooms = ["Child", "Parent", "Spouse/Partner", "Sibling", "Suicide", "Terminal", "Friend", "Community Tragety", "Different"]
-
+const rooms = ["Lobby","Child", "Parent", "Spouse/Partner", "Sibling", "Suicide", "Terminal", "Friend", "Community Tragety", "Different"]
+const users = [];
+const botName = "Grief Support Bot";
 
 // new setup using sessionMiddleware for socket.io:
 const sessionMiddleware = session({
@@ -115,37 +116,21 @@ io.use((socket, next) => {
  
 
 
-
-const botName = "Grief Support Bot";
-
-const users = [];
-
-
 // // Join user to chat
 function userJoin(id, username, room, _id) {
-    console.log("userjoin", id, username, room, _id)
-
   const user = { id, username, room, _id };
-
-
   users.push(user);
-
-  // console.log("ho hum", users)
-  
   return user;
- 
 }
 
 // // Get current user
 function getCurrentUser(id) {
-  console.log("getCurrentUser:", id, users)
   return users.find(user => user.id === id);
 }
 
 // // User leaves chat
 function userLeave(id) {
   const index = users.findIndex(user => user.id === id);
-
   if (index !== -1) {
     return users.splice(index, 1)[0];
   }
@@ -157,7 +142,7 @@ function getRoomUsers(room) {
 }
 
  
-
+// run when Lobby connects
 lobby2.on("connection", (socket) => {
   console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.request.params}`, socket.id, socket.nsp.name);
 
@@ -181,7 +166,7 @@ setInterval(() => lobby2.emit('timeData', new Date().toLocaleTimeString()), 1000
 
   lobby2.emit("timeClock", `It's about time... Connected= ${socket.connected}, socketID: ${socket.id}`)
 
-  lobby2.emit("messageLobby", formatMessage(botName, `Welcome to Live Grief Support, ${socket.request.user.userName}!`));
+  lobby2.emit("messageLobby", formatMessage(botName, `Welcome to Live Grief Support Lobby, ${socket.request.user.userName}.`));
 
 
 // handle connections -lobby 
@@ -189,6 +174,12 @@ setInterval(() => lobby2.emit('timeData', new Date().toLocaleTimeString()), 1000
   console.log('Client connected', new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
   socket.join(rooms)
   console.log(socket.rooms)
+
+  lobby2.on("disconnect", (reason) => {
+    const user = userLeave(socket.id);
+
+    console.log(`${socket.user} disconnected because ${reason}`)
+  })
 });
  
  
