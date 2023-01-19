@@ -4,7 +4,6 @@ const express = require("express");
 const socketio = require("socket.io");
 const formatMessage = require("./utils/messages");
 const app = express();
-// const moment = require("moment");
 const server = http.createServer(app);
 const io = socketio(server);
 const cors = require('cors')
@@ -25,9 +24,9 @@ const mainRoutes = require("./routes/main");
 const postRoutes = require("./routes/posts");
 const commentRoutes = require("./routes/comments");
 const chatRoutes = require("./routes/chat")
-const chatsController = require("./controllers/chats")
+// const chatsController = require("./controllers/chats")
 
-const rooms = ["Lobby","Child", "Parent", "Spouse/Partner", "Sibling", "Suicide", "Terminal", "Friend", "Community Tragety", "Different"]
+const rooms = ["lobby", "Child", "Parent", "Spouse/Partner", "Sibling", "Suicide", "Terminal", "Friend", "Community Tragety", "Different"]
 const users = [];
 const botName = "Grief Support Bot";
 
@@ -144,7 +143,7 @@ function getRoomUsers(room) {
  
 // run when Lobby connects
 lobby2.on("connection", (socket) => {
-  console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.request.params}`, socket.id, socket.nsp.name);
+  // console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.request.params}`, socket.id, socket.nsp.name);
 
   // lobby2.on('connect', (socket) => {
     // socket.on("whoami", (cb) => {
@@ -162,17 +161,21 @@ lobby2.on("connection", (socket) => {
 
 setInterval(() => lobby2.emit('timeData', new Date().toLocaleTimeString()), 1000);
 
-  lobby2.emit("hi", "hello everyone!   ");
+  lobby2.emit("hi", formatMessage(`${socket.request.user.userName}`,"hello everyone!   "));
 
-  lobby2.emit("timeClock", `It's about time... Connected= ${socket.connected}, socketID: ${socket.id}`)
+  lobby2.emit("timeClock", `It's about time... ${socket.request.user.userName}, Connected= ${socket.connected}, socketID: ${socket.id}`)
 
   lobby2.emit("messageLobby", formatMessage(botName, `Welcome to Live Grief Support Lobby, ${socket.request.user.userName}.`));
 
 
 // handle connections -lobby 
 // io.on('connection', socket => {
-  console.log('Client connected', new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
-  socket.join(rooms)
+  // console.log('Client connected', new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
+
+// connect lobby2 to all other rooms
+  lobby2.in(session.socketID).socketsJoin(rooms);
+
+  // socket.join(rooms)
   console.log(socket.rooms)
 
   lobby2.on("disconnect", (reason) => {
@@ -188,20 +191,28 @@ setInterval(() => lobby2.emit('timeData', new Date().toLocaleTimeString()), 1000
 io.on("connection", (socket) => {
   console.log('New WS server.js Connection', "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer);
 
+  const session = socket.request.session;
+  console.log(`io saving ${socket.request.user.userName} sid ${socket.id} in session ${session.id}`);
+  session.socketID = socket.id;
+  session.save();
 
   socket.on("joinRoom", ({ username, room, _id }) => {
-    const user = userJoin(socket.id, username, room, _id);
+    const user = userJoin(session.socketID, username, room, _id);
     // console.log("pkkkkkkkk", user)
     socket.join(user.room);
 
 
 // Welcome current user
-    socket.emit("message", formatMessage(botName, `Welcome to Live Grief Support, ${user.username}!`));
+    socket.emit("message", formatMessage(botName, `Welcome to ${user.room} Live Grief Support, ${user.username}!`));
+
+
+ // attempting to send from one namespace to the other
+ lobby2.emit("testmessage",  formatMessage(botName, `Welcome to TEST Live Grief Support, ${user.username}!`));
 
 // Broadcast when a user connects
     socket.broadcast
       .to(user.room)
-      .to("/lobby2")
+      .to("lobby")
       .emit(
         "message",  formatMessage(botName,`${user.username} has joined the chat`)
       );

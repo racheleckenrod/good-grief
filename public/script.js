@@ -42,9 +42,9 @@ lobbySocket.on('timeData', (timeString2) => {
 // // Message from server
 lobbySocket.on('hi', (message) => {
     console.log(message, "messageLobby");
-    // outputMessage(message, room);
+    outputMessage(message, room);
 
-    lobbySocket.on("chat-message")
+    // lobbySocket.on("chat-message")
   
 //   //   // Scroll down
     chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -83,7 +83,12 @@ lobbySocket.on('hi', (message) => {
 //      //   // Scroll down
 //      chatMessages.scrollTop = chatMessages.scrollHeight;
 // })
+// recieve testing from io
+lobbySocket.on("message", (message) => {
+  console.log(message, "test");
 
+  outputMessage(message, room)
+})
 
 // // Message from server
 lobbySocket.on('messageLobby', (message) => {
@@ -93,7 +98,7 @@ lobbySocket.on('messageLobby', (message) => {
   //   // Scroll down
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
-
+  })
   function outputMessage(message, room) {
     const div = document.createElement('div');
     div.classList.add('message');
@@ -102,23 +107,10 @@ lobbySocket.on('messageLobby', (message) => {
     <p class="text">
       ${message.text}
     </p>`;
-    document.querySelector(`.chat-messages `).appendChild(div);
+    document.querySelector(`.chat-messages`).appendChild(div);
 
   }
-// // Get room and users
-lobbySocket.on('roomUsers', ({ room, users }) => {
 
-    outputNumUsers(users)
-    console.log("mainJS2", users, socket.connected, socket.id)
-  
-    // console.log("bigtest", room, users)
-    outputRoomName(room);
-    // console.log("output", room)
-    outputUsers(users);
-    // console.log("output", users)
-    
-
-  });
 
   // // Add users to DOM
 function outputUsers(users) {
@@ -128,4 +120,3 @@ function outputUsers(users) {
     `;
 }
 
-})
