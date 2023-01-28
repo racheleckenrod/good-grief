@@ -207,7 +207,7 @@ io.on("connection", (socket) => {
 
 
  // attempting to send from one namespace to the other
- lobby2.emit("testmessage",  formatMessage(botName, `Welcome to TEST Live Grief Support, ${user.username}!`));
+ lobby2.emit("testmessage",  formatMessage(botName, `Welcome to TEST ${user.room} Live Grief Support, ${user.username}!`));
 
 // Broadcast when a user connects
     socket.broadcast

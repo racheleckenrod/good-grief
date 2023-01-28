@@ -1,5 +1,5 @@
 const username = document.getElementById('username').innerHTML
-const userlist = document.getElementById('users')
+// const userlist = document.getElementById('users')
 
 // maybe we can get the room name from the request
 const room = "lobby"
@@ -16,21 +16,24 @@ const id = lobbySocket.id;
 
 
 console.log("script.js", lobbySocket)
-let timeClock ;
+let timeClock =  document.getElementById('time');
 
 
 // lobbySocket.emit("joinAll", () =>{
 
 // })
-lobbySocket.on('connection',(socket) => {
-    console.log("OOO", socket)
+lobbySocket.on('testmessage',(message) => {
+    console.log("OOO", message)
+    outputMessage(message, room);
 })
 
 
 lobbySocket.on('timeClock', data => {
   console.log(data,"Personal", "connected?", lobbySocket.connected)
-  timeClock = document.getElementById('time').innerHTML = data
- 
+  // timeClock.innerHTML = `${data.map(user => `<li class="${user.username}" >${user.username}</li>`).join('')}`
+
+  timeClock.innerHTML = data
+
 })
 
 lobbySocket.on('timeData', (timeString2) => {
@@ -102,7 +105,7 @@ lobbySocket.on('messageLobby', (message) => {
   function outputMessage(message, room) {
     const div = document.createElement('div');
     div.classList.add('message');
-    div.classList.add(`${room}`);
+    // div.classList.add(`${room}`);
     div.innerHTML = `<p class="meta">${message.username} <span>${message.time}</span></p>
     <p class="text">
       ${message.text}
