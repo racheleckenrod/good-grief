@@ -213,7 +213,7 @@ io.on("connection", (socket) => {
       .to(`${socket.request.user.userName}`.room)
       .to("lobby")
       .emit(
-        "message",  formatMessage(botName,`${user.username} has joined the chat`)
+        "message",  formatMessage(botName,`${user.username} has joined the ${user.room} chat`)
       );
 
       console.log(users)
