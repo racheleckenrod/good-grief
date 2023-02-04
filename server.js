@@ -193,6 +193,7 @@ io.on("connection", (socket) => {
   const session = socket.request.session;
   console.log(`io saving ${socket.request.user.userName} sid ${socket.id} in session ${session.id}`);
   session.socketID = socket.id;
+  session.room = socket.handshake.session
   session.save();
 
   socket.on("joinRoom", ({ username, room, _id }) => {
