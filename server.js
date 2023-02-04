@@ -55,7 +55,7 @@ app.use(express.static(path.join(__dirname, "public")));
 //Using EJS for views
 app.set("view engine", "ejs");
 
-app.set('socketio', io);
+// app.set('socketio', io);
 
 //Body Parsing
 app.use(express.urlencoded({ extended: true }));
@@ -64,6 +64,19 @@ app.use(express.json());
 //Logging
 app.use(logger("dev"));
 
+
+// supposedly to pass the req variables through
+// app.use(function(req, res, next){
+//   res.locals.user = req.user;
+//   // res.locals.authenticated = ! req.user.anonymous;
+//   next();
+// });
+
+const myLogger = function (req, res, next) {
+  console.log('LOGGED')
+  next()
+}
+app.use(myLogger)
 //Use forms for put / delete
 app.use(methodOverride("_method"));
 
@@ -290,14 +303,14 @@ io.on("connection", (socket) => {
     }
    
 
-    if (user) {
-      io.to(user.room).to("lobby").emit(
-        "message",
-        formatMessage(botName, `${user.username} has left the chat because: ${reason}`)
-      );
+//     if (user) {
+//       io.to(user.room).to("lobby").emit(
+//         "message",
+//         formatMessage(botName, `${user.username} has left the chat because: ${reason}`)
+//       );
 
 
-      // Send users and room info
+//       // Send users and room info
 
       io.to(user.room).to("lobby").emit("roomUsers", {
         room: user.room,
@@ -305,7 +318,7 @@ io.on("connection", (socket) => {
       });
     }
   });
-});
+// });
 // })
 
 //Setup Routes For Which The Server Is Listening

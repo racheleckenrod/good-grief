@@ -23,12 +23,12 @@ console.log("room=", room, username, _id)
 // my try at pulling the data into the chat
 
 // console.log(username, "username")
-const socket = io( { query: { myParam: 'myValue' } });
+const socket = io();
 const id = socket.id;
 console.log("mainJS", socket, socket.connected, socket.id)
 
 // // Join chatroom
-lobbySocket.emit('joinRoom mainJS', { id, username, room, _id });
+lobbySocket.emit('joinRoom', { id, username, room, _id });
 console.log("joinRoom", id, username, room, _id)
 
 // // Get room and users
@@ -113,9 +113,9 @@ function outputUsers(users) {
       console.log("forEach", user.username, user._id)
        window.location = `/profile/${user._id}`
     })
-//     const li = document.createElement('li');
-//     li.innerText = user.username;
-//     userList.appendChild(li);
+    const li = document.createElement('li');
+    li.innerText = user.username;
+    userList.appendChild(li);
   });
 }
 
