@@ -83,6 +83,7 @@ app.use(sessionMiddleware)
 app.use(passport.initialize());
 app.use(passport.session());
 
+// console.log("passport", passport)
 
 //Use flash messages for errors, info, ect...
 app.use(flash());
@@ -172,6 +173,12 @@ function getRoomUsers(room) {
   return users.filter(user => user.room === room);
 }
 
+// // Join user to chat
+function userJoin(id, username, room, _id) {
+  const user = { id, username, room, _id };
+  users.push(user);
+  return user;
+}
 
 // // Join user to chat
 function userJoin(id, username, room, _id) {
@@ -198,10 +205,12 @@ function getRoomUsers(room) {
   return users.filter(user => user.room === room);
 }
 
- 
-// run when Lobby connects
-lobby2.on("connection", (socket) => {
-  // console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.request.params}`, socket.id, socket.nsp.name);
+// handle connections -lobby 
+io.on('connection', socket => {
+  console.log('Client connected', new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
+  socket.emit('timeClock', `It's about time... Connected = ${socket.connected}`);
+  socket.join(rooms)
+  console.log(rooms)
 
   // lobby2.on('connect', (socket) => {
     // socket.on("whoami", (cb) => {
