@@ -60,7 +60,6 @@ let timeClock =  document.getElementById('time');
 // console.log("script.js", socket)
 
 
-
 // // socket.emit("joinAll", () =>{
 
 // // })
