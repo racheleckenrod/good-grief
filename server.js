@@ -246,8 +246,8 @@ io.on("connection", (socket) => {
   // console.log(`saving sid ${socket.id} in session ${session.id}`);
   // session.socketID = socket.id;
   // session.room = 
-  session.save();
-  console.log("TRYHANDSHAKE", socket.request.session.room,session.socketID)
+  // session.save();
+  // console.log("TRYHANDSHAKE", socket.request.session.room,session.socketID)
 
   socket.on("joinRoom", ({ username, room, _id }) => {
     const user = userJoin(session.socketID, username, room, _id);
