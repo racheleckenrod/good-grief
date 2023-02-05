@@ -113,6 +113,25 @@ io.use((socket, next) => {
 });
  
 
+// Namespace
+const lobbyNamespace = io.of("/lobby");
+
+lobbyNamespace.use((socket, next) => {
+  if (socket.request.user) {
+    console.log(socket.request.user.userName, "io.use socket")
+    socket.user = socket.request.user.userName
+    next();
+  } else {
+    next(new Error('unauthorized by rachel'))
+  }
+});
+
+
+lobbyNamespace.on("connection", (socket) => {
+  socket.join(rooms)
+  console.log("LOBBBBBBY", socket.rooms)
+})
+
 
 // // Join user to chat
 function userJoin(id, username, room, _id) {
