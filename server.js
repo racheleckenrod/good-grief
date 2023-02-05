@@ -29,6 +29,15 @@ const rooms = ["lobby", "Child", "Parent", "Spouse/Partner", "Sibling", "Suicide
 const users = [];
 const botName = "Grief Support Bot";
 
+const {
+  userJoin,
+  getCurrentUser,
+  userLeave,
+  getRoomUsers,
+  getAllUsers,
+} = require("./utils/users");
+
+
 // new setup using sessionMiddleware for socket.io:
 const sessionMiddleware = session({
   secret: "goPackers",
@@ -190,6 +199,9 @@ setInterval(() => lobby2.emit('timeData', new Date().toLocaleTimeString()), 1000
 
   lobby2.emit("messageLobby", formatMessage(botName, `Welcome to Live Grief Support Lobby, ${socket.request.user.userName}.`));
 
+// lobby2.on("connection", (socket) => {
+  console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.request.params}`, socket.id, socket.nsp.name);
+  // console.log(session, "LOBBY2");
 
 // handle connections -lobby 
 // io.on('connection', socket => {
