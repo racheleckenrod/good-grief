@@ -7,10 +7,18 @@ const room =  roomName.innerHTML
 
 // // Get username and room from URL
 // this is major point to change from old to new. instead of query parameters being passed in on the get request.. need a route that takes query params
-const { _id } = Qs.parse(location.search, {
-  ignoreQueryPrefix: true,
+// const { _id } = Qs.parse(location.search, {
+//   ignoreQueryPrefix: true,
  
-});
+// });
+
+// get userName from DOM we have logged in users:
+// this is major point to change from old to new. instead of query parameter for user, we get it from the request, render it in the DOM, and getElementById
+// room could be accessed this way too, and the user id(_id) is already sent(although I dont know exactly if it is necessary to have so the eventlistener can pull up the chatuser's profile) 
+// get username from DOM
+// const username = document.querySelector('#username');
+// const room = document.getElementById('room-name');
+const _id =  document.getElementById('_id');
 console.log("room=", room, username, _id)
 // my try at pulling the data into the chat
 

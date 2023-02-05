@@ -210,7 +210,7 @@ io.on("connection", (socket) => {
 
 // Broadcast when a user connects
     socket.broadcast
-      .to(user.room)
+      .to(`${socket.request.user.userName}`.room)
       .to("lobby")
       .emit(
         "message",  formatMessage(botName,`${user.username} has joined the chat`)
@@ -231,6 +231,7 @@ io.on("connection", (socket) => {
 //   // Listen for chatMessage
 
   socket.on("chatMessage", (msg) => {
+    console.log(`${socket.request.user.userName}`)
     const user = getCurrentUser(socket.id);
        
     io.to(user.room).to("/lobby2").emit("message", formatMessage(user.username, msg));
