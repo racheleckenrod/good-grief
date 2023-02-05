@@ -1,7 +1,11 @@
 module.exports = {
     ensureAuth: function (req, res, next) {
       if (req.isAuthenticated()) {
+<<<<<<< HEAD
         console.log(`${req.user.userName} is authenticated, session is ${req.session.id}`);
+=======
+        console.log(`user is authenticated, session is ${req.session.id}`);
+>>>>>>> 512a168 (moving ahead with changing the links to the chatrooms to contain only the room to be passed as query param)
         return next();
       } else {
         res.redirect("/");
