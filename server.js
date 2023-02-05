@@ -197,7 +197,7 @@ io.on("connection", (socket) => {
   session.save();
 
 // handle connections -lobby 
-io.on('connection', socket => {
+// io.on('connection', socket => {
   console.log(`Client ${socket.request.user.userName} connected`, new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
 
   socket.emit('timeClock', `It's about time... ${socket.request.user.userName} Connected = ${socket.connected}`);
@@ -281,6 +281,7 @@ io.on('connection', socket => {
     }
   });
 });
+// })
 
 //Setup Routes For Which The Server Is Listening
 app.use("/", mainRoutes);
