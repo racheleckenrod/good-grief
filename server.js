@@ -1,9 +1,10 @@
 const path = require("path");
 const http = require("http");
 const express = require("express");
+const socketio = require("socket.io");
+const formatMessage = require("./utils/messages");
 const app = express();
 const server = http.createServer(app);
-const socketio = require("socket.io");
 const io = socketio(server);
 const cors = require('cors')
 require("dotenv").config({ path: "./config/.env" });
@@ -204,12 +205,10 @@ function getRoomUsers(room) {
   return users.filter(user => user.room === room);
 }
 
-// handle connections -lobby 
-io.on('connection', socket => {
-  console.log('Client connected', new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
-  socket.emit('timeClock', `It's about time... Connected = ${socket.connected}`);
-  socket.join(rooms)
-  console.log(rooms)
+ 
+// run when Lobby connects
+lobby2.on("connection", (socket) => {
+  // console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.request.params}`, socket.id, socket.nsp.name);
 
   // lobby2.on('connect', (socket) => {
     // socket.on("whoami", (cb) => {
@@ -315,8 +314,7 @@ io.on("connection", (socket) => {
 //   // Listen for chatMessage
 
   socket.on("chatMessage", (msg) => {
-    console.log(`${socket.request.user.userName}`)
-    // const user = getCurrentUser(socket.id);
+    const user = getCurrentUser(socket.id);
        
     io.to(user.room).to("/lobby2").emit("message", formatMessage(user.username, msg));
   });
@@ -349,7 +347,7 @@ io.on("connection", (socket) => {
 
       // Send users and room info
 
-      io.to(user.room).to("lobby").emit("roomUsers", {
+      io.to(user.room).emit("roomUsers", {
         room: user.room,
         users: getRoomUsers(user.room),
       });
