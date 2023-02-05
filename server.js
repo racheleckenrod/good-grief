@@ -1,10 +1,9 @@
 const path = require("path");
 const http = require("http");
 const express = require("express");
-const socketio = require("socket.io");
-const formatMessage = require("./utils/messages");
 const app = express();
 const server = http.createServer(app);
+const socketio = require("socket.io");
 const io = socketio(server);
 const cors = require('cors')
 require("dotenv").config({ path: "./config/.env" });
@@ -75,6 +74,7 @@ app.use(sessionMiddleware)
 app.use(passport.initialize());
 app.use(passport.session());
 
+// console.log("passport", passport)
 
 //Use flash messages for errors, info, ect...
 app.use(flash());
@@ -217,6 +217,7 @@ io.on("connection", (socket) => {
         "message",  formatMessage(botName,`${user.username} has joined the chat`)
       );
 
+      console.log(users)
 
 //     // Send users and room info
 

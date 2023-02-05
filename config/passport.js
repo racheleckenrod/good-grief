@@ -32,11 +32,14 @@ module.exports = function (passport) {
   );
 
   passport.serializeUser((user, done) => {
+    console.log(`serializeUser ${user.id} from passport.js`, user.id )
+
     done(null, user.id);
-    console.log("from passport,js", user.id )
   });
 
   passport.deserializeUser((id, done) => {
+    console.log(`from passport.js deserializeUser ${id}`, done, id)
+
     User.findById(id, (err, user) => done(err, user))
  
     console.log("from passport.js", "deserializeUser", id)
