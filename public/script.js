@@ -75,9 +75,7 @@ lobbySocket.on('testmessage',(message) => {
 // socket.on("connection", (socket) => {
 //     console.log('New WS SCRIPT Connection', "script", "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer)
    
-//     socket.emit('whoami', (username) => {
-//         console.log(username)
-//     })
+// })
 
 //     socket.emit('joinRoom', { id, username, room, _id });
 

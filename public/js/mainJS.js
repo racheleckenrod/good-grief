@@ -39,6 +39,7 @@ socket.on('roomUsers', ({ room, users }) => {
   outputRoomName(room);
   console.log("output", room)
   outputUsers(users);
+  console.log(users)
 });
 
 // // Message from server
@@ -75,6 +76,7 @@ chatForm.addEventListener('submit', (e) => {
 function outputMessage(message) {
   const div = document.createElement('div');
   div.classList.add('message');
+  div.classList.add(`${room}`);
   div.innerHTML = `<p class="meta">${message.username} <span>${message.time}</span></p>
   <p class="text">
     ${message.text}
