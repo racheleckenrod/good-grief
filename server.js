@@ -255,6 +255,7 @@ io.on("connection", (socket) => {
         formatMessage(botName, `${user.username} has left the chat because: ${reason}`)
       );
 
+      socket.on('disconnect', () => console.log('Client disconnected'));
 
       // Send users and room info
 
