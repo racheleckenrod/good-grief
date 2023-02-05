@@ -137,7 +137,7 @@ console.log("joinRoom", id, username, room, _id)
 
 // // Get room and users
 socket.on('roomUsers', ({ room, users }) => {
-  // console.log("mainJS2", socket, socket.connected, socket.id)
+  console.log("mainJS2", socket, socket.connected, socket.id)
 
   console.log("bigtest")
   outputRoomName(room);
