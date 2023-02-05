@@ -55,7 +55,7 @@ app.use(express.static(path.join(__dirname, "public")));
 //Using EJS for views
 app.set("view engine", "ejs");
 
-// app.set('socketio', io);
+app.set('socketio', io);
 
 //Body Parsing
 app.use(express.urlencoded({ extended: true }));
@@ -64,19 +64,6 @@ app.use(express.json());
 //Logging
 app.use(logger("dev"));
 
-
-// supposedly to pass the req variables through
-// app.use(function(req, res, next){
-//   res.locals.user = req.user;
-//   // res.locals.authenticated = ! req.user.anonymous;
-//   next();
-// });
-
-const myLogger = function (req, res, next) {
-  console.log('LOGGED')
-  next()
-}
-app.use(myLogger)
 //Use forms for put / delete
 app.use(methodOverride("_method"));
 
@@ -240,14 +227,10 @@ io.on("connection", (socket) => {
 
   socket.emit('timeClock', `It's about time... ${socket.request.user.userName} Connected = ${socket.connected}`);
 
-   
-  // console.log(`NEW ${  socket.request.session.room  } connection ${socket.id} ${socket.request.user.userName}`, socket.request.session, socket.request.session._id);
-  
-  // console.log(`saving sid ${socket.id} in session ${session.id}`);
-  // session.socketID = socket.id;
-  // session.room = 
-  // session.save();
-  // console.log("TRYHANDSHAKE", socket.request.session.room,session.socketID)
+// lobby2.on("connection", (socket) => {
+//   console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.handshake.params}`, socket.id, socket.nsp.name);
+//   console.log(session, "LOBBY2");
+//   console.log("GOGOOGOG", socket.handshake._query)
 
   socket.on("joinRoom", ({ username, room, _id }) => {
     const user = userJoin(session.socketID, username, room, _id);
@@ -262,17 +245,17 @@ io.on("connection", (socket) => {
  // attempting to send from one namespace to the other
  lobby2.emit("testmessage",  formatMessage(botName, `Welcome to TEST ${user.room} Live Grief Support, ${user.username}!`));
 
-// Broadcast when a user connects
-    socket.broadcast
-      .to(`${socket.request.user.userName}`.room)
-      .to("lobby")
-      .emit(
-        "message",  formatMessage(botName,`${user.username} has joined the ${user.room} chat`)
-      );
+// // Broadcast when a user connects
+//     io.broadcast
+//       .to(user.room)
+//       .to("lobby")
+//       .emit(
+//         "message",  formatMessage(botName,`${user.username} has joined the chat`)
+//       );
 
       console.log(users)
 
-//     // Send users and room info
+// //     // Send users and room info
 
     io.to(user.room).emit("roomUsers", {
       room: user.room,
@@ -280,19 +263,19 @@ io.on("connection", (socket) => {
     });
     console.log(botName, room, getRoomUsers(user.room))
 
+
   });
 
 //   // Listen for chatMessage
 
-  socket.on("chatMessage", (msg) => {
-    console.log(`${socket.request.user.userName}`)
-    // const user = getCurrentUser(socket.id);
+//   io.on("chatMessage", (msg) => {
+//     const user = getCurrentUser(socket.id);
        
     io.to(user.room).to("/lobby2").emit("message", formatMessage(user.username, msg));
   });
 
 
-// Runs when client disconnects
+// // Runs when client disconnects
   io.on("disconnect", (reason) => {
     // io.emit("message",  formatMessage(botName,'a user has left the chat'))
     const user = userLeave(socket.id);
@@ -310,7 +293,14 @@ io.on("connection", (socket) => {
 //       );
 
 
-//       // Send users and room info
+    if (user) {
+      io.to(user.room).to("lobby").emit(
+        "message",
+        formatMessage(botName, `${user.username} has left the chat because: ${reason}`)
+      );
+
+
+      // Send users and room info
 
       io.to(user.room).to("lobby").emit("roomUsers", {
         room: user.room,
