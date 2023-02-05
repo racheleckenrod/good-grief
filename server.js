@@ -317,7 +317,7 @@ io.on("connection", (socket) => {
 
 //   // Listen for chatMessage
 
-  io.on("chatMessage", (msg) => {
+  socket.on("chatMessage", (msg) => {
     const user = getCurrentUser(socket.id);
        
     io.to(user.room).to("/lobby2").emit("message", formatMessage(user.username, msg));
@@ -325,7 +325,7 @@ io.on("connection", (socket) => {
 
 
 // Runs when client disconnects
-  io.on("disconnect", (reason) => {
+  socket.on("disconnect", (reason) => {
     // io.emit("message",  formatMessage(botName,'a user has left the chat'))
     const user = userLeave(socket.id);
     if(user) {
@@ -343,7 +343,7 @@ io.on("connection", (socket) => {
 
 
     if (user) {
-      io.to(user.room).to("lobby").emit(
+      io.to(user.room).emit(
         "message",
         formatMessage(botName, `${user.username} has left the chat because: ${reason}`)
       );
