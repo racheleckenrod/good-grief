@@ -196,6 +196,21 @@ io.on("connection", (socket) => {
   // session.room = user.room
   session.save();
 
+// handle connections -lobby 
+io.on('connection', socket => {
+  console.log(`Client ${socket.request.user.userName} connected`, new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
+
+  socket.emit('timeClock', `It's about time... ${socket.request.user.userName} Connected = ${socket.connected}`);
+
+   
+  console.log(`NEW ${  socket.request.session.room  } connection ${socket.id} ${socket.request.user.userName}`, socket.request.session, socket.request.session._id);
+  
+  console.log(`saving sid ${socket.id} in session ${session.id}`);
+  session.socketID = socket.id;
+  // session.room = 
+  session.save();
+  console.log("TRYHANDSHAKE", socket.request.session.room,session.socketID)
+
   socket.on("joinRoom", ({ username, room, _id }) => {
     const user = userJoin(session.socketID, username, room, _id);
     // console.log("pkkkkkkkk", user)
