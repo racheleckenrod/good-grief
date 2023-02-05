@@ -74,7 +74,6 @@ app.use(sessionMiddleware)
 app.use(passport.initialize());
 app.use(passport.session());
 
-// console.log("passport", passport)
 
 //Use flash messages for errors, info, ect...
 app.use(flash());
@@ -255,7 +254,6 @@ io.on("connection", (socket) => {
         formatMessage(botName, `${user.username} has left the chat because: ${reason}`)
       );
 
-      socket.on('disconnect', () => console.log('Client disconnected'));
 
       // Send users and room info
 
