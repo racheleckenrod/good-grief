@@ -28,7 +28,7 @@ const id = socket.id;
 console.log("mainJS", socket, socket.connected, socket.id)
 
 // // Join chatroom
-socket.emit('joinRoom', { id, username, room, _id });
+lobbySocket.emit('joinRoom mainJS', { id, username, room, _id });
 console.log("joinRoom", id, username, room, _id)
 
 // // Get room and users

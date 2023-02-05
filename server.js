@@ -280,7 +280,7 @@ io.on("connection", (socket) => {
 
 
 // Runs when client disconnects
-  socket.on("disconnect", (reason) => {
+  io.on("disconnect", (reason) => {
     // io.emit("message",  formatMessage(botName,'a user has left the chat'))
     const user = userLeave(socket.id);
     if(user) {
