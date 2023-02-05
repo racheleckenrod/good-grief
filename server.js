@@ -190,6 +190,7 @@ setInterval(() => lobby2.emit('timeData', new Date().toLocaleTimeString()), 1000
 io.on("connection", (socket) => {
   console.log('New WS server.js Connection', "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer);
 
+  // socket.data.username = socket.request.user.userName
   const session = socket.request.session;
   console.log(`io saving ${socket.request.user.userName} sid ${socket.id} in session ${session.id}`);
   session.socketID = socket.id;
@@ -203,10 +204,10 @@ io.on("connection", (socket) => {
   socket.emit('timeClock', `It's about time... ${socket.request.user.userName} Connected = ${socket.connected}`);
 
    
-  console.log(`NEW ${  socket.request.session.room  } connection ${socket.id} ${socket.request.user.userName}`, socket.request.session, socket.request.session._id);
+  // console.log(`NEW ${  socket.request.session.room  } connection ${socket.id} ${socket.request.user.userName}`, socket.request.session, socket.request.session._id);
   
-  console.log(`saving sid ${socket.id} in session ${session.id}`);
-  session.socketID = socket.id;
+  // console.log(`saving sid ${socket.id} in session ${session.id}`);
+  // session.socketID = socket.id;
   // session.room = 
   session.save();
   console.log("TRYHANDSHAKE", socket.request.session.room,session.socketID)

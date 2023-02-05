@@ -122,7 +122,7 @@ lobbySocket.on('hi', (message) => {
   
 //   //   // Scroll down
     chatMessages.scrollTop = chatMessages.scrollHeight;
-
+// 
   
   });
 
