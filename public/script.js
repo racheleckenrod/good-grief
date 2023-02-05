@@ -193,4 +193,3 @@ function outputUsers(users) {
     ${users.map(user => `<li class="${user.username}" >${user.username}</li>`).join('')}
     `;
 }
-
