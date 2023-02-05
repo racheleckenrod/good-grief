@@ -58,7 +58,7 @@ let timeClock =  document.getElementById('time');
 
 
 // console.log("script.js", socket)
-// let timeClock ;
+
 
 
 // // socket.emit("joinAll", () =>{

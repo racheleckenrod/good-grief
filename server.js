@@ -315,6 +315,7 @@ io.on("connection", (socket) => {
 //   // Listen for chatMessage
 
   socket.on("chatMessage", (msg) => {
+    console.log(`${socket.request.user.userName}`)
     const user = getCurrentUser(socket.id);
        
     io.to(user.room).to("/lobby2").emit("message", formatMessage(user.username, msg));
