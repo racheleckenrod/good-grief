@@ -250,7 +250,7 @@ io.on("connection", (socket) => {
    
 
     if (user) {
-      io.to(user.room).emit(
+      io.to(user.room).to("lobby").emit(
         "message",
         formatMessage(botName, `${user.username} has left the chat because: ${reason}`)
       );
@@ -258,7 +258,7 @@ io.on("connection", (socket) => {
 
       // Send users and room info
 
-      io.to(user.room).emit("roomUsers", {
+      io.to(user.room).to("lobby").emit("roomUsers", {
         room: user.room,
         users: getRoomUsers(user.room),
       });
