@@ -38,7 +38,6 @@ const {
 } = require("./utils/users");
 
 
-
 // new setup using sessionMiddleware for socket.io:
 const sessionMiddleware = session({
   secret: "goPackers",
@@ -176,29 +175,19 @@ function getRoomUsers(room) {
 
 // // Join user to chat
 function userJoin(id, username, room, _id) {
-    console.log("userjoin", id, username, room, _id)
-
   const user = { id, username, room, _id };
-
-
   users.push(user);
-
-  // console.log("ho hum", users)
-  
   return user;
- 
 }
 
 // // Get current user
 function getCurrentUser(id) {
-  console.log("getCurrentUser:", id, users)
   return users.find(user => user.id === id);
 }
 
 // // User leaves chat
 function userLeave(id) {
   const index = users.findIndex(user => user.id === id);
-
   if (index !== -1) {
     return users.splice(index, 1)[0];
   }
