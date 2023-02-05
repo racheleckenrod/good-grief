@@ -93,7 +93,7 @@ function outputMessage(message) {
   document.querySelector('.chat-messages').appendChild(div);
 }
 
-// // Add room name to DOM
+// Add room name to DOM
 // function outputRoomName(room) {
 //   console.log("output test", socket, socket.connected, socket.id)
 //   roomName.innerText = room;

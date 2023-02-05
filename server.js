@@ -304,7 +304,6 @@ io.on("connection", (socket) => {
 
       console.log(users)
 
-// //     // Send users and room info
 
     io.to(user.room).emit("roomUsers", {
       room: user.room,
@@ -318,14 +317,14 @@ io.on("connection", (socket) => {
 
 //   // Listen for chatMessage
 
-//   io.on("chatMessage", (msg) => {
-//     const user = getCurrentUser(socket.id);
+  io.on("chatMessage", (msg) => {
+    const user = getCurrentUser(socket.id);
        
     io.to(user.room).to("/lobby2").emit("message", formatMessage(user.username, msg));
   });
 
 
-// // Runs when client disconnects
+// Runs when client disconnects
   io.on("disconnect", (reason) => {
     // io.emit("message",  formatMessage(botName,'a user has left the chat'))
     const user = userLeave(socket.id);
@@ -358,7 +357,7 @@ io.on("connection", (socket) => {
       });
     }
   });
-// });
+});
 // })
 
 //Setup Routes For Which The Server Is Listening
