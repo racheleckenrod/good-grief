@@ -127,6 +127,10 @@ a {
 	flex: 1;
 }
 
+#_id {
+	visibility: hidden;
+}
+
 /* Join Page */
 .join-container {
 	max-width: 500px;
