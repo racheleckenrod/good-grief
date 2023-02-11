@@ -23,7 +23,7 @@ router.get("/profile/:id", postsController.showProfile);
 router.get("/profile", ensureAuth, postsController.getProfile);
 router.get("/editProfile", ensureAuth, postsController.getEditProfile);
 router.put("/editProfile/:id", postsController.editProfile)
-router.post("/profilePicture", upload.single("file"), postsController.createProfile);
+router.put("/profilePicture/:id", upload.single("file"), postsController.editProfilePic);
 
 
 router.get("/welcome", ensureAuth, homeController.getWelcome);

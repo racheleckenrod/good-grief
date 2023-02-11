@@ -36,7 +36,7 @@
 
                     <div class="col-12 mt-5">
                         <h2>Choose your Profile Picture</h2>
-                        <form action="/profilePicture" enctype="multipart/form-data" method="POST">
+                        <form action="/profilePicture/<%= user.id %>?_method=PUT" enctype="multipart/form-data" method="POST">
                             <div class="mb-3">
                                 <label for="imgUpload" class="">Image</label>
                                 <input type="file" class="" id="imageUpload" name="file">

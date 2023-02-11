@@ -29,22 +29,50 @@ module.exports = {
     }
   },
   editProfile: async (req, res) => {
+    console.log(req.user, "editProfile")
+     try {
+ 
+        //  if(req.params ){
+ 
+        
+       //   // Upload image to cloudinary
+        //  const result = await cloudinary.uploader.upload(req.file.path);
+        //  console.log(result)
+        //  req.user.profilePicture = result.secure_url
+        //  console.log(req.user,req.body)
+      //  }
+       await User.findOneAndUpdate(
+         { _id: req.params.id },
+       
+         
+           {...req.body }
+          
+       
+       );
+       console.log("Updated editProfile() User",req.body );
+       res.redirect(`/profile`);
+     } catch (err) {
+       console.log(err);
+     }
+   },
+  editProfilePic: async (req, res) => {
    console.log(req.user, "editProfile")
     try {
 
-      //   if(req.params ){
+        if(req.params ){
 
        
       //   // Upload image to cloudinary
-      //   const result = await cloudinary.uploader.upload(req.file.path);
-      //   console.log(result)
-      //   req.user.profilePicture = result.secure_url
-      // }
+        const result = await cloudinary.uploader.upload(req.file.path);
+        console.log(result)
+        req.user.profilePicture = result.secure_url
+        console.log(req.user,req.body)
+      }
       await User.findOneAndUpdate(
         { _id: req.params.id },
       
         
-          {...req.body }
+          {...req.user }
          
       
       );
@@ -69,7 +97,7 @@ module.exports = {
         user = await User.findOneAndUpdate(req.params.id, data, {
           new: true
         });
-        console.log("after user", user)
+        console.log("after user", user, user.profilePicture)
         // res.json(user);
       
         // Upload image to cloudinary
