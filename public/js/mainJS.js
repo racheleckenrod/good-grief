@@ -18,7 +18,7 @@ const room =  roomName.innerHTML
 // get username from DOM
 // const username = document.querySelector('#username');
 // const room = document.getElementById('room-name');
-const _id =  document.getElementById('_id');
+const _id =  document.getElementById('_id').innerHTML;
 console.log("room=", room, username, _id)
 // my try at pulling the data into the chat
 
