@@ -19,79 +19,12 @@ console.log("script.js", lobbySocket)
 let timeClock =  document.getElementById('time');
 
 
-// lobbySocket.emit("joinAll", () =>{
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// let username 
-// const room = "lobby"
-// let _id = 123456789 
-
-// const roomName = document.getElementById('room-name');
-// const userList = document.getElementById('users');
-// const chatMessages = document.querySelector('.chat-messages');
-
-// const socket = io();
-// const lobbySocket = io('/lobby2')
-// const id = socket.id;
-
-
-
-// console.log("script.js", socket)
-
-
-// // socket.emit("joinAll", () =>{
-
-// // })
-// lobbySocket.on('connect',(message) => {
-//     console.log(message)
-// })
 lobbySocket.on('testmessage',(message) => {
     console.log("OOO", message)
     outputMessage(message, room);
 })
 
-// socket.on("connection", (socket) => {
-//     console.log('New WS SCRIPT Connection', "script", "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer)
-   
-// })
 
-//     socket.emit('joinRoom', { id, username, room, _id });
-
-// });
-
-// socket.on("numOfUsers", (message, room) =>{
-//     console.log(message, "numOfUsers");
-//     outputMessage(message)
-// })
-
-// socket.on("message", (message, room) => {
-//     console.log(message, "welcome?")
-//     outputMessage(message);
-
-//      //   // Scroll down
-//      chatMessages.scrollTop = chatMessages.scrollHeight;
-// })
 lobbySocket.on('testmessage',(message) => {
     console.log("OOO", message)
     outputMessage(message, room);
@@ -117,7 +50,6 @@ lobbySocket.on('hi', (message) => {
     console.log(message, "messageLobby");
     outputMessage(message, room);
 
-    // lobbySocket.on("chat-message")
   
 //   //   // Scroll down
     chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -125,37 +57,6 @@ lobbySocket.on('hi', (message) => {
   
   });
 
-
-
-// lobbySocket.on("socket", (socket) => {
-//     console.log('New WS SCRIPT Connection', "script", "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer)
-   
-//     // socket.emit('whoami', (username) => {
-//     //     console.log(username)
-//     // })
-
-//     // socket.emit('joinRoom', { id, username, room, _id });
-
-// });
-
-//   });
-
-// // // Message from server
-// socket.on("message", (message) => {
-//     console.log(message, "welcome?")
-//     outputMessage(message);
-
-//      //   // Scroll down
-//     //  chatMessages.scrollTop = chatMessages.scrollHeight;
-//   })
-
-
-// lobbySocket.on("messageLobby", (message) => {
-//     outputMessage(message);
-
-//      //   // Scroll down
-//      chatMessages.scrollTop = chatMessages.scrollHeight;
-// })
 // recieve testing from io
 lobbySocket.on("message", (message) => {
   console.log(message, "test");
