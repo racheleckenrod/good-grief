@@ -46,44 +46,41 @@ lobbySocket.on('timeData', (timeString2) => {
 })
 
 // // Message from server
-lobbySocket.on('hi', (message) => {
-    console.log(message, "messageLobby");
-    outputMessage(message, room);
+// lobbySocket.on('hi', (message) => {
+//     console.log(message, "messageLobby");
+//     outputMessage(message, room);
 
   
 //   //   // Scroll down
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+    // chatMessages.scrollTop = chatMessages.scrollHeight;
 // 
   
-  });
+  // });
 
 // recieve testing from io
-lobbySocket.on("message", (message) => {
-  console.log(message, "test");
+// lobbySocket.on("message", (message) => {
+//   console.log(message, "test");
 
-  outputMessage(message, room)
-})
+//   outputMessage(message, room)
+// })
 
 // // Message from server
-lobbySocket.on('messageLobby', (message) => {
-    console.log(message, "messageLobby");
-    outputMessage(message, room);
+// lobbySocket.on('messageLobby', (message) => {
+//     console.log(message, "messageLobby");
+//     outputMessage(message, room);
   
-//   //   // Scroll down
-//     chatMessages.scrollTop = chatMessages.scrollHeight;
+  // })
+  // function outputMessage(message, room) {
+  //   const div = document.createElement('div');
+  //   div.classList.add('message');
+  //   // div.classList.add(`${room}`);
+  //   div.innerHTML = `<p class="meta">${message.username} <span>${message.time}</span></p>
+  //   <p class="text">
+  //     ${message.text}
+  //   </p>`;
+  //   document.querySelector(`.chat-messages`).appendChild(div);
 
-  })
-  function outputMessage(message, room) {
-    const div = document.createElement('div');
-    div.classList.add('message');
-    // div.classList.add(`${room}`);
-    div.innerHTML = `<p class="meta">${message.username} <span>${message.time}</span></p>
-    <p class="text">
-      ${message.text}
-    </p>`;
-    document.querySelector(`.chat-messages`).appendChild(div);
-
-  }
+  // }
 
 
   // // Add users to DOM
