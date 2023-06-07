@@ -84,10 +84,10 @@
 										</div>
 									</div>
 								</div>
-								<ul class="actions special">
+								<!-- <ul class="actions special">
 									<li><a href="#" class="button style1 large">Get Started</a></li>
 									<li><a href="#" class="button style2 large">More Info</a></li>
-								</ul>
+								</ul> -->
 							</section>
 
 					</div>
@@ -100,34 +100,34 @@
 						<div class="row aln-center">
 							<div class="col-4 col-12-medium">
 								<section class="highlight">
-									<a href="#" class="image featured"><img src= <%= posts[0].image %> alt="" /></a>
-									<h3><a href="#"><%= posts[0].title %></a></h3>
+									<a href="/post/<%= `${posts[0]._id}`%>" class="image featured"><img src= <%= posts[0].image %> alt="user photo" /></a>
+									<h3><a href="/post/<%= `${posts[0]._id}`%>"><%= posts[0].title %></a></h3>
 									<p><%= posts[0].caption %></p>
 									<p>Likes: <%= posts[0].likes %></p>
 									<ul class="actions">
-										<li><a href="#" class="button style1">Comment</a></li>
+										<li><a href="/post/<%= `${posts[0]._id}`%>" class="button style1">Comment</a></li>
 									</ul>
 								</section>
 							</div>
 							<div class="col-4 col-12-medium">
 								<section class="highlight">
-									<a href="#" class="image featured"><img src= <%= posts[1].image %> alt="" /></a>
-									<h3><a href="#"><%= posts[1].title %></a></h3>
+									<a href="/post/<%= `${posts[1]._id}`%>" class="image featured"><img src= <%= posts[1].image %> alt="" /></a>
+									<h3><a href="/post/<%= `${posts[1]._id}`%>"><%= posts[1].title %></a></h3>
 									<p><%= posts[1].caption %></p>
 									<p>Likes: <%= posts[1].likes %></p>
 									<ul class="actions">
-										<li><a href="#" class="button style1">Learn More</a></li>
+										<li><a href="/post/<%= `${posts[1]._id}`%>" class="button style1">Comment</a></li>
 									</ul>
 								</section>
 							</div>
 							<div class="col-4 col-12-medium">
 								<section class="highlight">
-									<a href="#" class="image featured"><img src= <%= posts[2].image %> alt="" /></a>
-									<h3><a href="#"><%= posts[2].title %></a></h3>
+									<a href="/post/<%= `${posts[2]._id}`%>" class="image featured"><img src= <%= posts[2].image %> alt="" /></a>
+									<h3><a href="/post/<%= `${posts[2]._id}`%>"><%= posts[2].title %></a></h3>
 									<p><%= posts[2].caption %></p>
 									<p>Likes: <%= posts[2].likes %></p>
 									<ul class="actions">
-										<li><a href="#" class="button style1">Learn More</a></li>
+										<li><a href="/post/<%= `${posts[2]._id}`%>" class="button style1">Comment</a></li>
 									</ul>
 								</section>
 							</div>
