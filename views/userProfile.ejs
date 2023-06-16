@@ -16,13 +16,16 @@
                 <a href="#" class="image featured">
                   <img src="<%= chatUser.profilePicture%>" alt="profile picture" />
                 </a>
-                <p>My Story.<br>
+                <h2>My Story:</h2>
                   
                 <p><%= chatUser.story %></p>
 
               <header>
                 <h2 class="">My most recent posts:</h2>
               </header>
+             
+
+
               <div class="row gtr-150">
                 <%if(posts.length > 0){%>
                 <div class="col-6 col-12-small">
@@ -30,9 +33,9 @@
                     <header>
                       <h2><%= posts[posts.length-1].title %></h2>
                     </header>
-                    <a href="#" class="image featured"><img src="<%= posts[posts.length-1].image %>" alt="latest post" /></a>
+                    <a href="/post/<%= `${posts[posts.length-1]._id}`%>" class="image featured"><img src="<%= posts[posts.length-1].image %>" alt="latest post" /></a>
                     <p><%= posts[posts.length-1].caption %></p>
-                    <a href="/post/<%= `${posts[i]._id}`%>" class="button style1">See Post</a>
+                    <a href="/post/<%= posts[posts.length-1]._id %>" class="button style1">See Post</a>
                   </section>
                 </div>
                 <%}%>
@@ -42,9 +45,9 @@
                     <header>
                       <h2><%= posts[posts.length-2].title %></h2>
                     </header>
-                    <a href="#" class="image featured"><img src="<%= posts[posts.length-2].image %>" alt="" /></a>
+                    <a href="/post/<%= posts[posts.length-2]._id %>" class="image featured"><img src="<%= posts[posts.length-2].image %>" alt="second latest post" /></a>
                     <p><%= posts[posts.length-2].caption %></p>
-                    <a href="#" class="button style1">More</a>
+                    <a href="/post/<%= posts[posts.length-2]._id %>" class="button style1">See Post</a>
                   </section>
                 </div>
                 <%}%>
@@ -214,14 +217,14 @@
 
 
 
-
+<!-- 
 <section id="highlights" class="wrapper style3">
     <div class="title">Our Community</div>
     <div class="container">
       <div class="row aln-center">
     
          
-        </div>
+        </div> -->
         <!-- <div class="col-4 col-12-medium">
           <section class="highlight">
             <a href="#" class="image featured"><img src="images/pic03.jpg" alt="" /></a>
@@ -242,10 +245,10 @@
             </ul>
           </section>
         </div> -->
-      </div>
+      <!-- </div>
     </div>
   </section>
-  
+   -->
 
 
 
