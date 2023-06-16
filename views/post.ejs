@@ -15,12 +15,13 @@
       <div class="">
         <p><%= post.caption %></p>
       </div>
+      
         <form
-          class="col-1"
+          class="row-1"
           action="/post/likePost/<%= post.id %>?_method=PUT"
           method="POST"
         >
-          <button class="btn style1 fa fa-heart" type="submit">like post</button>
+          <button class="btn style1" type="submit"><i class="fa fa-heart"></i>post</button>
         </form>
         <h3 class="col-3">Likes: <%= post.likes %></h3>
         <%if(post.user.id == user.id){ %>
@@ -29,7 +30,10 @@
           method="POST"
           class="col-3"
         >
-          <button class="btn style1 fa fa-trash" type="submit">delete post</button>
+          <button class="btn style1" type="submit"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
+            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
+          </svg> post</button>
         </form>
         <form
         action="/post/editPostPage/<%= post.id %>"
@@ -57,7 +61,7 @@
             action="/comment/likeComment/<%= comments[i]._id %>?_method=PUT"
             method="POST"
             >
-            <button class="btn style1 fa fa-heart" type="submit">Like Comment</button>
+            <button class="btn style1" type="submit"><i class="fa fa-heart"></i>Comment</button>
           </form>
           <p class="p-3">Comment Likes: <%= comments[i].likes %></p>
         </li>
@@ -67,7 +71,7 @@
                 method="POST"
                 class="col-3"
               >
-                <button class="btn style1 fa fa-trash" type="submit">delete my comment</button>
+                <button class="btn style1" type="submit"><i class=" fa fa-trash"></i>comment</button>
               </form>
 
              
@@ -90,13 +94,13 @@
      
     </div>
     <div class="">
-      <a class="button style3" href="/profile/<%= post.user._id %>">Return to Profile</a>
+      <a class="button style3" href="/profile/<%= post.user._id %>">See Profile</a>
       <div class=""></div>
-      <a class="button style3" href="/chat">Return to Lobby</a>
+      <a class="button style3" href="/chat">Lobby</a>
       <div class=""></div>
-      <a class="button style3" href="/feed">Return to Community</a>
+      <a class="button style3" href="/feed">Community</a>
       <div class=""></div>
-      <a class="button style3" href="/">Return Home</a>
+      <a class="button style3" href="/">Home</a>
       <div class=""></div>
       <a class="button style3" href="/logout">Logout</a>
       <div class=""></div>

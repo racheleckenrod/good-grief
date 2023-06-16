@@ -155,17 +155,17 @@ module.exports = {
       console.log(err);
     }
   },
-  getTestFeed: async (req, res) => {
-    try {
-      const posts = await Post.find().populate('user').sort({ createdAt: "desc" }).lean();
-      const comments = await Comment.find().sort({ createdAt: "asc" }).lean()
+  // getTestFeed: async (req, res) => {
+  //   try {
+  //     const posts = await Post.find().populate('user').sort({ createdAt: "desc" }).lean();
+  //     const comments = await Comment.find().sort({ createdAt: "asc" }).lean()
     
-      res.render("feed.ejs", { posts: posts, comments: comments, user: req.user });
-      console.log("testFeed" ,posts)
-    } catch (err) { 
-      console.log(err);
-    }
-  },
+  //     res.render("feed.ejs", { posts: posts, comments: comments, user: req.user });
+  //     console.log("testFeed" ,posts)
+  //   } catch (err) { 
+  //     console.log(err);
+  //   }
+  // },
   getPost: async (req, res) => {
     try {
       const post = await Post.findById(req.params.id).populate('user');

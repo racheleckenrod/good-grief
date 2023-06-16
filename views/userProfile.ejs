@@ -1,7 +1,7 @@
 <%- include('partials/header') -%>
 
 <section id="main" class="wrapper style2">
-    <div class="title">Welcome, <%= user.userName %>, to <%= chatUser.userName %></div>
+    <div class="title">Welcome to <%= chatUser.userName%>'s Profile, <%= user.userName %></div>
     <div class="container">
       <div class="row gtr-150">
         <div class="col-8 col-12-medium">
@@ -16,7 +16,7 @@
                 <a href="#" class="image featured">
                   <img src="<%= chatUser.profilePicture%>" alt="profile picture" />
                 </a>
-                <h2>My Story:</h2>
+                <h2><%= chatUser.userName%>'s Story:</h2>
                   
                 <p><%= chatUser.story %></p>
 
@@ -61,7 +61,7 @@
             <div id="sidebar">
               <section class="box">
                 <header>
-                  <h2>About Me:</h2>
+                  <h2>About <%= chatUser.userName%>:</h2>
                 </header>
                 <p><%= chatUser.about %></p>
                
