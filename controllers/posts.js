@@ -215,7 +215,26 @@ module.exports = {
         }
       );
       console.log("Likes +1");
+     
       res.redirect(`/post/${req.params.id}`);
+    } catch (err) {
+      console.log(err);
+    }
+  },
+  likePostFeed: async (req, res) => {
+    try {
+      await Post.findOneAndUpdate(
+        { _id: req.params.id },
+        {
+          $inc: { likes: 1 },
+        }
+      );
+      console.log("Likes +1");
+      const posts = await Post.find().populate('user').sort({ createdAt: "desc" }).lean();
+      const comments = await Comment.find().populate('user').sort({ createdAt: "asc" }).lean()
+      console.log(posts,comments, "from getFeed")
+      const _id = req.user._id
+      res.render("feed.ejs", { posts: posts, comments: comments, user: req.user, _id: _id });
     } catch (err) {
       console.log(err);
     }
