@@ -19,8 +19,8 @@
                 <form action="/signup" method="POST">
                     <div class="mb-3">
                         <label for="userName" class="form-label">User Name</label>
-                        <input type="text" class="form-control" onkeypress="return event.key.charCodeAt(0) != 32" id="userName" name="userName">
-                        <div id="userNameHelp" class="form-text">No spaces allowed in User Name.</div>
+                        <input type="text" class="form-control" onkeypress="return event.key.charCodeAt(0) != 32" id="userName" name="userName" onfocus="{document.querySelector('#userNameHelp').setAttribute('style', 'display:inline-block')}" >
+                        <div id="userNameHelp" style="display:none"class="form-text">No spaces are allowed in User Name.</div>
                       </div>
                     <div class="mb-3">
                       <label for="exampleInputEmail1" class="form-label">Email address</label>
