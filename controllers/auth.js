@@ -14,6 +14,7 @@ exports.getLogin = (req, res) => {
 
 exports.postLogin = (req, res, next) => {
   const validationErrors = [];
+  
   if (!validator.isEmail(req.body.email))
     validationErrors.push({ msg: "Please enter a valid email address." });
   if (validator.isEmpty(req.body.password))
@@ -71,6 +72,8 @@ exports.getSignup = (req, res) => {
 exports.postSignup = (req, res, next) => {
   console.log("calling exports.postSignup")
   const validationErrors = [];
+  if (validator.blacklist(req.body.userName, '\/s\[\/s\]'))
+    validationErrors.push({ msg: "Please enter a valid user name without spaces." });
   if (!validator.isEmail(req.body.email))
     validationErrors.push({ msg: "Please enter a valid email address." });
   if (!validator.isLength(req.body.password, { min: 8 }))
