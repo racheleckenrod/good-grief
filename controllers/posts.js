@@ -6,12 +6,12 @@ const User = require("../models/User");
 
 module.exports = {
   getProfile: async (req, res) => {
-    // console.log(req.user, req.user.profilePicture)
+    console.log(req.user, req.user.profilePicture)
     try {
       const posts = await Post.find({ user: req.user.id });
       const likedPosts = await Post.find({ user: req.user.id }).sort({likes: "desc"}).lean();
       const _id = req.user._id || 33333333
-      console.log(req.session, req.session.timezone)
+      console.log(req.session, req.body.timezone)
       res.render("profile.ejs", { posts: posts, user: req.user, likedPosts: likedPosts, _id: _id });
     } catch (err) {
       console.log(err);

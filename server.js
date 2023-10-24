@@ -12,6 +12,7 @@ const PORT = process.env.PORT;
 
 app.use(cors())
 
+const moment = require('moment-timezone');
 const mongoose = require("mongoose");
 const passport = require("passport");
 const session = require("express-session");
@@ -212,6 +213,7 @@ lobby2.on("connection", (socket) => {
     // })
   
     const session = socket.request.session;
+    const userTimeZone = socket.request.user.timezone
     console.log(`lobby2 saving ${socket.request.user.userName} sid ${socket.id} in session ${session.id}`);
     session.socketID = socket.id;
     session.save();
@@ -219,7 +221,12 @@ lobby2.on("connection", (socket) => {
 
   // broadcast updates
 
-setInterval(() => lobby2.emit('timeData', new Date().toLocaleString()), 1000);
+
+setInterval(() => {
+  const localTime = moment.tz(userTimeZone).format('h:mm:ss a');
+
+  
+  lobby2.emit('timeData', localTime);}, 1000);
 
   lobby2.emit("hi", formatMessage(`${socket.request.user.userName}`,"hello everyone!   "));
 
@@ -256,6 +263,7 @@ io.on("connection", (socket) => {
 
   // socket.data.username = socket.request.user.userName
   const session = socket.request.session;
+  const userTimeZone = socket.request.user.timezone
   console.log(`io saving ${socket.request.user.userName} sid ${socket.id} in session ${session.id}`);
   session.socketID = socket.id;
   // session.room = user.room
@@ -279,11 +287,11 @@ io.on("connection", (socket) => {
 
 
 // Welcome current user
-    socket.emit("message", formatMessage(botName, `Welcome to ${user.room} Live Grief Support, ${user.username}!`));
+    socket.emit("message", formatMessage(botName, `Welcome to ${user.room} Live Grief Support, ${user.username}!`, userTimeZone));
 
 
  // attempting to send from one namespace to the other
- lobby2.emit("testmessage",  formatMessage(botName, `Welcome to TEST ${user.room} Live Grief Support, ${user.username}!`));
+ lobby2.emit("testmessage",  formatMessage(botName, `Welcome to TEST ${user.room} Live Grief Support, ${user.username}!`, userTimeZone));
 
 // // Broadcast when a user connects
 //     io.broadcast
@@ -311,7 +319,7 @@ io.on("connection", (socket) => {
   socket.on("chatMessage", (msg) => {
     const user = getCurrentUser(socket.id);
        
-    io.to(user.room).to("/lobby2").emit("message", formatMessage(user.username, msg));
+    io.to(user.room).to("/lobby2").emit("message", formatMessage(user.username, msg, userTimeZone));
   });
 
 
@@ -336,7 +344,7 @@ io.on("connection", (socket) => {
     if (user) {
       io.to(user.room).emit(
         "message",
-        formatMessage(botName, `${user.username} has left the chat because: ${reason}`)
+        formatMessage(botName, `${user.username} has left the chat because: ${reason}`, userTimeZone)
       );
 
 

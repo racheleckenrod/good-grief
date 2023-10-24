@@ -39,15 +39,25 @@ exports.postLogin = (req, res, next) => {
       req.flash("errors", info);
       return res.redirect("/login");
     }
+
+    const userTimeZone = req.body.timezone;
+
+    
+
     console.log(req.session, "first check")
-    // req.logIn(user, (err) => {
-    //   if (err) {
-    //     return next(err);
-    //   }
-      // req.flash("success", { msg: "Success! You are logged in." });
-      console.log(req.session, "second check")
-      // res.redirect(req.session.returnTo || "/profile");
-    // });
+    req.logIn(user, (err) => {
+      if (err) {
+        return next(err);
+      }
+      req.flash("success", { msg: "Success! You are logged in." });
+      console.log(req.body.timezone, "second check")
+      User.findByIdAndUpdate(req.user.id, { $set: { timezone: userTimeZone }}, (err, user) => {
+        if (err) {
+          return next(err);
+        }
+      });
+      res.redirect(req.session.returnTo || "/profile");
+    });
   })(req, res, next);
 };
 
