@@ -223,7 +223,7 @@ lobby2.on("connection", (socket) => {
 
 
 setInterval(() => {
-  const localTime = moment.tz(userTimeZone).format('h:mm:ss a');
+  const localTime = moment.tz(userTimeZone).format('dddd, MMMM D, YYYY h:mm:ss a');
 
   
   lobby2.emit('timeData', localTime);}, 1000);
