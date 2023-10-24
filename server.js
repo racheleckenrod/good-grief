@@ -217,7 +217,7 @@ lobby2.on("connection", (socket) => {
 
   // broadcast updates
 
-setInterval(() => lobby2.emit('timeData', new Date().toLocaleTimeString()), 1000);
+setInterval(() => lobby2.emit('timeData', new Date().toLocaleString()), 1000);
 
   lobby2.emit("hi", formatMessage(`${socket.request.user.userName}`,"hello everyone!   "));
 
