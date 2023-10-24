@@ -204,6 +204,7 @@ module.exports = {
       res.redirect(`/feed`);
     } catch (err) {
       console.log(err);
+      res.redirect(`/post/newPost/:id`)
     }
   },
   likePost: async (req, res) => {
