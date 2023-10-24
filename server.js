@@ -115,7 +115,9 @@ io.use(wrap(passport.session()));
 io.use((socket, next) => {
   if (socket.request.user) {
     console.log(socket.request.user.userName, "io.use socket")
-    socket.user = socket.request.user.userName
+    socket.user = socket.request.user.userName;
+    socket.userTimeZone = socket.request.session.timezone || 'UTC';
+    console.log(socket.request.session, "TIMEZONE")
     next();
   } else {
     next(new Error('unauthorized by rachel'))

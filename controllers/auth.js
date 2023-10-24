@@ -28,6 +28,9 @@ exports.postLogin = (req, res, next) => {
     gmail_remove_dots: false,
   });
 
+  req.session.timezone = req.body.timezone || "UTC"
+  console.log("timezone:", req.session.timezone, req.body.timezone, req.session)
+
   passport.authenticate("local", (err, user, info) => {
     if (err) {
       return next(err);
@@ -36,13 +39,15 @@ exports.postLogin = (req, res, next) => {
       req.flash("errors", info);
       return res.redirect("/login");
     }
-    req.logIn(user, (err) => {
-      if (err) {
-        return next(err);
-      }
-      req.flash("success", { msg: "Success! You are logged in." });
-      res.redirect(req.session.returnTo || "/profile");
-    });
+    console.log(req.session, "first check")
+    // req.logIn(user, (err) => {
+    //   if (err) {
+    //     return next(err);
+    //   }
+      // req.flash("success", { msg: "Success! You are logged in." });
+      console.log(req.session, "second check")
+      // res.redirect(req.session.returnTo || "/profile");
+    // });
   })(req, res, next);
 };
 
