@@ -2,11 +2,12 @@ const moment = require('moment-timezone');
 
 function formatMessage(username, text) {
   const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const utcTime = moment().utc();
   
   return {
     username,
     text,
-    time: moment().tz(userTimeZone).format('h:mm a')
+    time: moment(utcTime).tz(userTimeZone).format('h:mm a')
   };
 }
 
