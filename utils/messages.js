@@ -5,8 +5,10 @@ function formatMessage(username, text) {
   console.log(userTimeZone);
   const utcTime = moment.utc();
   const localTime=  moment(utcTime).tz(userTimeZone).format('h:mm a');
+  const now = moment();
   const LOCALTIME = now.local()
   console.log(utcTime, localTime, LOCALTIME);
+  console.log(LOCALTIME.format('h:mm a'))
   
   return {
     username,
