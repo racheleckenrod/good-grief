@@ -85,7 +85,7 @@ exports.getSignup = (req, res) => {
 };
 
 exports.postSignup = (req, res, next) => {
-  console.log("calling exports.postSignup", req.body.userName)
+  console.log("calling exports.postSignup", req.body.userName, req.body.timezone)
   const validationErrors = [];
   // if (validator.blacklist(req.body.userName, '\/s\[\/s\]'))
   //   validationErrors.push({ msg: "Please enter a valid user name without spaces." });
@@ -110,6 +110,7 @@ exports.postSignup = (req, res, next) => {
     userName: req.body.userName,
     email: req.body.email,
     password: req.body.password,
+    timezone: req.body.timezone,
   });
 
   User.findOne(
