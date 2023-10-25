@@ -25,7 +25,6 @@ const mainRoutes = require("./routes/main");
 const postRoutes = require("./routes/posts");
 const commentRoutes = require("./routes/comments");
 const chatRoutes = require("./routes/chat");
-const { Console } = require("console");
 // const chatsController = require("./controllers/chats")
 
 const rooms = ["The Lobby", "Child", "Parent", "Spouse/Partner", "Sibling", "Suicide", "Terminal", "Friend", "Community Tragety", "Different"]
@@ -247,7 +246,7 @@ setInterval(() => {
   // lobby2.in(session.socketID).socketsJoin(rooms);
 
   socket.join("The Lobby")
-  console.log(socket.rooms)
+  // console.log(socket.rooms)
 
   lobby2.on("disconnect", (reason) => {
     const user = userLeave(socket.id);
