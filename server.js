@@ -127,6 +127,7 @@ io.use((socket, next) => {
  
 
 // Namespace
+// I dont think I need the namespace
 // const lobbyNamespace = io.of("/lobby");
 
 // lobbyNamespace.use((socket, next) => {
