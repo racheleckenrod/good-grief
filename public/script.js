@@ -32,7 +32,7 @@ lobbySocket.on('timeData', (timeString2) => {
 
 
 // // Join chatroom
-socket.emit('joinRoom', {  username, room, _id });
+socket.emit('joinRoom', { id, username, room, _id });
 // console.log("joinRoom", username, room, _id)
 
 // // Get room and users
@@ -40,7 +40,7 @@ socket.on('roomUsers', ({ room, users }) => {
   // console.log("mainJS2", socket, socket.connected, socket.id)
 
   // console.log("bigtest")
-  // outputRoomName(room);
+  outputRoomName(room);
   // console.log("output", room)
   outputUsers(users);
 });
