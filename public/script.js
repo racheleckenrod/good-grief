@@ -9,7 +9,7 @@ const _id =  document.getElementById('_id').innerHTML;
 // console.log("room=", room, username, _id)
 
 const socket = io();
-// const id = socket.id;
+const id = socket.id;
 const lobbySocket = io('/lobby2')
 
 // console.log("mainJS", socket, socket.connected, socket.id)
@@ -20,7 +20,7 @@ lobbySocket.on('timeClock', data => {
   // console.log("Nothing",data,"Personal", "connected?", lobbySocket.connected)
  
   timeClock.innerHTML = data
-  // console.log("script.js2", lobbySocket, id)
+  console.log("script.js2", lobbySocket, id)
 
 })
 
@@ -32,22 +32,22 @@ lobbySocket.on('timeData', (timeString2) => {
 
 
 // // Join chatroom
-socket.emit('joinRoom', { id, username, room, _id });
-// console.log("joinRoom", username, room, _id)
+socket.emit('joinRoom', {  username, room, _id });
+console.log("joinRoom", username, room, _id)
 
 // // Get room and users
 socket.on('roomUsers', ({ room, users }) => {
-  // console.log("mainJS2", socket, socket.connected, socket.id)
+  console.log("mainJS2", socket, socket.connected, socket.id)
 
-  // console.log("bigtest")
+  console.log("bigtest")
   outputRoomName(room);
-  // console.log("output", room)
+  console.log("output", room)
   outputUsers(users);
 });
 
 // // Message from server
 socket.on('message', (message) => {
-  // console.log(message);
+  console.log(message);
   outputMessage(message);
 
 //   // Scroll down
@@ -60,7 +60,7 @@ chatForm.addEventListener('submit', (e) => {
 
 //   // Get message text
   let msg = e.target.elements.msg.value;
-  // console.log(msg)
+  console.log(msg)
 //   msg = msg.trim();
 
 //   if (!msg) {
@@ -87,17 +87,22 @@ function outputMessage(message) {
   document.querySelector('.chat-messages').appendChild(div);
 }
 
+// // Add room name to DOM
+function outputRoomName(room) {
+  console.log("output test", socket, socket.connected, socket.id)
+  roomName.innerText = room;
+}
 
 // // Add users to DOM
 function outputUsers(users) {
-  // console.log("outputUsers", users)
+  console.log("outputUsers", users)
   userList.innerHTML = `
   ${users.map(user => `<li class="${user.username}" >${user.username}</li>`).join('')}
   `;
 
   // Add event listeners to names to connect to their profile page
   users.forEach((user) => {
-    // console.log("first", user)
+    console.log("first", user)
     document.querySelector(`.${user.username}`).addEventListener('click', () => {
       console.log("forEach", user.username, user._id)
        window.location = `/profile/${user._id}`
