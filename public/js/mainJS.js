@@ -14,16 +14,17 @@ const socket = io();
 const id = socket.id;
 // console.log("mainJS", socket, socket.connected, socket.id)
 
-
+console.log(userList)
 // // Join chatroom
 socket.emit('joinRoom', { id, username, room, _id });
-// console.log("joinRoom", id, username, room, _id)
+console.log("joinRoom", id, username, room, _id)
+console.log(userList)
 
 // // Get room and users
 socket.on('roomUsers', ({ room, users }) => {
   // console.log("mainJS2", socket, socket.connected, socket.id)
 
-  // console.log("bigtest")
+  console.log(users)
   outputRoomName(room);
   // console.log("output", room)
   outputUsers(users);
@@ -79,7 +80,7 @@ function outputRoomName(room) {
 
 // // Add users to DOM
 function outputUsers(users) {
-  // console.log("outputUsers", users)
+  console.log("outputUsers", users)
   userList.innerHTML = `
   ${users.map(user => `<li class="${user.username}" >${user.username}</li>`).join('')}
   `;

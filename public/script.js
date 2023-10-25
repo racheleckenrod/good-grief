@@ -43,6 +43,7 @@ socket.on('roomUsers', ({ room, users }) => {
   outputRoomName(room);
   console.log("output", room)
   outputUsers(users);
+  console.log(users)
 });
 
 // // Message from server
