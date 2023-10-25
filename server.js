@@ -24,7 +24,8 @@ const connectDB = require("./config/database");
 const mainRoutes = require("./routes/main");
 const postRoutes = require("./routes/posts");
 const commentRoutes = require("./routes/comments");
-const chatRoutes = require("./routes/chat")
+const chatRoutes = require("./routes/chat");
+const { Console } = require("console");
 // const chatsController = require("./controllers/chats")
 
 const rooms = ["The Lobby", "Child", "Parent", "Spouse/Partner", "Sibling", "Suicide", "Terminal", "Friend", "Community Tragety", "Different"]
@@ -116,7 +117,7 @@ io.use(wrap(passport.session()));
 io.use((socket, next) => {
   if (socket.request.user) {
     console.log(socket.request.user.userName, "io.use socket")
-    socket.user = socket.request.user.userName;
+    // socket.user = socket.request.user.userName;
     // socket.userTimeZone = socket.request.session.timezone || 'UTC';
     // console.log(socket.request.session, "TIMEZONE")
     next();
@@ -282,7 +283,7 @@ lobby2.on("connection", (socket) => {
 
   socket.on("joinRoom", ({ username, room, _id }) => {
     const user = userJoin(session.socketID, username, room, _id);
-    // console.log("pkkkkkkkk", user)
+    console.log("pkkkkkkkk", user)
     socket.join(user.room);
 
 
@@ -308,7 +309,7 @@ lobby2.on("connection", (socket) => {
       room: user.room,
       users: getRoomUsers(user.room),
     });
-    console.log(botName, room, getRoomUsers(user.room))
+    console.log(botName, room, (user.room))
 
 //   });
 
@@ -317,7 +318,10 @@ lobby2.on("connection", (socket) => {
 //   // Listen for chatMessage
 
   socket.on("chatMessage", (msg) => {
+    console.log(socket.id)
     const user = getCurrentUser(socket.id);
+
+    console.log("User=", user, user.room)
        
     io.to(user.room).to("/lobby2").emit("message", formatMessage(user.username, msg, userTimeZone));
   });
