@@ -1,12 +1,12 @@
 module.exports = {
     getLobby: (req, res, next) => {
-        console.log("lobby test", req.user, req.query._id, req.params, req.session)
+        // console.log("lobby test", req.user, req.query._id, req.params, req.session)
         const _id = req.user._id
       res.render("lobby.ejs", { user: req.user, _id: _id, room: "The Lobby", session: req.session });
       next()
     },
     getRoom: (req, res, next) => {
-      console.log("from getRoom",req.user.userName, req.query._id, req.user._id, req.params.room)
+      // console.log("from getRoom",req.user.userName, req.query._id, req.user._id, req.params.room)
       // var sess = req.session
       const _id = req.user._id
       // sess.room = req.params.room

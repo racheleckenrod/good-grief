@@ -34,7 +34,7 @@ module.exports = {
         const likedPosts = await Post.find({ user: req.user.id }).sort({likes: "desc"}).lean();
         const comments = await Comment.find().sort({ createdAt: "asc" }).lean()
         const _id = req.user._id
-        console.log(likedPosts, "likedPosts from getWelcome")
+        // console.log(likedPosts, "likedPosts from getWelcome")
         res.render("welcome.ejs", { posts: posts, comments: comments, user: req.user, _id: _id, likedPosts: likedPosts });
       }catch (err) {
         console.log(err)
@@ -42,7 +42,7 @@ module.exports = {
 
     },
     postUserFeedback: async (req,res, next) => {
-      console.log("wowowo",req.body)
+      // console.log("wowowo",req.body)
       const validationErrors = [];
       if (!validator.isEmail(req.body.email))
         validationErrors.push({ msg: "Please enter a valid email address." });
@@ -79,7 +79,7 @@ module.exports = {
             } 
   },
   postGuestFeedback: async (req,res, next) => {
-    console.log("wowowoGUEST")
+    console.log("GUEST feedback")
     const validationErrors = [];
     if (!validator.isEmail(req.body.email))
       validationErrors.push({ msg: "Please enter a valid email address." });
@@ -148,7 +148,7 @@ module.exports = {
                   // save feedback?
                  
                   console.log(feedback, feedback._id, "winninging")
-                 console.log(req.body)
+                //  console.log(req.body)
                  req.flash("info", {
                   msg: `Your message was sent. Thank you, ${req.body.userName} for your feedback!`,
                 });

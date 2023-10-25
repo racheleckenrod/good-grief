@@ -29,7 +29,7 @@ exports.postLogin = (req, res, next) => {
   });
 
   req.session.timezone = req.body.timezone || "UTC"
-  console.log("timezone:", req.session.timezone, req.body.timezone, req.session)
+  // console.log("timezone:", req.session.timezone, req.body.timezone, req.session)
 
   passport.authenticate("local", (err, user, info) => {
     if (err) {
@@ -44,13 +44,13 @@ exports.postLogin = (req, res, next) => {
 
     
 
-    console.log(req.session, "first check")
+    // console.log(req.session, "first check")
     req.logIn(user, (err) => {
       if (err) {
         return next(err);
       }
       req.flash("success", { msg: "Success! You are logged in." });
-      console.log(req.body.timezone, "second check")
+      // console.log(req.body.timezone, "second check")
       User.findByIdAndUpdate(req.user.id, { $set: { timezone: userTimeZone }}, (err, user) => {
         if (err) {
           return next(err);

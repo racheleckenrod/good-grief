@@ -6,12 +6,12 @@ const User = require("../models/User");
 
 module.exports = {
   getProfile: async (req, res) => {
-    console.log(req.user, req.user.profilePicture)
+    // console.log(req.user, req.user.profilePicture)
     try {
       const posts = await Post.find({ user: req.user.id });
       const likedPosts = await Post.find({ user: req.user.id }).sort({likes: "desc"}).lean();
       const _id = req.user._id || 33333333
-      console.log(req.session, req.body.timezone)
+      // console.log(req.session, req.body.timezone)
       res.render("profile.ejs", { posts: posts, user: req.user, likedPosts: likedPosts, _id: _id });
     } catch (err) {
       console.log(err);
@@ -22,14 +22,14 @@ module.exports = {
       const posts = await Post.find({ user: req.user.id });
       const likedPosts = await Post.find({ user: req.user.id }).sort({likes: "desc"}).lean();
       const _id = req.user._id
-      console.log(req.user)
+      // console.log(req.user)
       res.render("editProfile.ejs", { posts: posts, user: req.user, likedPosts: likedPosts, _id: _id });
     } catch (err) {
       console.log(err);
     }
   },
   editProfile: async (req, res) => {
-    console.log(req.user, "editProfile")
+    // console.log(req.user, "editProfile")
      try {
  
         //  if(req.params ){
@@ -49,14 +49,14 @@ module.exports = {
           
        
        );
-       console.log("Updated editProfile() User",req.body );
+      //  console.log("Updated editProfile() User",req.body );
        res.redirect(`/profile`);
      } catch (err) {
        console.log(err);
      }
    },
   editProfilePic: async (req, res) => {
-   console.log(req.user, "editProfile")
+  //  console.log(req.user, "editProfile")
     try {
 
         if(req.params ){
@@ -64,9 +64,9 @@ module.exports = {
        
       //   // Upload image to cloudinary
         const result = await cloudinary.uploader.upload(req.file.path);
-        console.log(result)
+        // console.log(result)
         req.user.profilePicture = result.secure_url
-        console.log(req.user,req.body)
+        // console.log(req.user,req.body)
       }
       await User.findOneAndUpdate(
         { _id: req.params.id },
@@ -76,28 +76,28 @@ module.exports = {
          
       
       );
-      console.log("Updated editProfile() User",req.body );
+      // console.log("Updated editProfile() User",req.body );
       res.redirect(`/profile`);
     } catch (err) {
       console.log(err);
     }
   },
   createProfile: async (req, res) => {
-   console.log("createProfile")
+  //  console.log("createProfile")
     try {
 
       let user = await User.findById(req.params.id)
       const _id = req.user._id
-      console.log(user, "second")
+      // console.log(user, "second")
       const result = await cloudinary.uploader.upload(req.file.path);
-      console.log(result, user)
+      // console.log(result, user)
         const data = {
           profilePicture: result.secure_url || user.profilePicture
         };
         user = await User.findOneAndUpdate(req.params.id, data, {
           new: true
         });
-        console.log("after user", user, user.profilePicture)
+        // console.log("after user", user, user.profilePicture)
         // res.json(user);
       
         // Upload image to cloudinary
@@ -118,24 +118,24 @@ module.exports = {
          
       
       // );
-      console.log("Updated createProfile User", req.user.profilePicture );
+      // console.log("Updated createProfile User", req.user.profilePicture );
       res.redirect(`/profile`);
     } catch (err) {
       console.log(err);
     }
   },
   showProfile: async (req, res) => {
-    console.log("showprofile", req.params)
+    // console.log("showprofile", req.params)
     try {
       // const { id } = req.params.id
       const chatUser = await User.findOne( { _id: req.params.id } )
-      console.log("yessss",chatUser,"KOKOK")
+      // console.log("yessss",chatUser,"KOKOK")
       const posts = await Post.find({ user: chatUser }).populate('user');
       // console.log("yep", posts, "yoyoyo")
       const likedPosts = await Post.find({ user: chatUser}).sort({likes: "desc"}).lean();
       const _id = req.user._id
       const comments = await Comment.find().populate('user').sort({ createdAt: "asc" }).lean()
-      console.log(likedPosts.length, comments.length, "length of likedPost and comments")
+      // console.log(likedPosts.length, comments.length, "length of likedPost and comments")
       res.render("userProfile.ejs", { posts: posts, user: req.user, chatUser: chatUser, comments: comments, likedPosts: likedPosts, _id: _id });
     } catch (err) {
       console.log(err, "STOP!!");
@@ -146,7 +146,7 @@ module.exports = {
     try {
       const posts = await Post.find().populate('user').sort({ createdAt: "desc" }).lean();
       const comments = await Comment.find().populate('user').sort({ createdAt: "asc" }).lean()
-      console.log(posts,comments, "from getFeed")
+      // console.log(posts,comments, "from getFeed")
       const _id = req.user._id
 
       res.render("feed.ejs", { posts: posts, comments: comments, user: req.user, _id: _id });
@@ -171,7 +171,7 @@ module.exports = {
       const post = await Post.findById(req.params.id).populate('user');
       const comments = await Comment.find({post: req.params.id}).populate('user').sort({ createdAt: "desc" }).lean();
       const _id = req.user._id
-      console.log(post,comments, "from getPost")
+      // console.log(post,comments, "from getPost")
       res.render("post.ejs", { post: post, user: req.user, comments: comments, _id: _id });
     } catch (err) {
       console.log(err);
@@ -190,7 +190,7 @@ module.exports = {
     try {
       // Upload image to cloudinary
       const result = await cloudinary.uploader.upload(req.file.path);
-      console.log(result)
+      // console.log(result)
 
       await Post.create({
         title: req.body.title,
@@ -233,7 +233,7 @@ module.exports = {
       console.log("Likes +1");
       const posts = await Post.find().populate('user').sort({ createdAt: "desc" }).lean();
       const comments = await Comment.find().populate('user').sort({ createdAt: "asc" }).lean()
-      console.log(posts,comments, "from getFeed")
+      // console.log(posts,comments, "from getFeed")
       const _id = req.user._id
       res.render("feed.ejs", { posts: posts, comments: comments, user: req.user, _id: _id });
     } catch (err) {
@@ -261,7 +261,7 @@ module.exports = {
          
       
       );
-      console.log("Updated Post",req.body.title );
+      // console.log("Updated Post",req.body.title );
       res.redirect(`/post/${req.params.id}`);
     } catch (err) {
       console.log(err);

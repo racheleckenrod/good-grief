@@ -31,15 +31,6 @@ const rooms = ["The Lobby", "Child", "Parent", "Spouse/Partner", "Sibling", "Sui
 const users = [];
 const botName = "Grief Support Bot";
 
-// const {
-//   userJoin,
-//   getCurrentUser,
-//   userLeave,
-//   getRoomUsers,
-//   getAllUsers,
-// } = require("./utils/users");
-
-
 // new setup using sessionMiddleware for socket.io:
 const sessionMiddleware = session({
   secret: "goPackers",
@@ -101,11 +92,11 @@ lobby2.use(wrap(passport.session()));
 
 lobby2.use((socket, next) => {
   if (socket.request.user) {
-    console.log(socket.request.user.userName, socket.id,"lobby2.use")
+    // console.log(socket.request.user.userName, socket.id,"lobby2.use")
     socket.user = socket.request.user.userName
     next();
   } else {
-    next(new Error('unauthorized by rachel'))
+    next(new Error('unauthorized'))
   }
 });
 
@@ -115,51 +106,19 @@ io.use(wrap(passport.session()));
 
 io.use((socket, next) => {
   if (socket.request.user) {
-    console.log(socket.request.user.userName, "io.use socket")
+    // console.log(socket.request.user.userName, "io.use socket")
     socket.user = socket.request.user.userName;
-    // socket.userTimeZone = socket.request.session.timezone || 'UTC';
-    // console.log(socket.request.session, "TIMEZONE")
+   
     next();
   } else {
-    next(new Error('unauthorized by rachel'))
+    next(new Error('unauthorized'))
   }
 });
  
 
-// Namespace
-// const lobbyNamespace = io.of("/lobby");
-
-// lobbyNamespace.use((socket, next) => {
-//   if (socket.request.user) {
-//     console.log(socket.request.user.userName, "io.use lobbyNamespace socket")
-//     socket.user = socket.request.user.userName
-//     next();
-//   } else {
-//     next(new Error('unauthorized by rachel'))
-//   }
-// });
-
-
-// lobbyNamespace.on("connection", (socket) => {
-//   console.log("LOBBBBBBY", socket.user)
-
-//   // socket.emit("hello", "world")
-//   socket.join(rooms)
-//   console.log("LOBBBBBBY", socket.user)
-//   console.log("Hee HOHO hee", socket.user, socket.rooms)
-
-// })
-
-
-// // // Join user to chat
-// function userJoin(id, username, room, _id) {
-//   const user = { id, username, room, _id };
-//   users.push(user);
-//   return user;
-// }
-
 // // Get current user
 function getCurrentUser(id) {
+  // console.log("getting current user", id)
   return users.find(user => user.id === id);
 }
 
@@ -183,38 +142,14 @@ function userJoin(id, username, room, _id) {
   return user;
 }
 
-// // // Get current user
-// function getCurrentUser(id) {
-//   return users.find(user => user.id === id);
-// }
-
-// // User leaves chat
-// function userLeave(id) {
-//   const index = users.findIndex(user => user.id === id);
-//   if (index !== -1) {
-//     return users.splice(index, 1)[0];
-//   }
-// }
-
-// // // Get room users
-// function getRoomUsers(room) {
-//   return users.filter(user => user.room === room);
-// }
-
  
 // run when Lobby connects
 lobby2.on("connection", (socket) => {
   // console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.request.params}`, socket.id, socket.nsp.name);
-
-  // lobby2.on('connect', (socket) => {
-    // socket.on("whoami", (cb) => {
-    //   cb(socket.request.user ? socket.request.user.username : "");
-    // });
-    // })
   
     const session = socket.request.session;
     const userTimeZone = socket.request.user.timezone
-    console.log(`lobby2 saving ${socket.request.user.userName} in socket: ${socket.id} in session: ${session.id}`);
+    // console.log(`lobby2 saving ${socket.request.user.userName} in socket: ${socket.id} in session: ${session.id}`);
     session.socketID = socket.id;
     session.save();
   
@@ -228,14 +163,14 @@ setInterval(() => {
   
   lobby2.emit('timeData', localTime);}, 1000);
 
-  lobby2.emit("hi", formatMessage(`${socket.request.user.userName}`,"hello everyone!   ", userTimeZone));
+  // lobby2.emit("hi", formatMessage(`${socket.request.user.userName}`,"hello everyone!   ", userTimeZone));
 
   lobby2.emit("timeClock", `It's about time... ${socket.request.user.userName}, Connected= ${socket.connected}, socketID: ${socket.id}`)
 
   lobby2.emit("messageLobby", formatMessage(botName, `Welcome to Live Grief Support Lobby, ${socket.request.user.userName}.`, userTimeZone));
 
 // lobby2.on("connection", (socket) => {
-  console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.request}`, socket.id, socket.nsp.name);
+  // console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.request}`, socket.id, socket.nsp.name);
   // console.log(session, "LOBBY2");
 
 // handle connections -lobby 
@@ -245,13 +180,15 @@ setInterval(() => {
 // connect lobby2 to all other rooms
   // lobby2.in(session.socketID).socketsJoin(rooms);
 
+  
+
   socket.join("The Lobby")
-  console.log(socket.rooms)
+  // console.log(socket.rooms)
 
   lobby2.on("disconnect", (reason) => {
     const user = userLeave(socket.id);
 
-    console.log(`${socket.user} disconnected because ${reason}`)
+    console.log(`${socket.user} disconnected from lobby because ${reason}`)
   })
 });
  
@@ -259,19 +196,19 @@ setInterval(() => {
 
 // // // Run when CHAT client connects
 io.on("connection", (socket) => {
-  console.log('New WS server.js Connection', "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer);
+  // console.log('New WS server.js Connection', "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer);
 
   // socket.data.username = socket.request.user.userName
   const session = socket.request.session;
   const userTimeZone = socket.request.user.timezone
-  console.log(`io saving ${socket.request.user.userName} sid ${socket.id} in session ${session.id}`);
+  // console.log(`io saving ${socket.request.user.userName} sid ${socket.id} in session ${session.id}`);
   session.socketID = socket.id;
   // session.room = user.room
   session.save();
 
 // handle connections -lobby 
 // io.on('connection', socket => {
-  console.log(`Client ${socket.request.user.userName} connected`, new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
+  // console.log(`Client ${socket.request.user.userName} connected`, new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
 
   socket.emit('timeClock', `It's about time... ${socket.request.user.userName} Connected = ${socket.connected}`);
 
@@ -282,7 +219,7 @@ io.on("connection", (socket) => {
 
   socket.on("joinRoom", ({ username, room, _id }) => {
     const user = userJoin(session.socketID, username, room, _id);
-    console.log("pkkkkkkkk", user)
+    // console.log("pkkkkkkkk", user)
     socket.join(user.room);
 
 
@@ -291,7 +228,7 @@ io.on("connection", (socket) => {
 
 
  // attempting to send from one namespace to the other
- lobby2.emit("testmessage",  formatMessage(botName, `Welcome to TEST ${user.room} Live Grief Support, ${user.username}!`, userTimeZone));
+//  lobby2.emit("testmessage",  formatMessage(botName, `Welcome to TEST ${user.room} Live Grief Support, ${user.username}!`, userTimeZone));
 
 // // Broadcast when a user connects
 //     io.broadcast
@@ -301,14 +238,14 @@ io.on("connection", (socket) => {
 //         "message",  formatMessage(botName,`${user.username} has joined the chat`)
 //       );
 
-      console.log(users)
+      // console.log(users)
 
 
     io.to(user.room).emit("roomUsers", {
       room: user.room,
       users: getRoomUsers(user.room),
     });
-    console.log(botName, room, getRoomUsers(user.room))
+    // console.log(botName, room, getRoomUsers(user.room))
 
 //   });
 
