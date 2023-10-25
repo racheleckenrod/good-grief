@@ -321,9 +321,9 @@ lobby2.on("connection", (socket) => {
     console.log(socket.id)
     const user = getCurrentUser(socket.id);
 
-    console.log("User=", user, user.room)
+    console.log("User=", user)
        
-    io.to(user.room).to("/lobby2").emit("message", formatMessage(user.username, msg, userTimeZone));
+    io.to("The Lobby").to("/lobby2").emit("message", formatMessage(user.username, msg, userTimeZone));
   });
 
 
