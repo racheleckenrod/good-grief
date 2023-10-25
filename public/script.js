@@ -14,25 +14,24 @@ const lobbySocket = io('/lobby2')
 const id = lobbySocket.id;
 
 
-
-console.log("script.js", lobbySocket)
+console.log("script.js", lobbySocket, id)
 let timeClock =  document.getElementById('time');
 
 
-lobbySocket.on('testmessage',(message) => {
+lobbySocket.on('hi',(message) => {
     console.log("OOO", message)
     outputMessage(message, room);
 })
 
 
-lobbySocket.on('testmessage',(message) => {
-    console.log("OOO", message)
+lobbySocket.on('messageLobby',(message) => {
+    console.log("OOO111", message)
     outputMessage(message, room);
 })
 
 
 lobbySocket.on('timeClock', data => {
-  console.log(data,"Personal", "connected?", lobbySocket.connected)
+  console.log("Nothing",data,"Personal", "connected?", lobbySocket.connected)
   // timeClock.innerHTML = `${data.map(user => `<li class="${user.username}" >${user.username}</li>`).join('')}`
 
   timeClock.innerHTML = data
@@ -41,7 +40,7 @@ lobbySocket.on('timeClock', data => {
 
 lobbySocket.on('timeData', (timeString2) => {
   el = document.getElementById('currently');
-  el.innerHTML = 'Current time: ' + timeString2;
+  el.innerHTML = 'Currently: ' + timeString2;
 
 })
 
@@ -70,17 +69,17 @@ lobbySocket.on('timeData', (timeString2) => {
 //     outputMessage(message, room);
   
   // })
-  // function outputMessage(message, room) {
-  //   const div = document.createElement('div');
-  //   div.classList.add('message');
-  //   // div.classList.add(`${room}`);
-  //   div.innerHTML = `<p class="meta">${message.username} <span>${message.time}</span></p>
-  //   <p class="text">
-  //     ${message.text}
-  //   </p>`;
-  //   document.querySelector(`.chat-messages`).appendChild(div);
+  function outputMessage(message, room) {
+    const div = document.createElement('div');
+    div.classList.add('message');
+    // div.classList.add(`${room}`);
+    div.innerHTML = `<p class="meta">${message.username} <span>${message.time}</span></p>
+    <p class="text">
+      ${message.text}
+    </p>`;
+    document.querySelector(`.chat-messages`).appendChild(div);
 
-  // }
+  }
 
 
   // // Add users to DOM

@@ -27,7 +27,7 @@ const commentRoutes = require("./routes/comments");
 const chatRoutes = require("./routes/chat")
 // const chatsController = require("./controllers/chats")
 
-const rooms = ["lobby", "Child", "Parent", "Spouse/Partner", "Sibling", "Suicide", "Terminal", "Friend", "Community Tragety", "Different"]
+const rooms = ["The Lobby", "Child", "Parent", "Spouse/Partner", "Sibling", "Suicide", "Terminal", "Friend", "Community Tragety", "Different"]
 const users = [];
 const botName = "Grief Support Bot";
 
@@ -101,7 +101,7 @@ lobby2.use(wrap(passport.session()));
 
 lobby2.use((socket, next) => {
   if (socket.request.user) {
-    console.log(socket.request.user.userName, "lobby2.use lobby2 socket")
+    console.log(socket.request.user.userName, socket.id,"lobby2.use")
     socket.user = socket.request.user.userName
     next();
   } else {
@@ -117,8 +117,8 @@ io.use((socket, next) => {
   if (socket.request.user) {
     console.log(socket.request.user.userName, "io.use socket")
     socket.user = socket.request.user.userName;
-    socket.userTimeZone = socket.request.session.timezone || 'UTC';
-    console.log(socket.request.session, "TIMEZONE")
+    // socket.userTimeZone = socket.request.session.timezone || 'UTC';
+    // console.log(socket.request.session, "TIMEZONE")
     next();
   } else {
     next(new Error('unauthorized by rachel'))
@@ -127,28 +127,28 @@ io.use((socket, next) => {
  
 
 // Namespace
-const lobbyNamespace = io.of("/lobby");
+// const lobbyNamespace = io.of("/lobby");
 
-lobbyNamespace.use((socket, next) => {
-  if (socket.request.user) {
-    console.log(socket.request.user.userName, "io.use lobbyNamespace socket")
-    socket.user = socket.request.user.userName
-    next();
-  } else {
-    next(new Error('unauthorized by rachel'))
-  }
-});
+// lobbyNamespace.use((socket, next) => {
+//   if (socket.request.user) {
+//     console.log(socket.request.user.userName, "io.use lobbyNamespace socket")
+//     socket.user = socket.request.user.userName
+//     next();
+//   } else {
+//     next(new Error('unauthorized by rachel'))
+//   }
+// });
 
 
-lobbyNamespace.on("connection", (socket) => {
-  console.log("LOBBBBBBY", socket.user)
+// lobbyNamespace.on("connection", (socket) => {
+//   console.log("LOBBBBBBY", socket.user)
 
-  // socket.emit("hello", "world")
-  socket.join(rooms)
-  console.log("LOBBBBBBY", socket.user)
-  console.log("Hee HOHO hee", socket.user, socket.rooms)
+//   // socket.emit("hello", "world")
+//   socket.join(rooms)
+//   console.log("LOBBBBBBY", socket.user)
+//   console.log("Hee HOHO hee", socket.user, socket.rooms)
 
-})
+// })
 
 
 // // // Join user to chat
@@ -214,7 +214,7 @@ lobby2.on("connection", (socket) => {
   
     const session = socket.request.session;
     const userTimeZone = socket.request.user.timezone
-    console.log(`lobby2 saving ${socket.request.user.userName} sid ${socket.id} in session ${session.id}`);
+    console.log(`lobby2 saving ${socket.request.user.userName} in socket: ${socket.id} in session: ${session.id}`);
     session.socketID = socket.id;
     session.save();
   
@@ -228,14 +228,14 @@ setInterval(() => {
   
   lobby2.emit('timeData', localTime);}, 1000);
 
-  lobby2.emit("hi", formatMessage(`${socket.request.user.userName}`,"hello everyone!   "));
+  lobby2.emit("hi", formatMessage(`${socket.request.user.userName}`,"hello everyone!   ", userTimeZone));
 
   lobby2.emit("timeClock", `It's about time... ${socket.request.user.userName}, Connected= ${socket.connected}, socketID: ${socket.id}`)
 
-  lobby2.emit("messageLobby", formatMessage(botName, `Welcome to Live Grief Support Lobby, ${socket.request.user.userName}.`));
+  lobby2.emit("messageLobby", formatMessage(botName, `Welcome to Live Grief Support Lobby, ${socket.request.user.userName}.`, userTimeZone));
 
 // lobby2.on("connection", (socket) => {
-  console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.request.params}`, socket.id, socket.nsp.name);
+  console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.request}`, socket.id, socket.nsp.name);
   // console.log(session, "LOBBY2");
 
 // handle connections -lobby 
@@ -243,9 +243,9 @@ setInterval(() => {
   // console.log('Client connected', new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
 
 // connect lobby2 to all other rooms
-  lobby2.in(session.socketID).socketsJoin(rooms);
+  // lobby2.in(session.socketID).socketsJoin(rooms);
 
-  // socket.join(rooms)
+  socket.join("The Lobby")
   console.log(socket.rooms)
 
   lobby2.on("disconnect", (reason) => {
@@ -276,13 +276,13 @@ io.on("connection", (socket) => {
   socket.emit('timeClock', `It's about time... ${socket.request.user.userName} Connected = ${socket.connected}`);
 
 // lobby2.on("connection", (socket) => {
-//   console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.handshake.params}`, socket.id, socket.nsp.name);
+//   console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.handshake.params}`, socket.id, socket.nsp.name);})
 //   console.log(session, "LOBBY2");
 //   console.log("GOGOOGOG", socket.handshake._query)
 
   socket.on("joinRoom", ({ username, room, _id }) => {
     const user = userJoin(session.socketID, username, room, _id);
-    // console.log("pkkkkkkkk", user)
+    console.log("pkkkkkkkk", user)
     socket.join(user.room);
 
 
@@ -341,20 +341,20 @@ io.on("connection", (socket) => {
 //       );
 
 
-    if (user) {
-      io.to(user.room).emit(
-        "message",
-        formatMessage(botName, `${user.username} has left the chat because: ${reason}`, userTimeZone)
-      );
+    // if (user) {
+      // io.to(user.room).emit(
+      //   "message",
+      //   formatMessage(botName, `${user.username} has left the chat because: ${reason}`, userTimeZone)
+      // );
 
 
       // Send users and room info
 
-      io.to(user.room).emit("roomUsers", {
-        room: user.room,
-        users: getRoomUsers(user.room),
-      });
-    }
+      // io.to(user.room).emit("roomUsers", {
+      //   room: user.room,
+      //   users: getRoomUsers(user.room),
+      // });
+    // }
   });
 });
 // })
