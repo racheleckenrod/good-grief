@@ -262,7 +262,7 @@ setInterval(() => {
 io.on("connection", (socket) => {
   console.log('New WS server.js Connection', "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer);
 
-  // socket.data.username = socket.request.user.userName
+  socket.data.username = socket.request.user.userName
   const session = socket.request.session;
   const userTimeZone = socket.request.user.timezone
   console.log(`io saving ${socket.request.user.userName} sid ${socket.id} in session ${session.id}`);
@@ -291,17 +291,6 @@ lobby2.on("connection", (socket) => {
     socket.emit("message", formatMessage(botName, `Welcome to ${user.room} Live Grief Support, ${user.username}!`, userTimeZone));
 
 
- // attempting to send from one namespace to the other
-//  lobby2.emit("testmessage",  formatMessage(botName, `Welcome to TEST ${user.room} Live Grief Support, ${user.username}!`, userTimeZone));
-
-// // Broadcast when a user connects
-//     io.broadcast
-//       .to(user.room)
-//       .to("lobby")
-//       .emit(
-//         "message",  formatMessage(botName,`${user.username} has joined the chat`)
-//       );
-
       console.log(users)
 
 
@@ -319,7 +308,7 @@ lobby2.on("connection", (socket) => {
 
   socket.on("chatMessage", (msg) => {
     console.log(socket.id)
-    const user = getCurrentUser(socket.id);
+    // const user = getCurrentUser(socket.id);
 
     console.log("User=", user)
        
