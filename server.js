@@ -292,7 +292,7 @@ lobby2.on("connection", (socket) => {
 
 
  // attempting to send from one namespace to the other
- lobby2.emit("testmessage",  formatMessage(botName, `Welcome to TEST ${user.room} Live Grief Support, ${user.username}!`, userTimeZone));
+//  lobby2.emit("testmessage",  formatMessage(botName, `Welcome to TEST ${user.room} Live Grief Support, ${user.username}!`, userTimeZone));
 
 // // Broadcast when a user connects
 //     io.broadcast
@@ -313,7 +313,7 @@ lobby2.on("connection", (socket) => {
 
 //   });
 
-  });
+
 
 //   // Listen for chatMessage
 
@@ -326,7 +326,7 @@ lobby2.on("connection", (socket) => {
     io.to("The Lobby").to("/lobby2").emit("message", formatMessage(user.username, msg, userTimeZone));
   });
 
-
+});
 // Runs when client disconnects
   socket.on("disconnect", (reason) => {
     // io.emit("message",  formatMessage(botName,'a user has left the chat'))
