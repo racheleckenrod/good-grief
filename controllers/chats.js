@@ -1,8 +1,19 @@
+const { session } = require("passport");
+
 module.exports = {
     getLobby: (req, res, next) => {
         // console.log("lobby test", req.user, req.query._id, req.params, req.session)
-        const _id = req.user._id
-      res.render("lobby.ejs", { user: req.user, _id: _id, room: "The Lobby", session: req.session });
+        if (req.user) {
+          const _id = req.user._id
+          console.log("getLobby",_id, req.user._id)
+          res.render("lobby.ejs", { userName: req.user.userName, _id: _id, room: "The Lobby", session: req.session });
+        } else {
+          const _id = req.session._id
+          console.log("getLobby", _id, req.session._id)
+
+          res.render("lobby.ejs", { userName: req.session.userName, _id: _id, room: "The Lobby", session: req.session })
+        }
+       
       next()
     },
     getRoom: (req, res, next) => {

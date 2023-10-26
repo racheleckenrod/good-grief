@@ -10,13 +10,13 @@ const _id =  document.getElementById('_id').innerHTML;
 
 const socket = io();
 const id = socket.id;
-const lobbySocket = io('/lobby2')
+// const lobbySocket = io('/lobby2')
 
 // console.log("mainJS", socket, socket.connected, socket.id)
 
 let timeClock =  document.getElementById('time');
 
-lobbySocket.on('timeClock', data => {
+socket.on('timeClock', data => {
   // console.log("Nothing",data,"Personal", "connected?", lobbySocket.connected)
  
   timeClock.innerHTML = data
@@ -24,7 +24,7 @@ lobbySocket.on('timeClock', data => {
 
 })
 
-lobbySocket.on('timeData', (timeString2) => {
+socket.on('timeData', (timeString2) => {
   el = document.getElementById('currently');
   el.innerHTML = 'Currently: ' + timeString2;
 

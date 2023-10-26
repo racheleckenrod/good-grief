@@ -6,7 +6,7 @@ const chatsController = require("../controllers/chats");
 const { ensureAuth, ensureGuest } = require("../middleware/auth");
 
 //Chat Routes - simplified for now
-router.get("/", ensureAuth, chatsController.getLobby);
+router.get("/", chatsController.getLobby);
 router.get("/room/:room", ensureAuth, chatsController.getRoom);
 
 

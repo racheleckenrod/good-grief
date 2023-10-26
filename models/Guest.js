@@ -9,6 +9,6 @@ const GuestSchema = new mongoose.Schema({
       default: Date.now,
     },
   
-  })
+  });
 
   module.exports = mongoose.model("Guest", GuestSchema);

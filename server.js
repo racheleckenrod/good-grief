@@ -25,11 +25,12 @@ const mainRoutes = require("./routes/main");
 const postRoutes = require("./routes/posts");
 const commentRoutes = require("./routes/comments");
 const chatRoutes = require("./routes/chat");
-// const chatsController = require("./controllers/chats")
+const GuestUserID = require("./models/GuestUserID");
+const generateGuestID = require("./utils/guestUserIDs")
 
-const rooms = ["The Lobby", "Child", "Parent", "Spouse/Partner", "Sibling", "Suicide", "Terminal", "Friend", "Community Tragety", "Different"]
 const users = [];
 const botName = "Grief Support Bot";
+
 
 // const {
 //   userJoin,
@@ -89,77 +90,52 @@ app.use(passport.session());
 //Use flash messages for errors, info, ect...
 app.use(flash());
 
+// create guestUserID for guests
+app.use(async (req, res, next) => {
+  if (!req.session._id) {
+    const { guestID } = await generateGuestID();
+
+    const guestUser = await GuestUserID.findOne({ guestUserID: guestID });
+
+    if (guestUser) {
+      req.session._id = guestUser._id;
+      req.session.userName = guestUser.userName;
+      req.session.timezone = guestUser.timezone
+    }
+
+  }
+  console.log("app.use", req.session)
+  next();
+})
+
 // convert a connect middleware to a Socket.IO middleware
 const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
 
-// Custom namespace
-const lobby2 = io.of("/lobby2");
-
-lobby2.use(wrap(sessionMiddleware));
-lobby2.use(wrap(passport.initialize()));
-lobby2.use(wrap(passport.session()));
-
-lobby2.use((socket, next) => {
-  if (socket.request.user) {
-    console.log(socket.request.user.userName, socket.id,"lobby2.use")
-    socket.user = socket.request.user.userName
-    next();
-  } else {
-    next(new Error('unauthorized by rachel'))
-  }
-});
 
 io.use(wrap(sessionMiddleware));
 io.use(wrap(passport.initialize()));
 io.use(wrap(passport.session()));
 
 io.use((socket, next) => {
+  console.log("first things")
   if (socket.request.user) {
-    console.log(socket.request.user.userName, "io.use socket")
-    // socket.user = socket.request.user.userName;
-    // socket.userTimeZone = socket.request.session.timezone || 'UTC';
-    // console.log(socket.request.session, "TIMEZONE")
-    next();
+    console.log("second")
+    socket.user = socket.request.user.userName;
+  console.log("third")
   } else {
-    next(new Error('unauthorized by rachel'))
+    console.log('forth')
+    socket.user = socket.request.session.userName
+    console.log('fifth')
   }
+console.log('sixth')
+  // join everyone to the lobby
+  // socket.join('The Lobby');
+  console.log("joined the lobby", socket.user)
+  next();
 });
  
 
-// Namespace
-// I dont think I need the namespace
-// const lobbyNamespace = io.of("/lobby");
-
-// lobbyNamespace.use((socket, next) => {
-//   if (socket.request.user) {
-//     console.log(socket.request.user.userName, "io.use lobbyNamespace socket")
-//     socket.user = socket.request.user.userName
-//     next();
-//   } else {
-//     next(new Error('unauthorized by rachel'))
-//   }
-// });
-
-
-// lobbyNamespace.on("connection", (socket) => {
-//   console.log("LOBBBBBBY", socket.user)
-
-//   // socket.emit("hello", "world")
-//   socket.join(rooms)
-//   console.log("LOBBBBBBY", socket.user)
-//   console.log("Hee HOHO hee", socket.user, socket.rooms)
-
-// })
-
-
-// // // Join user to chat
-// function userJoin(id, username, room, _id) {
-//   const user = { id, username, room, _id };
-//   users.push(user);
-//   return user;
-// }
-
-// // Get current user
+// Get current user
 function getCurrentUser(id) {
   return users.find(user => user.id === id);
 }
@@ -204,7 +180,7 @@ function userJoin(id, username, room, _id) {
 
  
 // run when Lobby connects
-lobby2.on("connection", (socket) => {
+io.on("connection", (socket) => {
   // console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.request.params}`, socket.id, socket.nsp.name);
 
   // lobby2.on('connect', (socket) => {
@@ -214,8 +190,8 @@ lobby2.on("connection", (socket) => {
     // })
   
     const session = socket.request.session;
-    const userTimeZone = socket.request.user.timezone
-    console.log(`lobby2 saving ${socket.request.user.userName} in socket: ${socket.id} in session: ${session.id}`);
+    const userTimeZone = socket.request.timezone 
+    // console.log(`lobby2 saving ${socket.request.user.userName} in socket: ${socket.id} in session: ${session.id}`);
     session.socketID = socket.id;
     session.save();
   
@@ -227,16 +203,16 @@ setInterval(() => {
   const localTime = moment.tz(userTimeZone).format('dddd, MMMM D, YYYY h:mm:ss a');
 
   
-  lobby2.emit('timeData', localTime);}, 1000);
+  io.emit('timeData', localTime);}, 1000);
 
-  lobby2.emit("hi", formatMessage(`${socket.request.user.userName}`,"hello everyone!   ", userTimeZone));
+  // io.emit("hi", formatMessage(`${socket.request.user.userName}`,"hello everyone!   ", userTimeZone));
+console.log(socket.user, "TESTING")
+  io.emit("timeClock", `It's about time... ${socket.request.userName || socket.request.userName}, Connected= ${socket.connected}, socketID: ${socket.id}`)
 
-  lobby2.emit("timeClock", `It's about time... ${socket.request.user.userName}, Connected= ${socket.connected}, socketID: ${socket.id}`)
-
-  lobby2.emit("messageLobby", formatMessage(botName, `Welcome to Live Grief Support Lobby, ${socket.request.user.userName}.`, userTimeZone));
+  io.emit("messageLobby", formatMessage(botName, `Welcome to Live Grief Support Lobby, ${socket.request.userName}.`, userTimeZone));
 
 // lobby2.on("connection", (socket) => {
-  console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.request}`, socket.id, socket.nsp.name);
+  // console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.request}`, socket.id, socket.nsp.name);
   // console.log(session, "LOBBY2");
 
 // handle connections -lobby 
@@ -246,10 +222,10 @@ setInterval(() => {
 // connect lobby2 to all other rooms
   // lobby2.in(session.socketID).socketsJoin(rooms);
 
-  socket.join("The Lobby")
+  // socket.join("The Lobby")
   // console.log(socket.rooms)
 
-  lobby2.on("disconnect", (reason) => {
+  io.on("disconnect", (reason) => {
     const user = userLeave(socket.id);
 
     console.log(`${socket.user} disconnected because ${reason}`)
@@ -262,22 +238,22 @@ setInterval(() => {
 io.on("connection", (socket) => {
   console.log('New WS server.js Connection', "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer);
 
-  socket.data.username = socket.request.user.userName
+  socket.data.username = socket.request.userName
   const session = socket.request.session;
-  const userTimeZone = socket.request.user.timezone
-  console.log(`io saving ${socket.request.user.userName} sid ${socket.id} in session ${session.id}`);
+  const userTimeZone = socket.request.timezone
+  console.log(`io saving ${socket.user} sid ${socket.id} in session ${session.id}`);
   session.socketID = socket.id;
   // session.room = user.room
   session.save();
 
 // handle connections -lobby 
 // io.on('connection', socket => {
-  console.log(`Client ${socket.request.user.userName} connected`, new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
+  console.log(`Client ${socket.user} connected`, new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
 
-  socket.emit('timeClock', `It's about time... ${socket.request.user.userName} Connected = ${socket.connected}`);
+  socket.emit('timeClock', `It's about time... ${socket.user} Connected = ${socket.connected}`);
 
-lobby2.on("connection", (socket) => {
-  console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.handshake.params}`, socket.id, socket.nsp.name);})
+io.on("connection", (socket) => {
+  console.log(`${socket.request.userName} connected on lobby2 in room ${socket.handshake.params}`, socket.id, socket.nsp.name);})
 //   console.log(session, "LOBBY2");
 //   console.log("GOGOOGOG", socket.handshake._query)
 
@@ -312,7 +288,7 @@ lobby2.on("connection", (socket) => {
 
     console.log("User=", user)
        
-    io.to("The Lobby").to("/lobby2").emit("message", formatMessage(user.username, msg, userTimeZone));
+    // io.to("The Lobby").to("/lobby2").emit("message", formatMessage(user.username, msg, userTimeZone));
   });
 
 });
