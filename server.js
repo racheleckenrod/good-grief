@@ -160,34 +160,10 @@ function userJoin(id, username, room, _id) {
   return user;
 }
 
-// // // Get current user
-// function getCurrentUser(id) {
-//   return users.find(user => user.id === id);
-// }
-
-// // User leaves chat
-// function userLeave(id) {
-//   const index = users.findIndex(user => user.id === id);
-//   if (index !== -1) {
-//     return users.splice(index, 1)[0];
-//   }
-// }
-
-// // // Get room users
-// function getRoomUsers(room) {
-//   return users.filter(user => user.room === room);
-// }
-
  
 // run when Lobby connects
 io.on("connection", (socket) => {
   // console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.request.params}`, socket.id, socket.nsp.name);
-
-  // lobby2.on('connect', (socket) => {
-    // socket.on("whoami", (cb) => {
-    //   cb(socket.request.user ? socket.request.user.username : "");
-    // });
-    // })
   
     const session = socket.request.session;
     const userTimeZone = socket.request.timezone 
@@ -199,64 +175,34 @@ io.on("connection", (socket) => {
   // broadcast updates
 
 
-setInterval(() => {
-  const localTime = moment.tz(userTimeZone).format('dddd, MMMM D, YYYY h:mm:ss a');
-
+    setInterval(() => {
+    const localTime = moment.tz(userTimeZone).format('dddd, MMMM D, YYYY h:mm:ss a');
   
-  io.emit('timeData', localTime);}, 1000);
+    io.emit('timeData', localTime);}, 1000);
 
-  // io.emit("hi", formatMessage(`${socket.request.user.userName}`,"hello everyone!   ", userTimeZone));
-console.log(socket.user, "TESTING")
-  io.emit("timeClock", `It's about time... ${socket.request.userName || socket.request.userName}, Connected= ${socket.connected}, socketID: ${socket.id}`)
+    io.emit("timeClock", `It's about time... ${socket.user}, Connected= ${socket.connected}, socketID: ${socket.id}`)
 
-  io.emit("messageLobby", formatMessage(botName, `Welcome to Live Grief Support Lobby, ${socket.request.userName}.`, userTimeZone));
+   
 
-// lobby2.on("connection", (socket) => {
-  // console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.request}`, socket.id, socket.nsp.name);
-  // console.log(session, "LOBBY2");
 
-// handle connections -lobby 
-// io.on('connection', socket => {
-  // console.log('Client connected', new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
-
-// connect lobby2 to all other rooms
-  // lobby2.in(session.socketID).socketsJoin(rooms);
-
-  // socket.join("The Lobby")
-  // console.log(socket.rooms)
 
   io.on("disconnect", (reason) => {
     const user = userLeave(socket.id);
 
     console.log(`${socket.user} disconnected because ${reason}`)
   })
-});
- 
- 
 
-// // // Run when CHAT client connects
-io.on("connection", (socket) => {
-  console.log('New WS server.js Connection', "socket.connected=", socket.connected, socket.id,socket.handshake.headers.referer);
+ 
 
   socket.data.username = socket.request.userName
-  const session = socket.request.session;
-  const userTimeZone = socket.request.timezone
-  console.log(`io saving ${socket.user} sid ${socket.id} in session ${session.id}`);
+ 
+  // console.log(`io saving ${socket.user} sid ${socket.id} in session ${session.id}`);
   session.socketID = socket.id;
   // session.room = user.room
   session.save();
 
-// handle connections -lobby 
-// io.on('connection', socket => {
-  console.log(`Client ${socket.user} connected`, new Date().toLocaleTimeString(), socket.id, socket.handshake.headers.referer);
 
-  socket.emit('timeClock', `It's about time... ${socket.user} Connected = ${socket.connected}`);
-
-io.on("connection", (socket) => {
-  console.log(`${socket.request.userName} connected on lobby2 in room ${socket.handshake.params}`, socket.id, socket.nsp.name);})
-//   console.log(session, "LOBBY2");
-//   console.log("GOGOOGOG", socket.handshake._query)
-
+  
   socket.on("joinRoom", ({ username, room, _id }) => {
     const user = userJoin(session.socketID, username, room, _id);
     console.log("pkkkkkkkk", user)
@@ -265,6 +211,8 @@ io.on("connection", (socket) => {
 
 // Welcome current user
     socket.emit("message", formatMessage(botName, `Welcome to ${user.room} Live Grief Support, ${user.username}!`, userTimeZone));
+
+    io.emit("messageLobby", formatMessage(botName, `Welcome to Live Grief Support Lobby, ${socket.request.userName}.`, userTimeZone));
 
 
       console.log(users)
@@ -276,11 +224,10 @@ io.on("connection", (socket) => {
     });
     console.log(botName, room, (user.room))
 
-//   });
 
 
 
-//   // Listen for chatMessage
+   // Listen for chatMessage
 
   socket.on("chatMessage", (msg) => {
     console.log(socket.id)
@@ -291,16 +238,22 @@ io.on("connection", (socket) => {
     // io.to("The Lobby").to("/lobby2").emit("message", formatMessage(user.username, msg, userTimeZone));
   });
 
+// Send users and room info
+  io.to(user.room).emit("roomUsers", {
+    room: user.room,
+    users: getRoomUsers(user.room),
+  });
+
 });
 // Runs when client disconnects
-  socket.on("disconnect", (reason) => {
-    // io.emit("message",  formatMessage(botName,'a user has left the chat'))
-    const user = userLeave(socket.id);
-    if(user) {
-      console.log(`${user.username} disconnected from ${user.room} because reason: ${reason}`)
-    }else{
-      console.log(`Disconnected because reason: ${reason}`)
-    }
+  // socket.on("disconnect", (reason) => {
+  //   // io.emit("message",  formatMessage(botName,'a user has left the chat'))
+  //   const user = userLeave(socket.id);
+  //   if(user) {
+  //     console.log(`${user.username} disconnected from ${user.room} because reason: ${reason}`)
+  //   }else{
+  //     console.log(`Disconnected because reason: ${reason}`)
+  //   }
    
 
 //     if (user) {
@@ -310,22 +263,18 @@ io.on("connection", (socket) => {
 //       );
 
 
-    if (user) {
-      io.to(user.room).emit(
-        "message",
-        formatMessage(botName, `${user.username} has left the chat because: ${reason}`, userTimeZone)
-      );
+    // if (user) {
+    //   io.to(user.room).emit(
+    //     "message",
+    //     formatMessage(botName, `${user.username} has left the chat because: ${reason}`, userTimeZone)
+    //   );
 
 
-      // Send users and room info
+      
 
-      io.to(user.room).emit("roomUsers", {
-        room: user.room,
-        users: getRoomUsers(user.room),
-      });
-    }
-  });
+    // }
 });
+// });
 // })
 
 //Setup Routes For Which The Server Is Listening

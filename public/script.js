@@ -20,7 +20,7 @@ socket.on('timeClock', data => {
   // console.log("Nothing",data,"Personal", "connected?", lobbySocket.connected)
  
   timeClock.innerHTML = data
-  console.log("script.js2", lobbySocket, id)
+  console.log("script.js2", socket, id)
 
 })
 
