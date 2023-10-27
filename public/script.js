@@ -39,7 +39,7 @@ console.log("joinRoom", username, room, _id)
 socket.on('roomUsers', ({ room, users }) => {
   console.log("mainJS2", socket, socket.connected, socket.id)
 
-  console.log("bigtest")
+
   outputRoomName(room);
   console.log("output", room)
   outputUsers(users);
@@ -48,7 +48,7 @@ socket.on('roomUsers', ({ room, users }) => {
 
 // // Message from server
 socket.on('message', (message) => {
-  console.log(message);
+  console.log("Message", message);
   outputMessage(message);
 
 //   // Scroll down
@@ -61,7 +61,7 @@ chatForm.addEventListener('submit', (e) => {
 
 //   // Get message text
   let msg = e.target.elements.msg.value;
-  console.log(msg)
+  console.log("msg", msg)
 //   msg = msg.trim();
 
 //   if (!msg) {
@@ -112,6 +112,15 @@ function outputUsers(users) {
 //     li.innerText = user.username;
 //     userList.appendChild(li);
   });
+}
+
+// // // User leaves chat
+function userLeave(id) {
+  const index = users.findIndex(user => user.id === id);
+
+  if (index !== -1) {
+    return users.splice(index, 1)[0];
+  }
 }
 
 

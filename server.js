@@ -183,14 +183,55 @@ io.on("connection", (socket) => {
     io.emit("timeClock", `It's about time... ${socket.user}, Connected= ${socket.connected}, socketID: ${socket.id}`)
 
    
+// Runs when client disconnects
+socket.on("disconnect", (reason) => {
+  io.emit("message",  formatMessage(botName,'a user has left the chat'))
+  const user = userLeave(socket.id);
+  if(user) {
+    console.log(`${user.username} disconnected from ${user.room} because reason: ${reason}`)
+  }else{
+    console.log(`Disconnected because reason: ${reason}`)
+  }
+ 
 
 
+  if (user) {
+    io.to(user.room).emit(
+      "message",
+      formatMessage(botName, `${user.username} has left the chat because: ${reason}`)
+    );
 
-  io.on("disconnect", (reason) => {
-    const user = userLeave(socket.id);
 
-    console.log(`${socket.user} disconnected because ${reason}`)
-  })
+    // Send users and room info
+
+    io.to(user.room).emit("roomUsers", {
+      room: user.room,
+      users: getRoomUsers(user.room),
+    });
+  }
+});
+
+
+  // io.on("disconnect", (reason) => {
+  //   const user = userLeave(socket.id);
+
+  //   console.log(`${socket.user} disconnected because ${reason}`)
+
+
+  //   if (user) {
+  //     io.to(user.room).emit(
+  //       "message",
+  //       formatMessage(botName, `${user.username} has left the chat because: ${reason}`, userTimeZone)
+  //     );
+  //   }
+
+
+  //   // Send users and room info
+  // io.to(user.room).emit("roomUsers", {
+  //   room: user.room,
+  //   users: getRoomUsers(user.room),
+  // });
+  // })
 
  
 
@@ -231,18 +272,14 @@ io.on("connection", (socket) => {
 
   socket.on("chatMessage", (msg) => {
     console.log(socket.id)
-    // const user = getCurrentUser(socket.id);
+    const user = getCurrentUser(socket.id);
 
     console.log("User=", user)
        
-    // io.to("The Lobby").to("/lobby2").emit("message", formatMessage(user.username, msg, userTimeZone));
+    io.to(user.room).emit("message", formatMessage(user.username, msg, userTimeZone));
   });
 
-// Send users and room info
-  io.to(user.room).emit("roomUsers", {
-    room: user.room,
-    users: getRoomUsers(user.room),
-  });
+
 
 });
 // Runs when client disconnects
@@ -254,25 +291,8 @@ io.on("connection", (socket) => {
   //   }else{
   //     console.log(`Disconnected because reason: ${reason}`)
   //   }
-   
-
-//     if (user) {
-//       io.to(user.room).to("lobby").emit(
-//         "message",
-//         formatMessage(botName, `${user.username} has left the chat because: ${reason}`)
-//       );
-
-
-    // if (user) {
-    //   io.to(user.room).emit(
-    //     "message",
-    //     formatMessage(botName, `${user.username} has left the chat because: ${reason}`, userTimeZone)
-    //   );
-
-
       
-
-    // }
+ // }
 });
 // });
 // })
