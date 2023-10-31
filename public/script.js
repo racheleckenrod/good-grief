@@ -4,17 +4,26 @@ const roomName = document.getElementById('room-name');
 const userList = document.getElementById('users');
 const username = document.getElementById('username').innerHTML;
 const room =  roomName.innerHTML
+// const ChatMessage = require('./models/ChatMessage')
 
 const _id =  document.getElementById('_id').innerHTML;
 // console.log("room=", room, username, _id)
 
-const socket = io();
+const socket = io({
+  reconection: true,
+  reconnectionAttempts: 10,
+  reconnectionDelay: 1000,
+});
 const id = socket.id;
 // const lobbySocket = io('/lobby2')
 
 // console.log("mainJS", socket, socket.connected, socket.id)
 
 let timeClock =  document.getElementById('time');
+
+socket.on('reconnect', (attemptNumber) => {
+  console.log(`Reconnected after ${attemptNumber} attempts`);
+});
 
 socket.on('timeClock', data => {
   // console.log("Nothing",data,"Personal", "connected?", lobbySocket.connected)
@@ -46,6 +55,17 @@ socket.on('roomUsers', ({ room, users }) => {
   console.log(users)
 });
 
+// Recent messages
+socket.on("recentMessages", (messages) => {
+  // display the recent messages in the chatroom
+  messages.forEach((message) => {
+    // const messageText = message.message;
+    // const username = message.user.userName;
+    // const timestamp = message.timestamp
+    outputMessage(message);
+  });
+});
+
 // // Message from server
 socket.on('message', (message) => {
   console.log("Message", message);
@@ -70,6 +90,7 @@ chatForm.addEventListener('submit', (e) => {
 
 //   // Emit message to server
   socket.emit('chatMessage', msg);
+
 
 //   // Clear input
   e.target.elements.msg.value = '';

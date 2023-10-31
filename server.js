@@ -26,7 +26,9 @@ const postRoutes = require("./routes/posts");
 const commentRoutes = require("./routes/comments");
 const chatRoutes = require("./routes/chat");
 const GuestUserID = require("./models/GuestUserID");
-const generateGuestID = require("./utils/guestUserIDs")
+const generateGuestID = require("./utils/guestUserIDs");
+const ChatMessage = require('./models/ChatMessage');
+const User = require("./models/User");
 
 const users = [];
 const botName = "Grief Support Bot";
@@ -117,7 +119,7 @@ io.use(wrap(passport.initialize()));
 io.use(wrap(passport.session()));
 
 io.use((socket, next) => {
-  console.log("first things")
+  console.log("first things", socket.request.session)
   if (socket.request.user) {
     console.log("second")
     socket.user = socket.request.user.userName;
@@ -130,7 +132,7 @@ io.use((socket, next) => {
 console.log('sixth')
   // join everyone to the lobby
   // socket.join('The Lobby');
-  console.log("joined the lobby", socket.user)
+  console.log("io.use(socket, next) joined the lobby", socket.user, socket.request.session.id)
   next();
 });
  
@@ -185,8 +187,10 @@ io.on("connection", (socket) => {
    
 // Runs when client disconnects
 socket.on("disconnect", (reason) => {
-  io.emit("message",  formatMessage(botName,'a user has left the chat'))
   const user = userLeave(socket.id);
+  console.log("disconnect user=", user)
+  io.emit("message",  formatMessage(botName,`a user ${socket.user} has left the chat`))
+ 
   if(user) {
     console.log(`${user.username} disconnected from ${user.room} because reason: ${reason}`)
   }else{
@@ -249,6 +253,39 @@ socket.on("disconnect", (reason) => {
     console.log("pkkkkkkkk", user)
     socket.join(user.room);
 
+    // fetch recent messages for the room from the database
+    ChatMessage.find({room: user.room })
+      .sort({ timestamp: -1 })
+      .limit(15)
+      .exec(async (err, messages) => {
+        if (err) {
+          console.log(err)
+        } else {
+          console.log("CHATmessage", messages)
+
+          const formattedMessages = [];
+          
+         for (const message of messages) {
+          try {
+            const user = await User.findById(message.user);
+            console.log("awaited user=", user)
+            if (user) {
+              const formattedMessage = {
+                text: message.message,
+                user: user.userName,
+                time: moment(message.timestamp).format('h:mm a'),
+              };
+              formattedMessages.push(formattedMessage);
+            }
+          } catch (error) {
+            console.error("Error fetching user data", error);
+          }
+        }
+          
+          socket.emit("recentMessages", formattedMessages.reverse());
+
+        }
+      });
 
 // Welcome current user
     socket.emit("message", formatMessage(botName, `Welcome to ${user.room} Live Grief Support, ${user.username}!`, userTimeZone));
@@ -257,7 +294,16 @@ socket.on("disconnect", (reason) => {
 
 
       console.log(users)
-
+        // Broadcast when a user connects
+        socket.broadcast
+        .to(user.room)
+        .emit(
+          "message",  formatMessage(botName,`${user.username} has joined the chat`)
+  //         formatMessage(botName, `${user.username} has joined the chat`)
+        );
+  
+  //     // Send users and room info
+ 
 
     io.to(user.room).emit("roomUsers", {
       room: user.room,
@@ -271,28 +317,34 @@ socket.on("disconnect", (reason) => {
    // Listen for chatMessage
 
   socket.on("chatMessage", (msg) => {
-    console.log(socket.id)
+    console.log("socket.user",socket.user._id, socket.id)
     const user = getCurrentUser(socket.id);
+
+
+      const newMessage = new ChatMessage({
+        room: user.room,
+        user: user._id,
+        message: msg,
+      });
+
+      newMessage.save()
+      .then(savedMessage => {
+        console.log('Chat message saved:', savedMessage);
+        io.to(user.room).emit("message", formatMessage(user.username, msg, userTimeZone));
+      })
+      .catch(error => {
+        console.error('Error saving chat message:', error);
+      })
 
     console.log("User=", user)
        
-    io.to(user.room).emit("message", formatMessage(user.username, msg, userTimeZone));
+   
   });
 
 
 
 });
-// Runs when client disconnects
-  // socket.on("disconnect", (reason) => {
-  //   // io.emit("message",  formatMessage(botName,'a user has left the chat'))
-  //   const user = userLeave(socket.id);
-  //   if(user) {
-  //     console.log(`${user.username} disconnected from ${user.room} because reason: ${reason}`)
-  //   }else{
-  //     console.log(`Disconnected because reason: ${reason}`)
-  //   }
-      
- // }
+
 });
 // });
 // })
@@ -301,14 +353,10 @@ socket.on("disconnect", (reason) => {
 app.use("/", mainRoutes);
 app.use("/post", postRoutes);
 app.use("/comment", commentRoutes);
-// app.post("/chat/:room", chatsController.getRoom);
 app.use("/chat/:room", chatRoutes);
 
 app.use("/chat", chatRoutes);
-// app.get("/chat",function(req, res, next) {
-//   console.log("hhh",req.user.userName, req.query )
-//   res.render('lobby.ejs', {username : req.user.userName, room: "POP"});
-// });
+
 
 
 server.listen(PORT, () => { console.log(`Server running on port ${PORT}`)});
