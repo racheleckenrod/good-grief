@@ -17,13 +17,13 @@ const socket = io({
 });
 const id = socket.id;
 
-const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+// const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 let timeClock =  document.getElementById('time');
 
 console.log("userTimeZone:", userTimeZone)
 
-socket.emit("connection", { timeZone: userTimeZone });
+// socket.emit("connection", { timeZone: userTimeZone });
 
 socket.on('reconnect', (attemptNumber) => {
   console.log(`Reconnected after ${attemptNumber} attempts`);
