@@ -4,11 +4,12 @@ const GuestUserID = require("../models/GuestUserID");
 async function generateGuestID() {
     let guestID
     let userName
+    console.log("generateGuestID")
     const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
 
     while (true) {
         guestID = Math.floor(Math.random() * 100000).toString();
-        userName = `guestUserID${guestID}`;
+        userName = `guestUserID_${guestID}`;
 
         const existingGuest = await GuestUserID.findOne({ GuestUserID: guestID });
 

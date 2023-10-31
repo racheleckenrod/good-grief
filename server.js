@@ -96,15 +96,19 @@ app.use(flash());
 // create guestUserID for guests
 app.use(async (req, res, next) => {
   if (!req.session._id) {
-    const { guestID } = await generateGuestID();
+    if (!req.user) {
 
-    const guestUser = await GuestUserID.findOne({ guestUserID: guestID });
+      const { guestID, userName, timezone } = await generateGuestID(req.body.timeZone);
+      const guestUser = await GuestUserID.findOne({ guestUserID: guestID });
 
-    if (guestUser) {
-      req.session._id = guestUser._id;
-      req.session.userName = guestUser.userName;
-      req.session.timezone = guestUser.timezone
+        if (guestUser) {
+          req.session._id = guestUser._id;
+          req.session.userName = guestUser.userName;
+        }
+
+        req.session.timezone = timezone
     }
+   
 
   }
   console.log("app.use", req.session)
@@ -120,6 +124,8 @@ io.use(wrap(passport.initialize()));
 io.use(wrap(passport.session()));
 
 io.use((socket, next) => {
+  const userTimeZone = socket.request.session.timezone
+
   console.log("first things", socket.request.session)
   if (socket.request.user) {
     console.log("second")
@@ -128,7 +134,8 @@ io.use((socket, next) => {
   } else {
     console.log('forth')
     socket.user = socket.request.session.userName
-    console.log('fifth')
+    // const userTimeZone = socket.request.session.timezone
+    console.log('fifth', userTimeZone)
   }
 console.log('sixth')
   // join everyone to the lobby
@@ -167,9 +174,13 @@ function userJoin(id, username, room, _id) {
 // run when Lobby connects
 io.on("connection", (socket) => {
   // console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.request.params}`, socket.id, socket.nsp.name);
+
+    socket.on("connect", ({ timeZone }) => {
+      socket.request.session.timezone = timeZone;
+    })
   
     const session = socket.request.session;
-    const userTimeZone = socket.request.session.timezone 
+    const userTimeZone = session.timezone || 'UTC'
     console.log("userTimeZone=", userTimeZone, session)
     // console.log(`lobby2 saving ${socket.request.user.userName} in socket: ${socket.id} in session: ${session.id}`);
     session.socketID = socket.id;
@@ -308,7 +319,7 @@ socket.on("disconnect", (reason) => {
 // Welcome current user
     socket.emit("message", formatMessage(botName, `Welcome to ${user.room} Live Grief Support, ${user.username}!`, userTimeZone));
 
-    io.emit("messageLobby", formatMessage(botName, `Welcome to Live Grief Support Lobby, ${socket.request.userName}.`, userTimeZone));
+    // io.emit("messageLobby", formatMessage(botName, `Welcome to Live Grief Support Lobby, ${socket.request.userName}.`, userTimeZone));
 
 
       console.log(users)
