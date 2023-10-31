@@ -12,7 +12,8 @@ const PORT = process.env.PORT;
 
 app.use(cors())
 
-const moment = require('moment-timezone');
+const moment = require('moment');
+const { DateTime } = require('luxon');
 const mongoose = require("mongoose");
 const passport = require("passport");
 const session = require("express-session");
@@ -29,17 +30,13 @@ const GuestUserID = require("./models/GuestUserID");
 const generateGuestID = require("./utils/guestUserIDs");
 const ChatMessage = require('./models/ChatMessage');
 const User = require("./models/User");
-const ipToTimezone = require('ip-to-timezone');
 
 const users = [];
 const botName = "Grief Support Bot";
 
 // moment.tz.setDefault('Etc/UTC')
 
-const getTimezoneFromIP = (userIP) => {
-  const timezone = ipToTimezone.lookup(userIP);
-  return timezone
-}
+
 
 
 // const {
@@ -101,24 +98,15 @@ app.use(passport.session());
 app.use(flash());
 
 
-app.use(async (req, res, next) => {
-  const userIP = req.ip;
-  const userTimeZone = getTimezoneFromIP(userIP)
-
-  req.session.timezone = userTimeZone;
-
-  next();
-})
-
 // create guestUserID for guests
 app.use(async (req, res, next) => {
   // const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
 
-  console.log("Client Timezone:", req.body.timezone, userTimeZone)
+  // console.log("Client Timezone:", req.body.timezone, userTimeZone)
   if (!req.session._id) {
     if (!req.user) {
 
-      const { guestID, userName, timezone } = await generateGuestID();
+      const { guestID, userName } = await generateGuestID();
       const guestUser = await GuestUserID.findOne({ guestUserID: guestID });
 
         if (guestUser) {
@@ -126,7 +114,7 @@ app.use(async (req, res, next) => {
           req.session.userName = guestUser.userName;
         }
 
-        req.session.timezone = timezone
+        // req.session.timezone = timezone
     }
    
 
@@ -144,7 +132,7 @@ io.use(wrap(passport.initialize()));
 io.use(wrap(passport.session()));
 
 io.use((socket, next) => {
-  const userTimeZone = socket.request.session.timezone
+  // const userTimeZone = socket.request.session.timezone
 
   console.log("first things", socket.request.session)
   if (socket.request.user) {
@@ -155,7 +143,7 @@ io.use((socket, next) => {
     console.log('forth')
     socket.user = socket.request.session.userName
     // const userTimeZone = socket.request.session.timezone
-    console.log('fifth', userTimeZone)
+    console.log('fifth')
   }
 console.log('sixth')
   // join everyone to the lobby
@@ -201,9 +189,9 @@ io.on("connection", (socket) => {
   
     const session = socket.request.session;
     // const userTimeZone = session.timezone || 'UTC'
-    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+    // const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
 
-    console.log("userTimeZone=", userTimeZone, session)
+    console.log("userTimeZone=", session)
     // console.log(`lobby2 saving ${socket.request.user.userName} in socket: ${socket.id} in session: ${session.id}`);
     session.socketID = socket.id;
     session.save();
@@ -213,14 +201,15 @@ io.on("connection", (socket) => {
 
 
     setInterval(() => {
-      const currentUTCTime = moment.utc();
+      // const currentTime = moment.utc();
       // console.log(currentUTCTime)
-      const currentTimestamp = Date.now()
+      const currentTimestamp = DateTime.local();
+      // const localTime = timestamp.toLocaleString()
       // console.log(currentTimestamp, userTimeZone)
-    const localTime = moment(currentTimestamp).tz(userTimeZone).format('dddd, MMMM D, YYYY h:mm:ss a');
+    const localFormattedTime = currentTimestamp.toFormat('ccc, LLLL d, y h:mm:ss a');
     // moment(message.timestamp).tz(userTimeZone).format('h:mm:ss a'),
   
-    io.emit('timeData', localTime);}, 1000);
+    io.emit('timeData', localFormattedTime);}, 1000);
 
     io.emit("timeClock", `It's about time... ${socket.user}, Connected= ${socket.connected}, socketID: ${socket.id}`)
 
@@ -308,23 +297,22 @@ socket.on("disconnect", (reason) => {
          for (const message of messages) {
           try {
             const user = await User.findById(message.user);
-            let username, userTimeZone;
+            let username;
            
             if (user) {
               username = user.userName;
-              userTimeZone = user.timezone;
+            
             } else {
               const guestUser = await GuestUserID.findById(message.user);
               if (guestUser) {
                 username = guestUser.userName;
-                userTimeZone = guestUser.timezone;
               }
             }
             console.log("awaited username=", username, message.user)
               const formattedMessage = {
                 text: message.message,
                 username: username,
-                time: moment(message.timestamp).tz(userTimeZone).format('h:mm:ss a'),
+                time: DateTime.fromJSDate(message.timestamp).toFormat('h:mm:ss a'),
               };
               formattedMessages.push(formattedMessage);
             
@@ -339,7 +327,7 @@ socket.on("disconnect", (reason) => {
       });
 
 // Welcome current user
-    socket.emit("message", formatMessage(botName, `Welcome to ${user.room} Live Grief Support, ${user.username}!`, userTimeZone));
+    socket.emit("message", formatMessage(botName, `Welcome to ${user.room} Live Grief Support, ${user.username}!`));
 
     // io.emit("messageLobby", formatMessage(botName, `Welcome to Live Grief Support Lobby, ${socket.request.userName}.`, userTimeZone));
 
@@ -377,13 +365,13 @@ socket.on("disconnect", (reason) => {
         room: user.room,
         user: user._id,
         message: msg,
-        timestamp: new Date(),
+        timestamp: new Date().toLocaleString(),
       });
 
       const savedMessage = await  newMessage.save();
 
       console.log('Chat message saved:', savedMessage);
-      io.to(user.room).emit("message", formatMessage(user.username, msg, userTimeZone));
+      io.to(user.room).emit("message", formatMessage(user.username, msg));
 
     } catch(error) {
         console.error('Error saving chat message:', error);

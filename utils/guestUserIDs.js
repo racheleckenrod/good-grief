@@ -1,11 +1,11 @@
-const moment = require ("moment-timezone");
+// const moment = require ("moment-timezone");
 const GuestUserID = require("../models/GuestUserID");
 
-async function generateGuestID() {
+async function generateGuestID(req, res) {
     let guestID
     let userName
+    // const userTimeZone = req.session.timezone
     console.log("generateGuestID")
-    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
 
     while (true) {
         guestID = Math.floor(Math.random() * 100000).toString();
@@ -18,14 +18,14 @@ async function generateGuestID() {
             const newGuest = GuestUserID({ 
                 guestUserID: guestID,
                 userName: userName,
-                timezone: userTimeZone,
+                // timezone: userTimeZone,
             });
 
             await newGuest.save();
             break;
         }
     }
-    return { guestID, userName, timezone: userTimeZone };
+    return { guestID, userName };
 }
 
 module.exports = generateGuestID;

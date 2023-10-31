@@ -1,16 +1,17 @@
-const moment = require('moment-timezone');
+const { DateTime } = require('luxon');
 
-function formatMessage(username, text, userTimeZone) {
+function formatMessage(username, text) {
   // const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   // console.log(userTimeZone);
   // const utcTime = moment.utc();
-  const localTime=  moment.tz(userTimeZone).format('h:mm:ss a');
+  const localTime = DateTime.local();
+  const formattedTime = localTime.toFormat('h:mm:ss a');
 
   
   return {
     username,
     text,
-    time: localTime
+    time: formattedTime
   };
 }
 
