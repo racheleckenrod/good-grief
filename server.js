@@ -203,10 +203,10 @@ io.on("connection", (socket) => {
     setInterval(() => {
       // const currentTime = moment.utc();
       // console.log(currentUTCTime)
-      const currentTimestamp = DateTime.local();
+      const currentTimestamp = new Date().toLocaleString()
       // const localTime = timestamp.toLocaleString()
       // console.log(currentTimestamp, userTimeZone)
-    const localFormattedTime = currentTimestamp.toFormat('ccc, LLLL d, y h:mm:ss a');
+    const localFormattedTime = currentTimestamp
     // moment(message.timestamp).tz(userTimeZone).format('h:mm:ss a'),
   
     io.emit('timeData', localFormattedTime);}, 1000);
