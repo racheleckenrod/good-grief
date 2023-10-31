@@ -324,29 +324,30 @@ socket.on("disconnect", (reason) => {
 
    // Listen for chatMessage
 
-  socket.on("chatMessage", (msg) => {
+  socket.on("chatMessage", async (msg) => {
     console.log("socket.user",socket.user._id, socket.id)
     const user = getCurrentUser(socket.id);
 
+    try {
 
       const newMessage = new ChatMessage({
         room: user.room,
         user: user._id,
         message: msg,
+        timestamp: new Date(),
       });
 
-      newMessage.save()
-      .then(savedMessage => {
-        console.log('Chat message saved:', savedMessage);
-        io.to(user.room).emit("message", formatMessage(user.username, msg, userTimeZone));
-      })
-      .catch(error => {
+      const savedMessage = await  newMessage.save();
+
+      console.log('Chat message saved:', savedMessage);
+      io.to(user.room).emit("message", formatMessage(user.username, msg, userTimeZone));
+
+    } catch(error) {
         console.error('Error saving chat message:', error);
-      })
+    }
 
     console.log("User=", user)
        
-   
   });
 
 
