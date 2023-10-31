@@ -281,7 +281,7 @@ socket.on("disconnect", (reason) => {
               const formattedMessage = {
                 text: message.message,
                 username: username,
-                time: moment(message.timestamp).format('h:mm a'),
+                time: moment(message.timestamp).format('h:mm:ss a'),
               };
               formattedMessages.push(formattedMessage);
             
