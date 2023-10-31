@@ -5,6 +5,7 @@ const socket = io({
     reconection: true,
     reconnectionAttempts: 10,
     reconnectionDelay: 1000,
+    query: { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone },
   });
   const id = socket.id;
 

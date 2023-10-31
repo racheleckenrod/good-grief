@@ -189,6 +189,8 @@ io.on("connection", (socket) => {
     // socket.on("connect", ({ timeZone }) => {
     //   socket.request.session.timezone = timeZone;
     // })
+
+    const userTimeZone = socket.handshake.query.timeZone
   
     const session = socket.request.session;
     // const userTimeZone = session.timezone || 'UTC'
@@ -204,7 +206,7 @@ io.on("connection", (socket) => {
 
 
     setInterval(() => {
-      const userTimeZone = socket.request.session.timezone;
+      // const userTimeZone = socket.request.session.timezone;
       // console.log(userTimeZone)
       const currentDateTime = DateTime.now().setZone(userTimeZone)
       // const localTime = timestamp.toLocaleString()
