@@ -101,25 +101,28 @@ app.use(flash());
 // create guestUserID for guests
 app.use(async (req, res, next) => {
   // const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
-
-  // console.log("Client Timezone:", req.body.timezone, userTimeZone)
+    let userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  console.log("Client Timezone:", req.body.timezone, userTimeZone)
   if (!req.session._id) {
     if (!req.user) {
+      // userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-      const { guestID, userName } = await generateGuestID();
+      const { guestID, userName } = await generateGuestID(userTimeZone);
       const guestUser = await GuestUserID.findOne({ guestUserID: guestID });
 
         if (guestUser) {
           req.session._id = guestUser._id;
           req.session.userName = guestUser.userName;
+          req.session.timezone = userTimeZone
         }
 
         // req.session.timezone = timezone
+        console.log(guestUser)
     }
-   
+  
 
   }
-  console.log("app.use", req.session)
+  console.log("app.use", req.session, userTimeZone)
   next();
 })
 
@@ -201,12 +204,12 @@ io.on("connection", (socket) => {
 
 
     setInterval(() => {
-      // const currentTime = moment.utc();
-      // console.log(currentUTCTime)
-      const currentTimestamp = new Date().toLocaleString()
+      const userTimeZone = socket.request.session.timezone;
+      // console.log(userTimeZone)
+      const currentDateTime = DateTime.now().setZone(userTimeZone)
       // const localTime = timestamp.toLocaleString()
       // console.log(currentTimestamp, userTimeZone)
-    const localFormattedTime = currentTimestamp
+    const localFormattedTime = currentDateTime.toFormat('cccc, LLLL d, y h:mm:ss a');
     // moment(message.timestamp).tz(userTimeZone).format('h:mm:ss a'),
   
     io.emit('timeData', localFormattedTime);}, 1000);
