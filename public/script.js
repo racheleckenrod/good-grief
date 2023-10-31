@@ -21,7 +21,7 @@ const id = socket.id;
 
 let timeClock =  document.getElementById('time');
 
-console.log("userTimeZone:", userTimeZone)
+// console.log("userTimeZone:", userTimeZone)
 
 // socket.emit("connection", { timeZone: userTimeZone });
 
