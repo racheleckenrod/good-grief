@@ -33,6 +33,7 @@ const User = require("./models/User");
 const users = [];
 const botName = "Grief Support Bot";
 
+moment.tz.setDefault('Etc/UTC')
 
 // const {
 //   userJoin,
@@ -168,7 +169,8 @@ io.on("connection", (socket) => {
   // console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.request.params}`, socket.id, socket.nsp.name);
   
     const session = socket.request.session;
-    const userTimeZone = socket.request.timezone 
+    const userTimeZone = socket.request.session.timezone 
+    console.log("userTimeZone=", userTimeZone, session)
     // console.log(`lobby2 saving ${socket.request.user.userName} in socket: ${socket.id} in session: ${session.id}`);
     session.socketID = socket.id;
     session.save();
@@ -178,7 +180,12 @@ io.on("connection", (socket) => {
 
 
     setInterval(() => {
-    const localTime = moment.tz(userTimeZone).format('dddd, MMMM D, YYYY h:mm:ss a');
+      const currentUTCTime = moment.utc();
+      // console.log(currentUTCTime)
+      const currentTimestamp = Date.now()
+      // console.log(currentTimestamp, userTimeZone)
+    const localTime = moment(currentTimestamp).tz(userTimeZone).format('dddd, MMMM D, YYYY h:mm:ss a');
+    // moment(message.timestamp).tz(userTimeZone).format('h:mm:ss a'),
   
     io.emit('timeData', localTime);}, 1000);
 
@@ -268,20 +275,23 @@ socket.on("disconnect", (reason) => {
          for (const message of messages) {
           try {
             const user = await User.findById(message.user);
-            let username;
-            console.log("awaited user=", user, message.user)
+            let username, userTimeZone;
+           
             if (user) {
               username = user.userName;
+              userTimeZone = user.timezone;
             } else {
               const guestUser = await GuestUserID.findById(message.user);
               if (guestUser) {
-                username = guestUser.userName
+                username = guestUser.userName;
+                userTimeZone = guestUser.timezone;
               }
             }
+            console.log("awaited username=", username, message.user)
               const formattedMessage = {
                 text: message.message,
                 username: username,
-                time: moment(message.timestamp).format('h:mm:ss a'),
+                time: moment(message.timestamp).tz(userTimeZone).format('h:mm:ss a'),
               };
               formattedMessages.push(formattedMessage);
             
@@ -325,7 +335,7 @@ socket.on("disconnect", (reason) => {
    // Listen for chatMessage
 
   socket.on("chatMessage", async (msg) => {
-    console.log("socket.user",socket.user._id, socket.id)
+    console.log("socket.user=",socket.user, socket.id)
     const user = getCurrentUser(socket.id);
 
     try {
