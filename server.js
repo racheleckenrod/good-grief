@@ -95,6 +95,9 @@ app.use(flash());
 
 // create guestUserID for guests
 app.use(async (req, res, next) => {
+  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+
+  console.log("Client Timezone:", req.body.timeZone, userTimeZone)
   if (!req.session._id) {
     if (!req.user) {
 
@@ -175,12 +178,14 @@ function userJoin(id, username, room, _id) {
 io.on("connection", (socket) => {
   // console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.request.params}`, socket.id, socket.nsp.name);
 
-    socket.on("connect", ({ timeZone }) => {
-      socket.request.session.timezone = timeZone;
-    })
+    // socket.on("connect", ({ timeZone }) => {
+    //   socket.request.session.timezone = timeZone;
+    // })
   
     const session = socket.request.session;
-    const userTimeZone = session.timezone || 'UTC'
+    // const userTimeZone = session.timezone || 'UTC'
+    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+
     console.log("userTimeZone=", userTimeZone, session)
     // console.log(`lobby2 saving ${socket.request.user.userName} in socket: ${socket.id} in session: ${session.id}`);
     session.socketID = socket.id;
