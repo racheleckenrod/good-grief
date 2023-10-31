@@ -2,7 +2,7 @@
 console.log("Shared")
 
 const socket = io({
-    reconection: true,
+    reconnection: true,
     reconnectionAttempts: 10,
     reconnectionDelay: 1000,
     query: { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone },

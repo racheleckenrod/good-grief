@@ -10,9 +10,10 @@ const _id =  document.getElementById('_id').innerHTML;
 // console.log("room=", room, username, _id)
 
 const socket = io({
-  reconection: true,
+  reconnection: true,
   reconnectionAttempts: 10,
   reconnectionDelay: 1000,
+  query: { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone },
 });
 const id = socket.id;
 
