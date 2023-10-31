@@ -30,6 +30,18 @@ socket.on('roomUsers', ({ room, users }) => {
   outputUsers(users);
 });
 
+
+// Recent messages
+socket.on("recentMessages", (messages) => {
+  // display the recent messages in the chatroom
+  messages.forEach((message) => {
+    // const messageText = message.message;
+    // const username = message.user.userName;
+    // const timestamp = message.timestamp
+    outputMessage(message);
+  });
+});
+
 // // Message from server
 socket.on('message', (message) => {
   // console.log(message);
