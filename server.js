@@ -268,15 +268,23 @@ socket.on("disconnect", (reason) => {
          for (const message of messages) {
           try {
             const user = await User.findById(message.user);
-            console.log("awaited user=", user)
+            let username;
+            console.log("awaited user=", user, message.user)
             if (user) {
+              username = user.userName;
+            } else {
+              const guestUser = await GuestUserID.findById(message.user);
+              if (guestUser) {
+                username = guestUser.userName
+              }
+            }
               const formattedMessage = {
                 text: message.message,
-                user: user.userName,
+                username: username,
                 time: moment(message.timestamp).format('h:mm a'),
               };
               formattedMessages.push(formattedMessage);
-            }
+            
           } catch (error) {
             console.error("Error fetching user data", error);
           }
