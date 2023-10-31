@@ -191,6 +191,7 @@ io.on("connection", (socket) => {
     // })
 
     const userTimeZone = socket.handshake.query.timeZone
+    console.log("Handshake timezone", userTimeZone)
   
     const session = socket.request.session;
     // const userTimeZone = session.timezone || 'UTC'
