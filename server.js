@@ -29,11 +29,18 @@ const GuestUserID = require("./models/GuestUserID");
 const generateGuestID = require("./utils/guestUserIDs");
 const ChatMessage = require('./models/ChatMessage');
 const User = require("./models/User");
+const ipToTimezone = require('ip-to-timezone');
 
 const users = [];
 const botName = "Grief Support Bot";
 
-moment.tz.setDefault('Etc/UTC')
+// moment.tz.setDefault('Etc/UTC')
+
+const getTimezoneFromIP = (userIP) => {
+  const timezone = ipToTimezone.lookup(userIP);
+  return timezone
+}
+
 
 // const {
 //   userJoin,
@@ -93,15 +100,25 @@ app.use(passport.session());
 //Use flash messages for errors, info, ect...
 app.use(flash());
 
+
+app.use(async (req, res, next) => {
+  const userIP = req.ip;
+  const userTimeZone = getTimezoneFromIP(userIP)
+
+  req.session.timezone = userTimeZone;
+
+  next();
+})
+
 // create guestUserID for guests
 app.use(async (req, res, next) => {
-  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+  // const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
 
-  console.log("Client Timezone:", req.body.timeZone, userTimeZone)
+  console.log("Client Timezone:", req.body.timezone, userTimeZone)
   if (!req.session._id) {
     if (!req.user) {
 
-      const { guestID, userName, timezone } = await generateGuestID(req.body.timeZone);
+      const { guestID, userName, timezone } = await generateGuestID();
       const guestUser = await GuestUserID.findOne({ guestUserID: guestID });
 
         if (guestUser) {
