@@ -195,39 +195,10 @@ io.on("connection", async ( socket) => {
 
     const userTimeZone = socket.timeZone
     console.log("socket.timezone=userTimeZone", userTimeZone)
-
-    // if (!req.session._id) {
-    //   if (!req.user) {
-    //     // userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  
-    //     const { guestID, userName } = await generateGuestID(userTimeZone);
-    //     const guestUser = await GuestUserID.findOne({ guestUserID: guestID });
-  
-    //       if (guestUser) {
-    //         req.session._id = guestUser._id;
-    //         req.session.userName = guestUser.userName;
-    //         req.session.timezone = userTimeZone
-    //       }
-  
-    //       // req.session.timezone = timezone
-    //       console.log("From connection", guestUser)
-    //   }
-    
-  
-    // }
-  
     const session = socket.request.session;
-    // const userTimeZone = session.timezone || 'UTC'
-    // const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
-
     console.log("socket.request.session=session=", session)
-    // console.log(`lobby2 saving ${socket.request.user.userName} in socket: ${socket.id} in session: ${session.id}`);
     session.socketID = socket.id;
-    // session.save();
-  
     socket.data.username = socket.request.userName
- 
-    // console.log(`io saving ${socket.user} sid ${socket.id} in session ${session.id}`);
     // session.socketID = socket.id;
     // session.room = user.room
     session.save();
@@ -235,163 +206,145 @@ io.on("connection", async ( socket) => {
   
 
    
-    // Runs when client disconnects
-    socket.on("disconnect", (reason) => {
-      const user = userLeave(socket.id);
-      console.log("disconnect user=", user)
-      io.emit("message",  formatMessage(botName,`a user ${socket.user} has left the chat`, socket.timeZone))
-    
-          if(user) {
-            console.log(`${user.username} disconnected from ${user.room} because reason: ${reason}`)
-          }else{
-            console.log(`Disconnected because reason: ${reason}`)
-          }
-
-
-          if (user) {
-            io.to(user.room).emit(
-              "message",
-              formatMessage(botName, `${user.username} has left the chat because: ${reason}`, socket.timeZone)
-            );
-
-
-            // Send users and room info
-
-            io.to(user.room).emit("roomUsers", {
-              room: user.room,
-              users: getRoomUsers(user.room),
-            });
-          }
-        });
-
-
-  
-    socket.on("joinLobby", () =>  {
-
-      // broadcast updates
-          setInterval(() => {
-
-            const localTime = moment.tz(socket.timeZone).format('dddd, MMMM D, YYYY h:mm:ss a');
-
-
-          io.emit('timeData', localTime);}, 1000);
-          
-
-          io.emit("timeClock", `It's about time... ${socket.user}, Connected= ${socket.connected}, socketID: ${socket.id}`)
-
-          });
-  
-  socket.on("joinRoom", ({ username, room, _id }) => {
-    const user = userJoin(session.socketID, username, room, _id);
-    console.log("pkkkkkkkk", user)
-    socket.join(user.room);
-
-    // fetch recent messages for the room from the database
-    ChatMessage.find({room: user.room })
-      .sort({ timestamp: -1 })
-      .limit(15)
-      .exec(async (err, messages) => {
-        if (err) {
-          console.log(err)
-        } else {
-          console.log("CHATmessage", messages)
-
-          const formattedMessages = [];
-          
-         for (const message of messages) {
-          try {
-            const user = await User.findById(message.user);
-            let username;
-           
-            if (user) {
-              username = user.userName;
-            
-            } else {
-              const guestUser = await GuestUserID.findById(message.user);
-              if (guestUser) {
-                username = guestUser.userName;
+        // Runs when client disconnects
+        socket.on("disconnect", (reason) => {
+          const user = userLeave(socket.id);
+          console.log("disconnect user=", user)
+          io.emit("message",  formatMessage(botName,`a user ${socket.user} has left the chat`, socket.timeZone))
+        
+              if(user) {
+                console.log(`${user.username} disconnected from ${user.room} because reason: ${reason}`)
+              }else{
+                console.log(`Disconnected because reason: ${reason}`)
               }
-            }
-            console.log("awaited username=", username, message.user)
-              const formattedMessage = {
-                text: message.message,
-                username: username,
-                time: moment.tz(message.timestamp, socket.timeZone).format('h:mm:ss a'),
-              };
-              formattedMessages.push(formattedMessage);
-            
-          } catch (error) {
-            console.error("Error fetching user data", error);
+              if (user) {
+                io.to(user.room).emit(
+                  "message",
+                  formatMessage(botName, `${user.username} has left the chat because: ${reason}`, socket.timeZone)
+                );
+                // Send users and room info
+                io.to(user.room).emit("roomUsers", {
+                  room: user.room,
+                  users: getRoomUsers(user.room),
+                });
+              }
+        });
+      
+        socket.on("joinLobby", () =>  {
+
+          // broadcast updates
+              setInterval(() => {
+
+                const localTime = moment.tz(socket.timeZone).format('dddd, MMMM D, YYYY h:mm:ss a');
+
+
+              io.emit('timeData', localTime);}, 1000);
+              
+
+              io.emit("timeClock", `It's about time... ${socket.user}, Connected= ${socket.connected}, socketID: ${socket.id}`)
+
+        });
+      
+        socket.on("joinRoom", ({ username, room, _id }) => {
+          const user = userJoin(session.socketID, username, room, _id);
+          console.log("pkkkkkkkk", user)
+          socket.join(user.room);
+
+           // Send users and room info
+           io.to(user.room).emit("roomUsers", {
+            room: user.room,
+            users: getRoomUsers(user.room),
+          });
+          // console.log(botName, room, (user.room))
+
+          // Broadcast when a user connects
+          socket.broadcast
+          .to(user.room)
+          .emit(
+            "message",  formatMessage(botName,`${user.username} has joined the chat`, socket.timeZone)
+          );
+    
+
+          // fetch recent messages for the room from the database
+          ChatMessage.find({room: user.room })
+            .sort({ timestamp: -1 })
+            .limit(15)
+            .exec(async (err, messages) => {
+              if (err) {
+                console.log(err)
+              } else {
+                console.log("CHATmessage", messages)
+                const formattedMessages = []; 
+              for (const message of messages) {
+                try {
+                  const user = await User.findById(message.user);
+                  let username;
+                
+                  if (user) {
+                    username = user.userName;
+                  
+                  } else {
+                    const guestUser = await GuestUserID.findById(message.user);
+                    if (guestUser) {
+                      username = guestUser.userName;
+                    }
+                  }
+                  console.log("awaited username=", username, message.user)
+                    const formattedMessage = {
+                      text: message.message,
+                      username: username,
+                      time: moment.tz(message.timestamp, socket.timeZone).format('h:mm:ss a'),
+                    };
+                    formattedMessages.push(formattedMessage);
+                  } catch (error) {
+                    console.error("Error fetching user data", error);
+                  }
+                }
+                
+                socket.emit("recentMessages", formattedMessages.reverse());
+
+              }
+          });
+
+
+          // Listen for chatMessage
+
+          socket.on("chatMessage", async (msg) => {
+          console.log("socket.user=",socket.user, socket.id)
+          const user = getCurrentUser(socket.id);
+
+          try {
+
+            const newMessage = new ChatMessage({
+              room: user.room,
+              user: user._id,
+              message: msg,
+              timestamp: new Date(),
+            });
+
+            const savedMessage = await  newMessage.save();
+
+            // console.log('Chat message saved:', savedMessage);
+            io.to(user.room).emit("message", formatMessage(user.username, msg, socket.timeZone));
+
+          } catch(error) {
+              console.error('Error saving chat message:', error);
           }
-        }
-          
-          socket.emit("recentMessages", formattedMessages.reverse());
 
-        }
-      });
-
-// Welcome current user
-    socket.emit("message", formatMessage(botName, `Welcome to ${user.room} Live Grief Support, ${user.username}!`, socket.timeZone));
-
-    // io.emit("messageLobby", formatMessage(botName, `Welcome to Live Grief Support Lobby, ${socket.request.userName}.`, userTimeZone));
+              console.log("User=", user)
+            
+          });
 
 
-      console.log(users)
-        // Broadcast when a user connects
-        socket.broadcast
-        .to(user.room)
-        .emit(
-          "message",  formatMessage(botName,`${user.username} has joined the chat`)
-  //         formatMessage(botName, `${user.username} has joined the chat`)
-        );
-  
-  //     // Send users and room info
- 
-
-    io.to(user.room).emit("roomUsers", {
-      room: user.room,
-      users: getRoomUsers(user.room),
-    });
-    console.log(botName, room, (user.room))
+         // Welcome current user
+        socket.emit("message", formatMessage(botName, `Welcome to ${user.room} Live Grief Support, ${user.username}!`, socket.timeZone));
 
 
 
 
-   // Listen for chatMessage
-
-  socket.on("chatMessage", async (msg) => {
-    console.log("socket.user=",socket.user, socket.id)
-    const user = getCurrentUser(socket.id);
-
-    try {
-
-      const newMessage = new ChatMessage({
-        room: user.room,
-        user: user._id,
-        message: msg,
-        timestamp: new Date(),
-      });
-
-      const savedMessage = await  newMessage.save();
-
-      console.log('Chat message saved:', savedMessage);
-      io.to(user.room).emit("message", formatMessage(user.username, msg, socket.timeZone));
-
-    } catch(error) {
-        console.error('Error saving chat message:', error);
-    }
-
-    console.log("User=", user)
-       
-  });
-
-
+    }); 
 
 });
-
-});
-// });
-// })
 
 //Setup Routes For Which The Server Is Listening
 app.use("/", mainRoutes);
