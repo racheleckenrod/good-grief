@@ -58,7 +58,7 @@ socket.on('roomUsers', ({ room, users }) => {
   outputRoomName(room);
   console.log("output", room)
   outputUsers(users);
-  console.log(users)
+  console.log("OUTPUTLOG", users)
 });
 
 // Recent messages
