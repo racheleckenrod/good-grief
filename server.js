@@ -12,7 +12,7 @@ const PORT = process.env.PORT;
 
 app.use(cors())
 
-const moment = require('moment');
+// const moment = require('moment');
 const { DateTime } = require('luxon');
 const mongoose = require("mongoose");
 const passport = require("passport");
@@ -21,6 +21,7 @@ const MongoStore = require("connect-mongo")(session);
 const methodOverride = require("method-override");
 const flash = require("express-flash");
 const logger = require("morgan");
+const cookieParser = require('cookie-parser')
 const connectDB = require("./config/database");
 const mainRoutes = require("./routes/main");
 const postRoutes = require("./routes/posts");
@@ -97,11 +98,13 @@ app.use(passport.session());
 //Use flash messages for errors, info, ect...
 app.use(flash());
 
+// cookies
+app.use(cookieParser());
 
 // create guestUserID for guests
 app.use( (req, res, next) => {
 
-  // req.session.userTimeZone = req.cookies.userTimeZone || req.headers['x-user-timezone'] || 'error';
+  req.session.userTimeZone = req.cookies.userTimeZone || 'error';
   // const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
     // let userTimeZone = req.query.timeZone;
   // console.log("Client Timezone:", req.query.timeZone, userTimeZone)
@@ -137,7 +140,8 @@ io.use(wrap(passport.initialize()));
 io.use(wrap(passport.session()));
 
 io.use((socket, next) => {
-  // const userTimeZone = socket.request.session.timezone
+  const userTimeZone = socket.request.session.userTimeZone
+  socket.timeZone = userTimeZone
 
   console.log("first things", socket.request.session)
   if (socket.request.user) {
@@ -150,7 +154,7 @@ io.use((socket, next) => {
     // const userTimeZone = socket.request.session.timezone
     console.log('fifth')
   }
-console.log('sixth')
+console.log('sixth', socket.timeZone)
   // join everyone to the lobby
   // socket.join('The Lobby');
   console.log("io.use(socket, next) joined the lobby", socket.user, socket.request.session.id)
@@ -192,7 +196,7 @@ io.on("connection", async ( socket) => {
     //   socket.request.session.timezone = timeZone;
     // })
 
-    const userTimeZone = socket.handshake.query.timeZone
+    const userTimeZone = socket.timeZone
     console.log("Handshake timezone", userTimeZone)
 
     // if (!req.session._id) {
