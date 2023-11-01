@@ -17,6 +17,8 @@ const socket = io({
 });
 const id = socket.id;
 
+// console.log("Query Params:", socket.request.query.timeZone)
+
 // const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 let timeClock =  document.getElementById('time');

@@ -1,11 +1,14 @@
 // const socket = io()
 console.log("Shared")
+const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone 
+console.log("SHARED userTimeZone1:", userTimeZone)
+
 
 const socket = io({
     reconnection: true,
     reconnectionAttempts: 10,
     reconnectionDelay: 1000,
-    query: { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone },
+    query: { timeZone:  Intl.DateTimeFormat().resolvedOptions().timeZone  },
   });
   const id = socket.id;
 
@@ -19,7 +22,7 @@ const socket = io({
   
 //   let timeClock =  document.getElementById('time');
   
-  console.log("SHARED userTimeZone:", socket.request)
+  console.log("SHARED userTimeZone:", userTimeZone, socket.io.engine.query)
   
 //   socket.emit("updateTimeZone", { timeZone: userTimeZone });
   

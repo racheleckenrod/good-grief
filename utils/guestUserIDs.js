@@ -1,10 +1,10 @@
 // const moment = require ("moment-timezone");
 const GuestUserID = require("../models/GuestUserID");
 
-async function generateGuestID(req, res, userTimeZone) {
+async function generateGuestID(userTimeZone) {
     let guestID
     let userName
-    // const userTimeZone = req.session.timezone
+    // const userTimeZone = socket.handshake.query.timeZone
     console.log("generateGuestID")
 
     while (true) {

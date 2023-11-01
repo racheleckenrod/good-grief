@@ -99,30 +99,32 @@ app.use(flash());
 
 
 // create guestUserID for guests
-app.use(async (req, res, next) => {
+app.use( (req, res, next) => {
+
+  // req.session.userTimeZone = req.cookies.userTimeZone || req.headers['x-user-timezone'] || 'error';
   // const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
-    let userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  console.log("Client Timezone:", req.body.timezone, userTimeZone)
-  if (!req.session._id) {
-    if (!req.user) {
-      // userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    // let userTimeZone = req.query.timeZone;
+  // console.log("Client Timezone:", req.query.timeZone, userTimeZone)
+  // if (!req.session._id) {
+  //   if (!req.user) {
+  //     // userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-      const { guestID, userName } = await generateGuestID(userTimeZone);
-      const guestUser = await GuestUserID.findOne({ guestUserID: guestID });
+  //     const { guestID, userName } = await generateGuestID();
+  //     const guestUser = await GuestUserID.findOne({ guestUserID: guestID });
 
-        if (guestUser) {
-          req.session._id = guestUser._id;
-          req.session.userName = guestUser.userName;
-          req.session.timezone = userTimeZone
-        }
+  //       if (guestUser) {
+  //         req.session._id = guestUser._id;
+  //         req.session.userName = guestUser.userName;
+  //         req.session.timezone = userTimeZone
+  //       }
 
-        // req.session.timezone = timezone
-        console.log(guestUser)
-    }
+  //       // req.session.timezone = timezone
+  //       console.log(guestUser)
+  //   }
   
 
-  }
-  console.log("app.use", req.session, userTimeZone)
+  // }
+  console.log("app.use", req.session)
   next();
 })
 
@@ -183,7 +185,7 @@ function userJoin(id, username, room, _id) {
 
  
 // run when Lobby connects
-io.on("connection", (socket) => {
+io.on("connection", async ( socket) => {
   // console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.request.params}`, socket.id, socket.nsp.name);
 
     // socket.on("connect", ({ timeZone }) => {
@@ -192,6 +194,26 @@ io.on("connection", (socket) => {
 
     const userTimeZone = socket.handshake.query.timeZone
     console.log("Handshake timezone", userTimeZone)
+
+    // if (!req.session._id) {
+    //   if (!req.user) {
+    //     // userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  
+    //     const { guestID, userName } = await generateGuestID(userTimeZone);
+    //     const guestUser = await GuestUserID.findOne({ guestUserID: guestID });
+  
+    //       if (guestUser) {
+    //         req.session._id = guestUser._id;
+    //         req.session.userName = guestUser.userName;
+    //         req.session.timezone = userTimeZone
+    //       }
+  
+    //       // req.session.timezone = timezone
+    //       console.log("From connection", guestUser)
+    //   }
+    
+  
+    // }
   
     const session = socket.request.session;
     // const userTimeZone = session.timezone || 'UTC'

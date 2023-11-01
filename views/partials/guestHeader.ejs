@@ -16,6 +16,16 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<link rel="stylesheet" href="/assets/css/style.css" />
+		<script>
+			function detectAndStoreTimezone() {
+				const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+				document.cookie = `userTimeZone=${userTimeZone}; expires=Thu, 01 Jan 2099 00:00:00 UTC; path=/`;
+				console.log(`detected timezone: ${userTimeZone}`);
+				console.log(`Set userTimeZone cookie: ${userTimeZone}`);
+
+			}
+			detectAndStoreTimezone();
+		</script>
 	</head>
 	<body class="homepage">
 		<div id="page-wrapper">
