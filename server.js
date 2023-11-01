@@ -105,9 +105,7 @@ app.use(cookieParser());
 app.use( async (req, res, next) => {
 
   req.session.userTimeZone = req.cookies.userTimeZone || 'error';
-  // const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
-    // let userTimeZone = req.query.timeZone;
-  // console.log("Client Timezone:", req.query.timeZone, userTimeZone)
+ 
   if (!req.session._id) {
     if (!req.user) {
   //     // userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -118,14 +116,13 @@ app.use( async (req, res, next) => {
         if (guestUser) {
           req.session._id = guestUser._id;
           req.session.userName = guestUser.userName;
+          req.session.guestID = guestUser.guestUserID
           req.session.timezone = req.cookies.userTimeZone
         }
 
         // req.session.timezone = timezone
         console.log("app,use guestUser=", guestUser)
     }
-  
-
   }
   console.log("app.use", req.session)
   next();
@@ -143,21 +140,19 @@ io.use((socket, next) => {
   const userTimeZone = socket.request.session.userTimeZone
   socket.timeZone = userTimeZone
 
-  console.log("first things", socket.request.session)
+  // console.log("first things", socket.request.session)
   if (socket.request.user) {
-    console.log("second")
+    // console.log("second")
     socket.user = socket.request.user.userName;
-  console.log("third")
+  // console.log("third")
   } else {
-    console.log('forth')
+    // console.log('forth')
     socket.user = socket.request.session.userName
+    socket.guestID = socket.request.session.guestID
     // const userTimeZone = socket.request.session.timezone
-    console.log('fifth')
+    console.log('fifth', socket.guestID, socket.request.session)
   }
-console.log('sixth', socket.timeZone)
-  // join everyone to the lobby
-  // socket.join('The Lobby');
-  console.log("io.use(socket, next) joined the lobby", socket.user, socket.request.session.id)
+
   next();
 });
  
@@ -190,9 +185,7 @@ function userJoin(id, username, room, _id) {
  
 // run when client connects
 io.on("connection", async ( socket) => {
-  // console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.request.params}`, socket.id, socket.nsp.name);
-
-
+ 
     const userTimeZone = socket.timeZone
     console.log("socket.timezone=userTimeZone", userTimeZone)
     const session = socket.request.session;
@@ -205,7 +198,6 @@ io.on("connection", async ( socket) => {
 
   
 
-   
         // Runs when client disconnects
         socket.on("disconnect", (reason) => {
           const user = userLeave(socket.id);
@@ -237,8 +229,8 @@ io.on("connection", async ( socket) => {
 
                 const localTime = moment.tz(socket.timeZone).format('dddd, MMMM D, YYYY h:mm:ss a');
 
-              io.emit('timeData', localTime);}, 1000);
-              io.emit("timeClock", `It's about time... ${socket.user}, Connected= ${socket.connected}, socketID: ${socket.id}`)
+              socket.emit('timeData', localTime);}, 1000);
+              socket.emit("timeClock", `It's about time... ${socket.user}, Connected= ${socket.connected}, socketID: ${socket.id}`)
         });
       
         socket.on("joinRoom", ({ username, room, _id }) => {
@@ -251,7 +243,6 @@ io.on("connection", async ( socket) => {
             room: user.room,
             users: getRoomUsers(user.room),
           });
-          // console.log(botName, room, (user.room))
 
           // Broadcast when a user connects
           socket.broadcast
@@ -260,7 +251,6 @@ io.on("connection", async ( socket) => {
             "message",  formatMessage(botName,`${user.username} has joined the chat`, socket.timeZone)
           );
     
-
           // fetch recent messages for the room from the database
           ChatMessage.find({room: user.room })
             .sort({ timestamp: -1 })
@@ -278,14 +268,13 @@ io.on("connection", async ( socket) => {
                 
                   if (user) {
                     username = user.userName;
-                  
                   } else {
                     const guestUser = await GuestUserID.findById(message.user);
                     if (guestUser) {
                       username = guestUser.userName;
                     }
                   }
-                  console.log("awaited username=", username, message.user)
+                  // console.log("awaited username=", username, message.user)
                     const formattedMessage = {
                       text: message.message,
                       username: username,
@@ -310,7 +299,6 @@ io.on("connection", async ( socket) => {
           const user = getCurrentUser(socket.id);
 
           try {
-
             const newMessage = new ChatMessage({
               room: user.room,
               user: user._id,
@@ -326,20 +314,14 @@ io.on("connection", async ( socket) => {
           } catch(error) {
               console.error('Error saving chat message:', error);
           }
-
-              console.log("User=", user)
-            
+              // console.log("User=", user)
           });
 
 
          // Welcome current user
         socket.emit("message", formatMessage(botName, `Welcome to ${user.room} of Live Grief Support, ${user.username}.`, socket.timeZone));
 
-
-
-
     }); 
-
 });
 
 //Setup Routes For Which The Server Is Listening

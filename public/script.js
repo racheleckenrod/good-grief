@@ -4,28 +4,18 @@ const roomName = document.getElementById('room-name');
 const userList = document.getElementById('users');
 const username = document.getElementById('username').innerHTML;
 const room =  roomName.innerHTML
-// const ChatMessage = require('./models/ChatMessage')
 
 const _id =  document.getElementById('_id').innerHTML;
-// console.log("room=", room, username, _id)
 
 const socket = io({
   reconnection: true,
   reconnectionAttempts: 10,
   reconnectionDelay: 1000,
-  // query: { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone },
 });
 const id = socket.id;
 
-// console.log("Query Params:", socket.request.query.timeZone)
-
-// const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
 let timeClock =  document.getElementById('time');
 
-// console.log("userTimeZone:", userTimeZone)
-
-// socket.emit("connection", { timeZone: userTimeZone });
 
 socket.on('reconnect', (attemptNumber) => {
   console.log(`Reconnected after ${attemptNumber} attempts`);
@@ -34,10 +24,8 @@ socket.on('reconnect', (attemptNumber) => {
 socket.emit("joinLobby")
 
 socket.on('timeClock', data => {
-  // console.log("Nothing",data,"Personal", "connected?", lobbySocket.connected)
  
   timeClock.innerHTML = data
-  console.log("script.js2", socket, id)
 
 })
 
@@ -50,33 +38,23 @@ socket.on('timeData', (timeString2) => {
 
 // // Join chatroom
 socket.emit('joinRoom', {  username, room, _id });
-console.log("joinRoom", username, room, _id)
 
 // // Get room and users
 socket.on('roomUsers', ({ room, users }) => {
-  console.log("mainJS2", socket, socket.connected, socket.id)
-
-
   outputRoomName(room);
-  console.log("output", room)
   outputUsers(users);
-  console.log("OUTPUTLOG", users)
 });
 
 // Recent messages
 socket.on("recentMessages", (messages) => {
   // display the recent messages in the chatroom
   messages.forEach((message) => {
-    // const messageText = message.message;
-    // const username = message.user.userName;
-    // const timestamp = message.timestamp
     outputMessage(message);
   });
 });
 
 // // Message from server
 socket.on('message', (message) => {
-  console.log("Message", message);
   outputMessage(message);
 
 //   // Scroll down
@@ -91,10 +69,6 @@ chatForm.addEventListener('submit', (e) => {
   let msg = e.target.elements.msg.value;
   console.log("msg", msg)
 //   msg = msg.trim();
-
-//   if (!msg) {
-//     return false;
-//   }
 
 //   // Emit message to server
   socket.emit('chatMessage', msg);
@@ -119,13 +93,11 @@ function outputMessage(message) {
 
 // // Add room name to DOM
 function outputRoomName(room) {
-  console.log("output test", socket, socket.connected, socket.id)
   roomName.innerText = room;
 }
 
 // // Add users to DOM
 function outputUsers(users) {
-  console.log("outputUsers", users)
   userList.innerHTML = `
   ${users.map(user => `<li class="${user.username}" >${user.username}</li>`).join('')}
   `;
@@ -133,15 +105,26 @@ function outputUsers(users) {
   // Add event listeners to names to connect to their profile page
   users.forEach((user) => {
     console.log("first", user)
-    document.querySelector(`.${user.username}`).addEventListener('click', () => {
-      console.log("forEach", user.username, user._id)
-       window.location = `/profile/${user._id}`
-    })
+    
+       document.querySelector(`.${user.username}`).addEventListener('click', () => {
+      console.log(user)
+      if (user.username.startsWith("guest")) {
+        alert("Guest users don't have access to user Profiles. Please sign up to see them.");
+      } else if (user.username.startsWith("guest")){
+        alert("Guest users do not have profiles.");
+      } else {
+        window.open(`/profile/${user._id}`, '_blank');
+      }
+      // console.log("forEach", user.username, user._id)
+      //  window.location = `/profile/${user._id}`
+    });
+    
+   
 //     const li = document.createElement('li');
 //     li.innerText = user.username;
 //     userList.appendChild(li);
   });
-}
+};
 
 // // // User leaves chat
 function userLeave(id) {

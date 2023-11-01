@@ -25,6 +25,7 @@ async function generateGuestID(userTimeZone) {
             break;
         }
     }
+    // console.log("guestID=", guestID)
     return { guestID, userName, userTimeZone };
 }
 

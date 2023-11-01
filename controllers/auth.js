@@ -28,7 +28,7 @@ exports.postLogin = (req, res, next) => {
     gmail_remove_dots: false,
   });
 
-  req.session.timezone = req.body.timezone || "UTC"
+  // req.session.timezone = req.body.timezone || "UTC"
   // console.log("timezone:", req.session.timezone, req.body.timezone, req.session)
 
   passport.authenticate("local", (err, user, info) => {
@@ -40,17 +40,17 @@ exports.postLogin = (req, res, next) => {
       return res.redirect("/login");
     }
 
-    const userTimeZone = req.body.timezone;
+    // const userTimeZone = req.body.timezone;
 
     
 
-    console.log(req.session, "first check")
+    // console.log(req.session, "first check")
     req.logIn(user, (err) => {
       if (err) {
         return next(err);
       }
       req.flash("success", { msg: "Success! You are logged in." });
-      console.log(req.body.timezone, "second check")
+      // console.log(req.body.timezone, "second check")
       User.findByIdAndUpdate(req.user.id, { $set: { timezone: userTimeZone }}, (err, user) => {
         if (err) {
           return next(err);
