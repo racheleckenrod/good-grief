@@ -270,20 +270,12 @@ io.on("connection", async ( socket) => {
 
       // broadcast updates
           setInterval(() => {
+
             const localTime = moment.tz(socket.timeZone).format('dddd, MMMM D, YYYY h:mm:ss a');
 
-            const userTimeZone = socket.timeZone;
-          //   // console.log(userTimeZone)
-            // const currentDateTime = new Date();
-            const currentDateTime = DateTime.now().setZone(userTimeZone);
-          //   // const localTime = timestamp.toLocaleString()
-          // const localFormattedTime = currentDateTime.toFormat('cccc, LLLL d, y h:mm:ss a');
-          const localFormattedTime = currentDateTime.toLocaleString();
-
-          // // moment(message.timestamp).tz(userTimeZone).format('h:mm:ss a'),
-          // console.log("SET INTERVAL", localTime)
 
           io.emit('timeData', localTime);}, 1000);
+          
 
           io.emit("timeClock", `It's about time... ${socket.user}, Connected= ${socket.connected}, socketID: ${socket.id}`)
 
@@ -383,7 +375,7 @@ io.on("connection", async ( socket) => {
       const savedMessage = await  newMessage.save();
 
       console.log('Chat message saved:', savedMessage);
-      io.to(user.room).emit("message", formatMessage(user.username, msg));
+      io.to(user.room).emit("message", formatMessage(user.username, msg, socket.timeZone));
 
     } catch(error) {
         console.error('Error saving chat message:', error);
