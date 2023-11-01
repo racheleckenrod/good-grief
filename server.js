@@ -12,7 +12,7 @@ const PORT = process.env.PORT;
 
 app.use(cors())
 
-// const moment = require('moment');
+const moment = require('moment-timezone');
 const { DateTime } = require('luxon');
 const mongoose = require("mongoose");
 const passport = require("passport");
@@ -270,18 +270,20 @@ io.on("connection", async ( socket) => {
 
       // broadcast updates
           setInterval(() => {
-          //   // const userTimeZone = socket.request.session.timezone;
+            const localTime = moment.tz(socket.timeZone).format('dddd, MMMM D, YYYY h:mm:ss a');
+
+            const userTimeZone = socket.timeZone;
           //   // console.log(userTimeZone)
             // const currentDateTime = new Date();
-            const currentDateTime = DateTime.now().setZone(socket.userTimeZone)
+            const currentDateTime = DateTime.now().setZone(userTimeZone);
           //   // const localTime = timestamp.toLocaleString()
           // const localFormattedTime = currentDateTime.toFormat('cccc, LLLL d, y h:mm:ss a');
           const localFormattedTime = currentDateTime.toLocaleString();
 
           // // moment(message.timestamp).tz(userTimeZone).format('h:mm:ss a'),
-          // console.log("SET INTERVAL", localFormattedTime, userTimeZone)
+          // console.log("SET INTERVAL", localTime)
 
-          io.emit('timeData', localFormattedTime);}, 1000);
+          io.emit('timeData', localTime);}, 1000);
 
           io.emit("timeClock", `It's about time... ${socket.user}, Connected= ${socket.connected}, socketID: ${socket.id}`)
 
