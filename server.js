@@ -202,7 +202,7 @@ io.on("connection", async ( socket) => {
         socket.on("disconnect", (reason) => {
           const user = userLeave(socket.id);
           console.log("disconnected user=", user)
-          io.emit("message",  formatMessage(botName,` user ${socket.user} has left a chat`, socket.timeZone))
+          io.emit("message",  formatMessage(botName,` user ${socket.user} has left a chat`, userTimeZone))
         
               if(user) {
                 console.log(`${user.username} disconnected from ${user.room} because reason: ${reason}`)
@@ -212,7 +212,7 @@ io.on("connection", async ( socket) => {
               if (user) {
                 io.to(user.room).emit(
                   "message",
-                  formatMessage(botName, `${user.username} has left the chat because: ${reason}`, socket.timeZone)
+                  formatMessage(botName, `${user.username} has left the chat because: ${reason}`, userTimeZone)
                 );
                 // Send users and room info
                 io.to(user.room).emit("roomUsers", {
@@ -248,7 +248,7 @@ io.on("connection", async ( socket) => {
           socket.broadcast
           .to(user.room)
           .emit(
-            "message",  formatMessage(botName,`${user.username} has joined the chat`, socket.timeZone)
+            "message",  formatMessage(botName,`${user.username} has joined the chat`, userTimeZone)
           );
     
           // fetch recent messages for the room from the database
@@ -309,7 +309,7 @@ io.on("connection", async ( socket) => {
             const savedMessage = await  newMessage.save();
 
             // console.log('Chat message saved:', savedMessage);
-            io.to(user.room).emit("message", formatMessage(user.username, msg, socket.timeZone));
+            io.to(user.room).emit("message", formatMessage(user.username, msg, userTimeZone));
 
           } catch(error) {
               console.error('Error saving chat message:', error);
@@ -319,7 +319,7 @@ io.on("connection", async ( socket) => {
 
 
          // Welcome current user
-        socket.emit("message", formatMessage(botName, `Welcome to ${user.room} of Live Grief Support, ${user.username}.`, socket.timeZone));
+        socket.emit("message", formatMessage(botName, `Welcome to ${user.room} of Live Grief Support, ${user.username}.`, userTimeZone));
 
     }); 
 });
