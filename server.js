@@ -331,7 +331,7 @@ io.on("connection", async ( socket) => {
       });
 
 // Welcome current user
-    socket.emit("message", formatMessage(botName, `Welcome to ${user.room} Live Grief Support, ${user.username}!`));
+    socket.emit("message", formatMessage(botName, `Welcome to ${user.room} Live Grief Support, ${user.username}!`, socket.timeZone));
 
     // io.emit("messageLobby", formatMessage(botName, `Welcome to Live Grief Support Lobby, ${socket.request.userName}.`, userTimeZone));
 
@@ -369,7 +369,7 @@ io.on("connection", async ( socket) => {
         room: user.room,
         user: user._id,
         message: msg,
-        timestamp: new Date().toLocaleString(),
+        timestamp: new Date(),
       });
 
       const savedMessage = await  newMessage.save();
