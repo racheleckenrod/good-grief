@@ -232,79 +232,60 @@ io.on("connection", async ( socket) => {
     // session.room = user.room
     session.save();
 
-  // broadcast updates
-
-
-    // setInterval(() => {
-    //   // const userTimeZone = socket.request.session.timezone;
-    //   // console.log(userTimeZone)
-    //   const currentDateTime = DateTime.now().setZone(userTimeZone)
-    //   // const localTime = timestamp.toLocaleString()
-    // const localFormattedTime = currentDateTime.toFormat('cccc, LLLL d, y h:mm:ss a');
-    // // moment(message.timestamp).tz(userTimeZone).format('h:mm:ss a'),
-    // console.log("SET INTERVAL", localFormattedTime, userTimeZone)
-
-    // io.emit('timeData', localFormattedTime);}, 1000);
-
-    io.emit("timeClock", `It's about time... ${socket.user}, Connected= ${socket.connected}, socketID: ${socket.id}`)
+  
 
    
-// Runs when client disconnects
-socket.on("disconnect", (reason) => {
-  const user = userLeave(socket.id);
-  console.log("disconnect user=", user)
-  io.emit("message",  formatMessage(botName,`a user ${socket.user} has left the chat`))
- 
-  if(user) {
-    console.log(`${user.username} disconnected from ${user.room} because reason: ${reason}`)
-  }else{
-    console.log(`Disconnected because reason: ${reason}`)
-  }
- 
+    // Runs when client disconnects
+    socket.on("disconnect", (reason) => {
+      const user = userLeave(socket.id);
+      console.log("disconnect user=", user)
+      io.emit("message",  formatMessage(botName,`a user ${socket.user} has left the chat`))
+    
+          if(user) {
+            console.log(`${user.username} disconnected from ${user.room} because reason: ${reason}`)
+          }else{
+            console.log(`Disconnected because reason: ${reason}`)
+          }
 
 
-  if (user) {
-    io.to(user.room).emit(
-      "message",
-      formatMessage(botName, `${user.username} has left the chat because: ${reason}`)
-    );
+          if (user) {
+            io.to(user.room).emit(
+              "message",
+              formatMessage(botName, `${user.username} has left the chat because: ${reason}`)
+            );
 
 
-    // Send users and room info
+            // Send users and room info
 
-    io.to(user.room).emit("roomUsers", {
-      room: user.room,
-      users: getRoomUsers(user.room),
-    });
-  }
-});
-
-
-  // io.on("disconnect", (reason) => {
-  //   const user = userLeave(socket.id);
-
-  //   console.log(`${socket.user} disconnected because ${reason}`)
+            io.to(user.room).emit("roomUsers", {
+              room: user.room,
+              users: getRoomUsers(user.room),
+            });
+          }
+        });
 
 
-  //   if (user) {
-  //     io.to(user.room).emit(
-  //       "message",
-  //       formatMessage(botName, `${user.username} has left the chat because: ${reason}`, userTimeZone)
-  //     );
-  //   }
+  
+    socket.on("joinLobby", () =>  {
 
+      // broadcast updates
+          setInterval(() => {
+          //   // const userTimeZone = socket.request.session.timezone;
+          //   // console.log(userTimeZone)
+            const currentDateTime = new Date();
+          //   const currentDateTime = DateTime.now().setZone(userTimeZone)
+          //   // const localTime = timestamp.toLocaleString()
+          // const localFormattedTime = currentDateTime.toFormat('cccc, LLLL d, y h:mm:ss a');
+          const localFormattedTime = currentDateTime.toLocaleString();
 
-  //   // Send users and room info
-  // io.to(user.room).emit("roomUsers", {
-  //   room: user.room,
-  //   users: getRoomUsers(user.room),
-  // });
-  // })
+          // // moment(message.timestamp).tz(userTimeZone).format('h:mm:ss a'),
+          // console.log("SET INTERVAL", localFormattedTime, userTimeZone)
 
- 
+          io.emit('timeData', localFormattedTime);}, 1000);
 
+          io.emit("timeClock", `It's about time... ${socket.user}, Connected= ${socket.connected}, socketID: ${socket.id}`)
 
-
+          });
   
   socket.on("joinRoom", ({ username, room, _id }) => {
     const user = userJoin(session.socketID, username, room, _id);

@@ -31,6 +31,8 @@ socket.on('reconnect', (attemptNumber) => {
   console.log(`Reconnected after ${attemptNumber} attempts`);
 });
 
+socket.emit("joinLobby")
+
 socket.on('timeClock', data => {
   // console.log("Nothing",data,"Personal", "connected?", lobbySocket.connected)
  
