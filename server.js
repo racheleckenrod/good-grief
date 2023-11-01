@@ -209,8 +209,8 @@ io.on("connection", async ( socket) => {
         // Runs when client disconnects
         socket.on("disconnect", (reason) => {
           const user = userLeave(socket.id);
-          console.log("disconnect user=", user)
-          io.emit("message",  formatMessage(botName,`a user ${socket.user} has left the chat`, socket.timeZone))
+          console.log("disconnected user=", user)
+          io.emit("message",  formatMessage(botName,` user ${socket.user} has left a chat`, socket.timeZone))
         
               if(user) {
                 console.log(`${user.username} disconnected from ${user.room} because reason: ${reason}`)
@@ -237,12 +237,8 @@ io.on("connection", async ( socket) => {
 
                 const localTime = moment.tz(socket.timeZone).format('dddd, MMMM D, YYYY h:mm:ss a');
 
-
               io.emit('timeData', localTime);}, 1000);
-              
-
               io.emit("timeClock", `It's about time... ${socket.user}, Connected= ${socket.connected}, socketID: ${socket.id}`)
-
         });
       
         socket.on("joinRoom", ({ username, room, _id }) => {
@@ -337,7 +333,7 @@ io.on("connection", async ( socket) => {
 
 
          // Welcome current user
-        socket.emit("message", formatMessage(botName, `Welcome to ${user.room} Live Grief Support, ${user.username}!`, socket.timeZone));
+        socket.emit("message", formatMessage(botName, `Welcome to ${user.room} of Live Grief Support, ${user.username}.`, socket.timeZone));
 
 
 
