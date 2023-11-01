@@ -239,7 +239,7 @@ io.on("connection", async ( socket) => {
     socket.on("disconnect", (reason) => {
       const user = userLeave(socket.id);
       console.log("disconnect user=", user)
-      io.emit("message",  formatMessage(botName,`a user ${socket.user} has left the chat`))
+      io.emit("message",  formatMessage(botName,`a user ${socket.user} has left the chat`, socket.timeZone))
     
           if(user) {
             console.log(`${user.username} disconnected from ${user.room} because reason: ${reason}`)
@@ -251,7 +251,7 @@ io.on("connection", async ( socket) => {
           if (user) {
             io.to(user.room).emit(
               "message",
-              formatMessage(botName, `${user.username} has left the chat because: ${reason}`)
+              formatMessage(botName, `${user.username} has left the chat because: ${reason}`, socket.timeZone)
             );
 
 
