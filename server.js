@@ -272,8 +272,8 @@ io.on("connection", async ( socket) => {
           setInterval(() => {
           //   // const userTimeZone = socket.request.session.timezone;
           //   // console.log(userTimeZone)
-            const currentDateTime = new Date();
-          //   const currentDateTime = DateTime.now().setZone(userTimeZone)
+            // const currentDateTime = new Date();
+            const currentDateTime = DateTime.now().setZone(socket.userTimeZone)
           //   // const localTime = timestamp.toLocaleString()
           // const localFormattedTime = currentDateTime.toFormat('cccc, LLLL d, y h:mm:ss a');
           const localFormattedTime = currentDateTime.toLocaleString();
