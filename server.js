@@ -192,9 +192,6 @@ function userJoin(id, username, room, _id) {
 io.on("connection", async ( socket) => {
   // console.log(`${socket.request.user.userName} connected on lobby2 in room ${socket.request.params}`, socket.id, socket.nsp.name);
 
-    // socket.on("connect", ({ timeZone }) => {
-    //   socket.request.session.timezone = timeZone;
-    // })
 
     const userTimeZone = socket.timeZone
     console.log("Handshake timezone", userTimeZone)
@@ -237,10 +234,10 @@ io.on("connection", async ( socket) => {
       // console.log(userTimeZone)
       const currentDateTime = DateTime.now().setZone(userTimeZone)
       // const localTime = timestamp.toLocaleString()
-      // console.log(currentTimestamp, userTimeZone)
     const localFormattedTime = currentDateTime.toFormat('cccc, LLLL d, y h:mm:ss a');
     // moment(message.timestamp).tz(userTimeZone).format('h:mm:ss a'),
-  
+    console.log("SET INTERVAL", localFormattedTime, userTimeZone)
+
     io.emit('timeData', localFormattedTime);}, 1000);
 
     io.emit("timeClock", `It's about time... ${socket.user}, Connected= ${socket.connected}, socketID: ${socket.id}`)

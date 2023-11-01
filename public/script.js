@@ -13,7 +13,7 @@ const socket = io({
   reconnection: true,
   reconnectionAttempts: 10,
   reconnectionDelay: 1000,
-  query: { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone },
+  // query: { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone },
 });
 const id = socket.id;
 
