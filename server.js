@@ -316,7 +316,7 @@ io.on("connection", async ( socket) => {
               const formattedMessage = {
                 text: message.message,
                 username: username,
-                time: moment.tz(message.timestamp).tz(socket.timeZone).format('h:mm:ss a'),
+                time: moment.tz(message.timestamp, socket.timeZone).format('h:mm:ss a'),
               };
               formattedMessages.push(formattedMessage);
             
