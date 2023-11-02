@@ -1,3 +1,7 @@
+import { socket } from './js/shared.js'
+
+let el
+
 const chatForm = document.getElementById('chat-form');
 const chatMessages = document.querySelector('.chat-messages');
 const roomName = document.getElementById('room-name');
@@ -7,16 +11,18 @@ const room =  roomName.innerHTML
 
 const _id =  document.getElementById('_id').innerHTML;
 
-const socket = io({
-  reconnection: true,
-  reconnectionAttempts: 10,
-  reconnectionDelay: 1000,
-});
-const id = socket.id;
+// const socket = io({
+//   reconnection: true,
+//   reconnectionAttempts: 10,
+//   reconnectionDelay: 1000,
+// });
+// const id = socket.id;
 
 let timeClock =  document.getElementById('time');
 
-
+socket.on('connect', () => {
+console.log('lobby connected', socket.id)
+});
 socket.on('reconnect', (attemptNumber) => {
   console.log(`Reconnected after ${attemptNumber} attempts`);
 });
@@ -101,7 +107,6 @@ function outputUsers(users) {
   userList.innerHTML = `
   ${users.map(user => `<li class="${user.username}" >${user.username}</li>`).join('')}
   `;
-
   // Add event listeners to names to connect to their profile page
   users.forEach((user) => {
     console.log("first", user)

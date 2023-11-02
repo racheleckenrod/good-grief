@@ -5,8 +5,13 @@ const socketio = require("socket.io");
 const formatMessage = require("./utils/messages");
 const app = express();
 const server = http.createServer(app);
-const io = socketio(server);
-const cors = require('cors')
+const io = socketio(server, {
+  reconnection: true,
+  reconnectionAttempts: 10,
+  reconnectionDelay: 1000,
+});
+const socketIoCookie = require("socket.io-cookie")
+const cors = require('cors');
 require("dotenv").config({ path: "./config/.env" });
 const PORT = process.env.PORT;
 
@@ -18,6 +23,7 @@ const mongoose = require("mongoose");
 const passport = require("passport");
 const session = require("express-session");
 const MongoStore = require("connect-mongo")(session);
+const expressSocketIoSession = require("express-socket.io-session");
 const methodOverride = require("method-override");
 const flash = require("express-flash");
 const logger = require("morgan");
@@ -135,6 +141,8 @@ const wrap = middleware => (socket, next) => middleware(socket.request, {}, next
 io.use(wrap(sessionMiddleware));
 io.use(wrap(passport.initialize()));
 io.use(wrap(passport.session()));
+
+io.use(expressSocketIoSession(sessionMiddleware));
 
 io.use((socket, next) => {
   const userTimeZone = socket.request.session.userTimeZone

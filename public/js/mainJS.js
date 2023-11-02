@@ -1,3 +1,6 @@
+import { socket } from './shared.js'
+import { id } from './shared.js'
+
 const chatForm = document.getElementById('chat-form');
 const chatMessages = document.querySelector('.chat-messages');
 const roomName = document.getElementById('room-name');
@@ -10,8 +13,8 @@ const _id =  document.getElementById('_id').innerHTML;
 // my try at pulling the data into the chat
 
 // console.log(username, "username")
-const socket = io();
-const id = socket.id;
+// const socket = io();
+// const id = socket.id;
 // console.log("mainJS", socket, socket.connected, socket.id)
 
 console.log(userList)
