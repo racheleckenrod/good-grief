@@ -176,8 +176,8 @@ function getRoomUsers(room) {
 }
 
 // // Join user to chat
-function userJoin(id, username, room, _id) {
-  const user = { id, username, room, _id };
+function userJoin(id, username, room, _id, userTimeZone) {
+  const user = { id, username, room, _id, userTimeZone };
   users.push(user);
   return user;
 }
@@ -234,6 +234,8 @@ io.on("connection", async ( socket) => {
         });
       
         socket.on("joinRoom", ({ username, room, _id }) => {
+          // userTimeZone = socket.timeZone
+          console.log("join room", userTimeZone)
           const user = userJoin(session.socketID, username, room, _id);
           console.log("pkkkkkkkk", user)
           socket.join(user.room);
@@ -259,7 +261,7 @@ io.on("connection", async ( socket) => {
               if (err) {
                 console.log(err)
               } else {
-                console.log("CHATmessage", messages)
+                // console.log("CHATmessage", messages)
                 const formattedMessages = []; 
               for (const message of messages) {
                 try {
@@ -295,7 +297,8 @@ io.on("connection", async ( socket) => {
           // Listen for chatMessage
 
           socket.on("chatMessage", async (msg) => {
-          console.log("socket.user=",socket.user, socket.id)
+            console.log("chat messages", userTimeZone)
+          // console.log("socket.user=",socket.user, socket.id)
           const user = getCurrentUser(socket.id);
 
           try {
@@ -308,8 +311,8 @@ io.on("connection", async ( socket) => {
 
             const savedMessage = await  newMessage.save();
 
-            // console.log('Chat message saved:', savedMessage);
-            io.to(user.room).emit("message", formatMessage(user.username, msg, userTimeZone));
+            console.log('Chat message saved:', userTimeZone);
+            io.to(user.room).emit("message", formatMessage(user.username, savedMessage.message, userTimeZone));
 
           } catch(error) {
               console.error('Error saving chat message:', error);

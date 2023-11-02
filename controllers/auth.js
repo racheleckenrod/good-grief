@@ -51,7 +51,9 @@ exports.postLogin = (req, res, next) => {
       }
       req.flash("success", { msg: "Success! You are logged in." });
       // console.log(req.body.timezone, "second check")
-      User.findByIdAndUpdate(req.user.id, { $set: { timezone: userTimeZone }}, (err, user) => {
+      // User.findByIdAndUpdate(req.user.id, { $set: { timezone: userTimeZone }}, (err, user) => {
+        User.findByIdAndUpdate(req.user.id, (err, user) => {
+
         if (err) {
           return next(err);
         }
