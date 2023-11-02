@@ -21,7 +21,7 @@ const _id =  document.getElementById('_id').innerHTML;
 let timeClock =  document.getElementById('time');
 
 socket.on('connect', () => {
-console.log('lobby connected', socket.id)
+console.log('lobby connected')
 });
 socket.on('reconnect', (attemptNumber) => {
   console.log(`Reconnected after ${attemptNumber} attempts`);

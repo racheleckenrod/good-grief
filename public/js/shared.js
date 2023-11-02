@@ -17,12 +17,12 @@ const socket = io({
     reconnectionDelay: 1000,
     // query: { timeZone:  Intl.DateTimeFormat().resolvedOptions().timeZone  },
   });
-  const id = socket.id;
+  
 
 socket.on('connect', () => {
-  console.log("socket connected!!", socket.timeZone, socket)
-
+  console.log("socket connected!!", socket.timeZone, socket, socket.id)
   
+  console.log("id=", socket.id)
 
 
     console.log("SHARED userTimeZone1:", userTimeZone)
@@ -42,8 +42,8 @@ socket.on('disconnect', () => {
     // You can use this event to provide feedback to the user during reconnection attempts.
   });
   
-  console.log("SHARED userTimeZone:", userTimeZone, socket.io.engine.query)
+  console.log("SHARED userTimeZone:", userTimeZone, socket.request)
   
 })
  
-  export { socket, id };
+  export { socket };
