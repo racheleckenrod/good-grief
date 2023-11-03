@@ -168,7 +168,7 @@ io.use((socket, next) => {
 
 // Get current user
 function getCurrentUser(id) {
-  return users.find(user => user.id === id);
+  return users.find(user => user.id.includes(id));
 }
 
 // // User leaves chat
@@ -196,12 +196,13 @@ function getRoomUsers(room) {
 
 // // Join user to chat
 function userJoin(id, username, room, _id, userTimeZone) {
-  const exsistingUser = users.find((user) => user.username === username && user.room === room);
-  if (exsistingUser) {
-    exsistingUser.userCount++;
-    return exsistingUser;
+  const existingUser = users.find((user) => user.username === username && user.room === room);
+  if (existingUser) {
+    existingUser.userCount++;
+    existingUser.id.push(id);
+    return existingUser;
   }
-  const user = { id: id, username, room, _id, userTimeZone, userCount: 1 };
+  const user = { id: [id], username, room, _id, userTimeZone, userCount: 1 };
   users.push(user);
   return user;
 }
@@ -322,7 +323,7 @@ io.on("connection", async ( socket) => {
             // console.log("chat messages", userTimeZone)
           // console.log("socket.user=",socket.user, socket.id)
           const user = getCurrentUser(socket.id);
-
+            console.log(user, "from getCurrentUser", socket.id)
           try {
             const newMessage = new ChatMessage({
               room: user.room,
