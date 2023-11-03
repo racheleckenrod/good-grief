@@ -302,7 +302,7 @@ io.on("connection", async ( socket) => {
           // Listen for chatMessage
 
           socket.on("chatMessage", async (msg) => {
-            console.log("chat messages", userTimeZone)
+            // console.log("chat messages", userTimeZone)
           // console.log("socket.user=",socket.user, socket.id)
           const user = getCurrentUser(socket.id);
 
@@ -316,7 +316,7 @@ io.on("connection", async ( socket) => {
 
             const savedMessage = await  newMessage.save();
 
-            console.log('Chat message saved:', userTimeZone);
+            console.log(`${user.room} Chat message saved:`, userTimeZone, savedMessage.message);
             io.to(user.room).emit("message", formatMessage(user.username, savedMessage.message, userTimeZone));
 
           } catch(error) {
