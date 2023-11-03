@@ -114,7 +114,6 @@ app.use( async (req, res, next) => {
  
   if (!req.session._id) {
     if (!req.user) {
-  //     // userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
       const { guestID, userName } = await generateGuestID(req.session.userTimeZone);
       const guestUser = await GuestUserID.findOne({ guestUserID: guestID });
@@ -127,10 +126,10 @@ app.use( async (req, res, next) => {
         }
 
         // req.session.timezone = timezone
-        console.log("app,use guestUser=", guestUser)
+        // console.log("app,use guestUser=", guestUser)
     }
   }
-  console.log("app.use", req.session)
+  // console.log("app.use", req.session)
   next();
 })
 
@@ -158,7 +157,7 @@ io.use((socket, next) => {
     socket.user = socket.request.session.userName
     socket.guestID = socket.request.session.guestID
     // const userTimeZone = socket.request.session.timezone
-    console.log('fifth', socket.guestID, socket.request.session)
+    // console.log('fifth', socket.guestID, socket.request.session)
   }
 
   next();
@@ -195,13 +194,11 @@ function userJoin(id, username, room, _id, userTimeZone) {
 io.on("connection", async ( socket) => {
  
     const userTimeZone = socket.timeZone
-    console.log("socket.timezone=userTimeZone", userTimeZone)
+    console.log("socket.timezone connected", userTimeZone, socket.user)
     const session = socket.request.session;
-    console.log("socket.request.session=session=", session)
-    session.socketID = socket.id;
+    // console.log("socket.request.session=session=", session)
     socket.data.username = socket.request.userName
-    // session.socketID = socket.id;
-    // session.room = user.room
+    
     session.save();
 
   
@@ -209,7 +206,7 @@ io.on("connection", async ( socket) => {
         // Runs when client disconnects
         socket.on("disconnect", (reason) => {
           const user = userLeave(socket.id);
-          console.log("disconnected user=", user)
+          console.log("disconnected user=", user, "socket.user=",socket.user)
           io.emit("message",  formatMessage(botName,` user ${socket.user} has left a chat`, userTimeZone))
         
               if(user) {
@@ -241,11 +238,11 @@ io.on("connection", async ( socket) => {
               socket.emit("timeClock", `It's about time... ${socket.user}, Connected= ${socket.connected}, socketID: ${socket.id}`)
         });
       
-        socket.on("joinRoom", ({ username, room, _id }) => {
+        socket.on("joinRoom", ({ username, room, _id, userTimeZone }) => {
           // userTimeZone = socket.timeZone
-          console.log("join room", userTimeZone)
-          const user = userJoin(session.socketID, username, room, _id);
-          console.log("pkkkkkkkk", user)
+          // console.log("join room", userTimeZone)
+          const user = userJoin(socket.id, username, room, _id, userTimeZone);
+          console.log(`joined ${user.room}`, user)
           socket.join(user.room);
 
            // Send users and room info

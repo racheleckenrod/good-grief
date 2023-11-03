@@ -1,6 +1,8 @@
-import { socket } from './js/shared.js'
+import { socket, userTimeZone } from './js/shared.js'
 
 let el
+
+console.log("test timezone", userTimeZone)
 
 const chatForm = document.getElementById('chat-form');
 const chatMessages = document.querySelector('.chat-messages');
@@ -43,7 +45,7 @@ socket.on('timeData', (timeString2) => {
 
 
 // // Join chatroom
-socket.emit('joinRoom', {  username, room, _id });
+socket.emit('joinRoom', {  username, room, _id, userTimeZone });
 
 // // Get room and users
 socket.on('roomUsers', ({ room, users }) => {
@@ -131,13 +133,5 @@ function outputUsers(users) {
   });
 };
 
-// // // User leaves chat
-function userLeave(id) {
-  const index = users.findIndex(user => user.id === id);
-
-  if (index !== -1) {
-    return users.splice(index, 1)[0];
-  }
-}
 
 

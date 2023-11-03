@@ -1,5 +1,4 @@
-import { socket } from './shared.js'
-import { id } from './shared.js'
+import { socket, userTimeZone } from './shared.js'
 
 const chatForm = document.getElementById('chat-form');
 const chatMessages = document.querySelector('.chat-messages');
@@ -17,17 +16,17 @@ const _id =  document.getElementById('_id').innerHTML;
 // const id = socket.id;
 // console.log("mainJS", socket, socket.connected, socket.id)
 
-console.log(userList)
+// console.log(userList)
 // // Join chatroom
-socket.emit('joinRoom', { id, username, room, _id });
-console.log("joinRoom", id, username, room, _id)
-console.log(userList)
+socket.emit('joinRoom', { username, room, _id, userTimeZone });
+console.log("joinRoom", username, room, _id, userTimeZone)
+// console.log(userList)
 
 // // Get room and users
 socket.on('roomUsers', ({ room, users }) => {
   // console.log("mainJS2", socket, socket.connected, socket.id)
 
-  console.log(users)
+  // console.log(users)
   outputRoomName(room);
   // console.log("output", room)
   outputUsers(users);

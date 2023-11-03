@@ -46,4 +46,4 @@ socket.on('disconnect', () => {
   
 })
  
-  export { socket };
+  export { socket, userTimeZone };
