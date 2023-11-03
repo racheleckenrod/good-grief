@@ -9,6 +9,8 @@ const io = socketio(server, {
   reconnection: true,
   reconnectionAttempts: 10,
   reconnectionDelay: 1000,
+  pingInterval: 25000,
+  pingTimeout: 5000,
 });
 const socketIoCookie = require("socket.io-cookie")
 const cors = require('cors');
@@ -37,6 +39,7 @@ const GuestUserID = require("./models/GuestUserID");
 const generateGuestID = require("./utils/guestUserIDs");
 const ChatMessage = require('./models/ChatMessage');
 const User = require("./models/User");
+// const socket  = require("./public/js/shared");
 
 const users = [];
 const botName = "Grief Support Bot";
@@ -171,10 +174,20 @@ function getCurrentUser(id) {
 
 // // User leaves chat
 function userLeave(id) {
-  const index = users.findIndex(user => user.id === id);
+  const user = users.find((user) => user.id === id);
+
+  if (user) {
+    user.userCount--;
+
+    if (user.userCount === 0){
+
+      const index = users.findIndex(user => user.id === id);
   if (index !== -1) {
     return users.splice(index, 1)[0];
   }
+    }
+  }
+  
 }
 
 // // Get room users
@@ -182,12 +195,17 @@ function getRoomUsers(room) {
   return users.filter(user => user.room === room);
 }
 
-// // Join user to chat
-function userJoin(id, username, room, _id, userTimeZone) {
-  const user = { id, username, room, _id, userTimeZone };
-  users.push(user);
-  return user;
-}
+// // // Join user to chat
+// function userJoin(id, username, room, _id, userTimeZone) {
+//   const exsistingUser = users.find((user) => user.username === username && user.room === room);
+//   if (exsistingUser) {
+//     exsistingUser.userCount++;
+//     return exsistingUser;
+//   }
+//   const user = { id: id, username, room, _id, userTimeZone, userCount: 1 };
+//   users.push(user);
+//   return user;
+// }
 
  
 // run when client connects
