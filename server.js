@@ -39,7 +39,6 @@ const GuestUserID = require("./models/GuestUserID");
 const generateGuestID = require("./utils/guestUserIDs");
 const ChatMessage = require('./models/ChatMessage');
 const User = require("./models/User");
-// const socket  = require("./public/js/shared");
 
 const users = [];
 const botName = "Grief Support Bot";
@@ -195,17 +194,17 @@ function getRoomUsers(room) {
   return users.filter(user => user.room === room);
 }
 
-// // // Join user to chat
-// function userJoin(id, username, room, _id, userTimeZone) {
-//   const exsistingUser = users.find((user) => user.username === username && user.room === room);
-//   if (exsistingUser) {
-//     exsistingUser.userCount++;
-//     return exsistingUser;
-//   }
-//   const user = { id: id, username, room, _id, userTimeZone, userCount: 1 };
-//   users.push(user);
-//   return user;
-// }
+// // Join user to chat
+function userJoin(id, username, room, _id, userTimeZone) {
+  const exsistingUser = users.find((user) => user.username === username && user.room === room);
+  if (exsistingUser) {
+    exsistingUser.userCount++;
+    return exsistingUser;
+  }
+  const user = { id: id, username, room, _id, userTimeZone, userCount: 1 };
+  users.push(user);
+  return user;
+}
 
  
 // run when client connects

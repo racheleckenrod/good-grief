@@ -1,15 +1,15 @@
 console.log("Shared")
 let userTimeZone
 // Read the userTimeZone cookie value
-// const cookies = document.cookie.split('; ');
-// const userTimeZoneCookie = cookies.find((cookie) => cookie.startsWith('userTimeZone='));
+const cookies = document.cookie.split('; ');
+const userTimeZoneCookie = cookies.find((cookie) => cookie.startsWith('userTimeZone='));
 
-// if (userTimeZoneCookie) {
-//   userTimeZone = userTimeZoneCookie.split('=')[1];
-//   console.log(`User's timezone from cookie: ${userTimeZone}`);
-// } else {
-//   console.log("User's timezone cookie not found.");
-// }
+if (userTimeZoneCookie) {
+  userTimeZone = userTimeZoneCookie.split('=')[1];
+  console.log(`User's timezone from cookie: ${userTimeZone}`);
+} else {
+  console.log("User's timezone cookie not found.");
+}
 
 const socket = io({
     reconnection: true,
@@ -46,4 +46,4 @@ socket.on('disconnect', () => {
   
 })
  
-  module.exports = { socket };
+  export { socket, userTimeZone };
