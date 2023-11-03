@@ -173,13 +173,12 @@ function getCurrentUser(id) {
 
 // // User leaves chat
 function userLeave(id) {
-  const user = users.find((user) => user.id === id);
+  const user = users.find((user) => user.id.some(socketID => socketID === id));
 
   if (user) {
     user.userCount--;
 
     if (user.userCount === 0){
-
       const index = users.findIndex(user => user.id === id);
   if (index !== -1) {
     return users.splice(index, 1)[0];
