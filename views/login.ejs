@@ -13,6 +13,15 @@
       messages.info.forEach( el => { %>
       <div class="alert alert-info"><%= el.msg %></div>
       <% }) %> <% } %>
+      <% if (messages.success && messages.success.length > 0) { %>
+        <div class="alert alert-success">
+          <ul>
+            <% messages.success.forEach(function(success) { %>
+              <li><%= success.msg %></li>
+            <% }); %>
+          </ul>
+        </div>
+      <% } %>
       <form action="/login" method="POST">
         <div class="">
           <input type="hidden" name="timezone" id="timezone" value="">
@@ -35,10 +44,15 @@
             name="password"
           />
         </div>
+       
+
         <button type="submit" class="button style1 large">Submit</button>
       </form>
-     
-      
+
+       <div class="">
+        <a href="/passwordResetRequest" class="button style3 large">Forgot Password?</a>
+        </div>
+
     </section>
   </div>
 </main>
