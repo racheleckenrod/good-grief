@@ -18,7 +18,7 @@ const _id =  document.getElementById('_id').innerHTML;
 //   reconnectionAttempts: 10,
 //   reconnectionDelay: 1000,
 // });
-// const id = socket.id;
+const id = socket.id;
 
 let timeClock =  document.getElementById('time');
 
@@ -112,10 +112,13 @@ function outputUsers(users) {
   // Add event listeners to names to connect to their profile page
   users.forEach((user) => {
     console.log("first", user)
+    console.log("guestID=", guestID.value)
+    // console.log("socket.data=", socket.data, "req", req)
+    
     
        document.querySelector(`.${user.username}`).addEventListener('click', () => {
-      console.log(user)
-      if (user.username.startsWith("guest")) {
+        
+      if (guestID.value) {
         alert("Guest users don't have access to user Profiles. Please sign up to see them.");
       } else if (user.username.startsWith("guest")){
         alert("Guest users do not have profiles.");

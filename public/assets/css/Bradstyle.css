@@ -131,6 +131,12 @@ a {
 	visibility: hidden;
 }
 
+#guestID {
+	visibility: hidden;
+}
+#users {
+	cursor: pointer !important;
+}
 /* Join Page */
 .join-container {
 	max-width: 500px;
