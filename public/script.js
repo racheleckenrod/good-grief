@@ -1,8 +1,8 @@
-import { socket, userTimeZone } from './js/shared.js'
+import { socket } from './js/shared.js'
 
 let el
 
-console.log("test timezone", userTimeZone)
+// console.log("test timezone", userTimeZone)
 
 const chatForm = document.getElementById('chat-form');
 const chatMessages = document.querySelector('.chat-messages');

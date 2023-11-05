@@ -2,7 +2,6 @@ const path = require("path");
 const http = require("http");
 const express = require("express");
 const socketio = require("socket.io");
-const formatMessage = require("./utils/messages");
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server, {
@@ -37,6 +36,8 @@ const commentRoutes = require("./routes/comments");
 const chatRoutes = require("./routes/chat");
 const GuestUserID = require("./models/GuestUserID");
 const generateGuestID = require("./utils/guestUserIDs");
+const formatMessage = require("./utils/messages");
+
 const ChatMessage = require('./models/ChatMessage');
 const User = require("./models/User");
 
@@ -112,25 +113,25 @@ app.use(cookieParser());
 // create guestUserID for guests
 app.use( async (req, res, next) => {
 
-  req.session.userTimeZone = req.cookies.userTimeZone || 'error';
+  // req.session.userTimeZone = req.cookies.userTimeZone || 'error';
  
-  if (!req.session._id) {
-    if (!req.user) {
+  // if (!req.session._id) {
+  //   if (!req.user) {
 
-      const { guestID, userName } = await generateGuestID(req.session.userTimeZone);
-      const guestUser = await GuestUserID.findOne({ guestUserID: guestID });
+  //     const { guestID, userName } = await generateGuestID(req.session.userTimeZone);
+  //     const guestUser = await GuestUserID.findOne({ guestUserID: guestID });
 
-        if (guestUser) {
-          req.session._id = guestUser._id;
-          req.session.userName = guestUser.userName;
-          req.session.guestID = guestUser.guestUserID
-          req.session.timezone = req.cookies.userTimeZone
-        }
+  //       if (guestUser) {
+  //         req.session._id = guestUser._id;
+  //         req.session.userName = guestUser.userName;
+  //         req.session.guestID = guestUser.guestUserID
+  //         req.session.timezone = req.cookies.userTimeZone
+  //       }
 
-        // req.session.timezone = timezone
-        // console.log("app,use guestUser=", guestUser)
-    }
-  }
+  //       // req.session.timezone = timezone
+  //       // console.log("app,use guestUser=", guestUser)
+  //   }
+  // }
   // console.log("app.use", req.session)
   next();
 })
@@ -146,21 +147,21 @@ io.use(wrap(passport.session()));
 io.use(expressSocketIoSession(sessionMiddleware));
 
 io.use((socket, next) => {
-  const userTimeZone = socket.request.session.userTimeZone
-  socket.timeZone = userTimeZone
+  const userTimeZone = socket.handshake.query.userTimeZone;
+  socket.timeZone = userTimeZone;
 
   // console.log("first things", socket.request.session)
-  if (socket.request.user) {
+  // if (socket.request.user) {
     // console.log("second")
-    socket.user = socket.request.user.userName;
+    // socket.user = socket.request.user.userName;
   // console.log("third")
-  } else {
+  // } else {
     // console.log('forth')
-    socket.user = socket.request.session.userName
-    socket.guestID = socket.request.session.guestID
+    // socket.user = socket.request.session.userName
+    // socket.guestID = socket.request.session.guestID
     // const userTimeZone = socket.request.session.timezone
     // console.log('fifth', socket.guestID, socket.request.session)
-  }
+  // }
 
   next();
 });

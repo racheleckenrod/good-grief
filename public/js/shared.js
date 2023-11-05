@@ -1,15 +1,15 @@
 console.log("Shared")
-let userTimeZone
+// let userTimeZone
 // Read the userTimeZone cookie value
-const cookies = document.cookie.split('; ');
-const userTimeZoneCookie = cookies.find((cookie) => cookie.startsWith('userTimeZone='));
+// const cookies = document.cookie.split('; ');
+// const userTimeZoneCookie = cookies.find((cookie) => cookie.startsWith('userTimeZone='));
 
-if (userTimeZoneCookie) {
-  userTimeZone = userTimeZoneCookie.split('=')[1];
-  console.log(`User's timezone from cookie: ${userTimeZone}`);
-} else {
-  console.log("User's timezone cookie not found.");
-}
+// if (userTimeZoneCookie) {
+//   userTimeZone = userTimeZoneCookie.split('=')[1];
+//   console.log(`User's timezone from cookie: ${userTimeZone}`);
+// } else {
+//   console.log("User's timezone cookie not found.");
+// }
 
 const socket = io({
     reconnection: true,
@@ -18,14 +18,17 @@ const socket = io({
     // query: { timeZone:  Intl.DateTimeFormat().resolvedOptions().timeZone  },
   });
   
+  const userTimeZone = Intl.DateTimeFormatTimeFormat().resolvedOptions().timeZone;
 
 socket.on('connect', () => {
-  console.log("socket connected!!", socket.timeZone, socket, socket.id)
+
+  socket.emit('setTimeZone', userTimeZone);
+  // console.log("socket connected!!", socket.timeZone, socket, socket.id)
   
-  console.log("id=", socket.id)
+  // console.log("id=", socket.id)
 
 
-    console.log("SHARED userTimeZone1:", userTimeZone)
+    // console.log("SHARED userTimeZone1:", userTimeZone)
 
 socket.on('disconnect', () => {
   console.log('socket disconnected... attempting to reconnect');
@@ -42,8 +45,8 @@ socket.on('disconnect', () => {
     // You can use this event to provide feedback to the user during reconnection attempts.
   });
   
-  console.log("SHARED userTimeZone:", userTimeZone, socket.request)
+  // console.log("SHARED userTimeZone:", userTimeZone, socket.request)
   
 })
  
-  export { socket, userTimeZone };
+  export { socket };
