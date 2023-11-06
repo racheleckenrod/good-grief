@@ -22,7 +22,7 @@ async function generateGuestID(userTimeZone) {
             });
 
             await newGuest.save();
-            console.log(newGuest)
+            console.log("New guestUser created", newGuest)
             break;
         }
     }

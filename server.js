@@ -146,25 +146,77 @@ io.use(wrap(passport.session()));
 
 io.use(expressSocketIoSession(sessionMiddleware));
 
-io.use((socket, next) => {
+io.use(async (socket, next) => {
   const userTimeZone = socket.handshake.query.userTimeZone;
   socket.timeZone = userTimeZone;
+  console.log("io.use=userTimeZone=", userTimeZone)
+
+  // check for guestID cookie
+  const guestIDCookie = socket.handshake.headers.cookie
+    .split('; ')
+    .find((cookie) => cookie.startsWith('guestID='));
+
+  if (guestIDCookie) {
+    const guestID = guestIDCookie.split('=')[1];
+    socket.guestID = guestID
+    socket.data = { guestID }
+  } else {
+    // generate new guestID
+    const newGuestID = await generateGuestID(socket.timeZone);
+    socket.guestID = newGuestID.guestID
+    console.log("socket.guestID=", socket.guestID)
+    socket.data = { guestID: newGuestID };
+    socket.request.session.guestID = newGuestID.guestID
+
+
+    // emit new guestID to client to set a cookie
+    socket.emit('setCookie', newGuestID.guestID);
+    console.log()
+  }
+
 
   // console.log("first things", socket.request.session)
-  // if (socket.request.user) {
+  if (socket.request.user) {
     // console.log("second")
-    // socket.user = socket.request.user.userName;
+    socket.user = socket.request.user.userName;
   // console.log("third")
-  // } else {
+  } else {
     // console.log('forth')
-    // socket.user = socket.request.session.userName
+    socket.user = socket.request.session.userName
     // socket.guestID = socket.request.session.guestID
     // const userTimeZone = socket.request.session.timezone
     // console.log('fifth', socket.guestID, socket.request.session)
-  // }
+  }
 
   next();
 });
+
+// create guestUserID for guests
+app.use( async (req, res, next) => {
+
+  // req.session.userTimeZone = req.cookies.userTimeZone || 'error';
+ 
+  if (!req.session._id) {
+    if (!req.user) {
+
+  //     const { guestID, userName } = await generateGuestID(req.session.userTimeZone);
+  //     const guestUser = await GuestUserID.findOne({ guestUserID: guestID });
+
+  //       if (guestUser) {
+  //         req.session._id = guestUser._id;
+          // req.session.userName = socket.data.guestID.userName;
+  //         req.session.guestID = guestUser.guestUserID
+  //         req.session.timezone = req.cookies.userTimeZone
+  //       }
+
+  //       // req.session.timezone = timezone
+  //       // console.log("app,use guestUser=", guestUser)
+    }
+  }
+  // console.log("app.use", req.session)
+  next();
+})
+
  
 
 // Get current user
@@ -236,7 +288,7 @@ io.on("connection", async ( socket) => {
     const session = socket.request.session;
     // console.log("socket.request.session=session=", session)
     socket.data.username = socket.request.userName;
-    socket.data = { guestID: socket.request.session.guestID };
+    // socket.data = { guestID: socket.guestID };
     console.log("socket.data=",socket.data)
     session.save();
 

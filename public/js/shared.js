@@ -10,22 +10,24 @@ console.log("Shared")
 // } else {
 //   console.log("User's timezone cookie not found.");
 // }
-
+  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+console.log("from shared.js UTZ=", userTimeZone)
 const socket = io({
     reconnection: true,
     reconnectionAttempts: 10,
     reconnectionDelay: 1000,
-    // query: { timeZone:  Intl.DateTimeFormat().resolvedOptions().timeZone  },
+    query: { userTimeZone: userTimeZone  },
   });
   
-  const userTimeZone = Intl.DateTimeFormatTimeFormat().resolvedOptions().timeZone;
 
 socket.on('connect', () => {
 
-  socket.emit('setTimeZone', userTimeZone);
-  // console.log("socket connected!!", socket.timeZone, socket, socket.id)
+  console.log("socket connected!!", socket.timeZone, socket, socket.id, socket.data)
   
-  // console.log("id=", socket.id)
+  socket.on('setCookie', (GuestID) => {
+    document.cookie = `guestID=${GuestID}; expires=Thu, 01 Jan 2099 00:00:00 UTC; path=/`;
+    console.log("cookie set??")
+  })
 
 
     // console.log("SHARED userTimeZone1:", userTimeZone)
