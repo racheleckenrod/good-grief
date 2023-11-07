@@ -158,7 +158,7 @@ io.use(wrap(passport.initialize()));
 io.use(wrap(passport.session()));
 
 io.use(expressSocketIoSession(sessionMiddleware));
-let userLang = "unknown"
+// let userLang = "unknown"
 io.use(async (socket, next) => {
   const userTimeZone = socket.handshake.query.userTimeZone;
   const userLang = socket.handshake.query.userLang;

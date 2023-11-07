@@ -134,7 +134,7 @@ a {
 #guestID {
 	visibility: hidden;
 }
-#users {
+#chatUsers {
 	cursor: pointer !important;
 }
 /* Join Page */
