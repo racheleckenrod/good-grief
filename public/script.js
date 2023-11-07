@@ -1,4 +1,4 @@
-import { socket, userTimeZone } from './js/shared.js'
+import { socket, userTimeZone, userStatus } from './js/shared.js'
 
 let el
 
@@ -112,13 +112,13 @@ function outputUsers(users) {
   // Add event listeners to names to connect to their profile page
   users.forEach((user) => {
     console.log("first", user)
-    console.log("guestID=", guestID.value)
+    console.log("guestID=", guestID.value, "userStatus=", userStatus)
     // console.log("socket.data=", socket.data, "req", req)
     
     
        document.querySelector(`.${user.username}`).addEventListener('click', () => {
         
-      if (!socket.user) {
+      if (userStatus === 'guest') {
         alert("Guest users don't have access to user Profiles. Please sign up to see them.");
       } else if (user.username.startsWith("guest")){
         alert("Guest users do not have profiles.");

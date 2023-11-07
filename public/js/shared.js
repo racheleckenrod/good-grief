@@ -12,6 +12,9 @@ console.log("Shared")
 // }
   const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 console.log("from shared.js UTZ=", userTimeZone)
+
+let userStatus = 'guest';
+
 const socket = io({
     reconnection: true,
     reconnectionAttempts: 10,
@@ -21,7 +24,13 @@ const socket = io({
   
 
 socket.on('connect', () => {
-  console.log("socket connected!!", socket.timeZone, socket, socket.id, socket.data)
+
+  console.log("socket connected!!", socket.timeZone, socket, socket.id, socket.data);
+
+  socket.on('setStatus', (onlineStatus) => {
+    userStatus = onlineStatus;
+    console.log("userStatus=", userStatus);
+  });
 });
 
 socket.on('setCookie', (GuestID) => {
@@ -46,4 +55,4 @@ socket.on('reconnecting', (attemptNumber) => {
 });
 
   
-  export { socket, userTimeZone };
+  export { socket, userTimeZone, userStatus };

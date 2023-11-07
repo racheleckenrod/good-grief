@@ -322,6 +322,9 @@ io.on("connection", async ( socket) => {
     console.log("socket.data=",socket.data)
     session.save();
 
+    const userStatus = socket.request.session.status;
+    socket.emit('setStatus', userStatus)
+
   
 
         // Runs when client disconnects
