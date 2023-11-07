@@ -264,8 +264,8 @@ io.on("connection", async ( socket) => {
         // Runs when client disconnects
         socket.on("disconnect", (reason) => {
           const chatUser = userLeave(socket.id);
-          console.log(`disconnected ${socket.id} chatUser=`, chatUser, "socket.user=",socket.chatUser)
-          io.emit("message",  formatMessage(botName,` user ${socket.chatUser} has left a chat`))
+          console.log(`disconnected ${socket.id} chatUser=`, chatUser, "socket.user=",socket.chatUser.userName)
+          io.emit("message",  formatMessage(botName,` user ${socket.chatUser.userName} has left a chat`))
         
               if(chatUser) {
                 console.log(`${chatUser.username} disconnected from ${chatUser.room} because reason: ${reason}`)
@@ -296,7 +296,7 @@ io.on("connection", async ( socket) => {
                 // const localTime = moment.tz(socket.timeZone).format('dddd, MMMM D, YYYY h:mm:ss a');
 
               socket.emit('timeData', localTime);}, 1000);
-              socket.emit("timeClock", `It's about time... ${socket.chatUser}, Connected= ${socket.connected}, socketID: ${socket.id}`)
+              socket.emit("timeClock", `It's about time... ${socket.chatUser.userName}, Connected= ${socket.connected}, socketID: ${socket.id}`)
         });
       
         socket.on("joinRoom", ({ username, room, _id}) => {
