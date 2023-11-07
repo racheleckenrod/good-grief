@@ -172,7 +172,7 @@ io.use(async (socket, next) => {
   socket.timeZone = userTimeZone;
   if (socket.request.user) {
       socket.request.user.timezone = userTimeZone
-      console.log("update user timezone")
+      console.log("update user timezone", socket.id)
   }
   // console.log("io.use=userTimeZone=", userTimeZone, socket.handshake.headers.cookie)
 
