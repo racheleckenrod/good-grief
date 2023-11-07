@@ -165,11 +165,15 @@ io.use(expressSocketIoSession(sessionMiddleware));
 
 io.use(async (socket, next) => {
   const userTimeZone = socket.handshake.query.userTimeZone;
-  moment.tz.setDefault(userTimeZone);
+  // moment.tz.setDefault(userTimeZone);
 
-  const currentTime = moment();
-  console.log(userTimeZone, 'current time:', currentTime.format('YYY-MM-DD HH:mm:ss'))
+  // const currentTime = moment();
+  // console.log(userTimeZone, 'current time:', currentTime.format('YYY-MM-DD HH:mm:ss'))
   socket.timeZone = userTimeZone;
+  if (socket.request.user) {
+      socket.request.user.timezone = userTimeZone
+      console.log("update user timezone")
+  }
   // console.log("io.use=userTimeZone=", userTimeZone, socket.handshake.headers.cookie)
 
   // check for guestID cookie

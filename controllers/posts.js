@@ -3,6 +3,8 @@ const Post = require("../models/Post");
 const Comment = require("../models/Comment");
 const User = require("../models/User");
 // const { post } = require("../routes/main");
+// const userTimeZone = require("../public/js/shared");
+// import { userTimeZone } from '../js/shared.js'
 
 module.exports = {
   getProfile: async (req, res) => {
@@ -143,13 +145,16 @@ module.exports = {
 
   },
   getFeed: async (req, res) => {
+    console.log(req.user)
+    const userTimeZone = req.user.timezone
+    console.log(userTimeZone)
     try {
       const posts = await Post.find().populate('user').sort({ createdAt: "desc" }).lean();
       const comments = await Comment.find().populate('user').sort({ createdAt: "asc" }).lean()
       // console.log(posts,comments, "from getFeed")
       const _id = req.user._id
 
-      res.render("feed.ejs", { posts: posts, comments: comments, user: req.user, _id: _id });
+      res.render("feed.ejs", { posts: posts, comments: comments, user: req.user, _id: _id, userTimeZone: userTimeZone });
       // console.log(comments, posts, "toooo much")
     } catch (err) { 
       console.log(err);
