@@ -175,12 +175,14 @@ module.exports = {
   getPost: async (req, res) => {
     console.log("getPOST", req.user.timezone)
     const userTimeZone = req.user.timezone
+    const userLang = req.user.userLang
+    console.log("also getPost", userTimeZone, userLang)
     try {
       const post = await Post.findById(req.params.id).populate('user');
       const comments = await Comment.find({post: req.params.id}).populate('user').sort({ createdAt: "desc" }).lean();
       const _id = req.user._id
       // console.log(post,comments, "from getPost")
-      res.render("post.ejs", { post: post, user: req.user, comments: comments, _id: _id });
+      res.render("post.ejs", { post: post, user: req.user, comments: comments, _id: _id, userTimeZone: userTimeZone, userLang: userLang });
     } catch (err) {
       console.log(err);
     }
