@@ -226,8 +226,8 @@ app.use( async (req, res, next) => {
 
   // req.session.userTimeZone = req.cookies.userTimeZone || 'error';
  
-  if (!req.session._id) {
-    if (!req.user) {
+  // if (!req.session._id) {
+    // if (!req.user) {
 
   //     const { guestID, userName } = await generateGuestID(req.session.userTimeZone);
   //     const guestUser = await GuestUserID.findOne({ guestUserID: guestID });
@@ -241,8 +241,8 @@ app.use( async (req, res, next) => {
 
   //       // req.session.timezone = timezone
       // console.log("app,use guestUser=", req.session.guestID)
-    }
-  }
+    // }
+  // }
   // console.log("app.use2", req.session.userName, req.session.guestUser)
   next();
 })
