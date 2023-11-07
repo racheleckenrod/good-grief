@@ -12,6 +12,7 @@ const UserSchema = new mongoose.Schema({
   viewUser: { type: Boolean, default: true},
   timezone: { type: String, default: "UTC"},
   userLang: { type: String, default: "default"},
+  guestIDs: { type: [String], default: [] },
   resetPasswordToken: { type: String },
   resetPasswordExpires: { type: Date },
 });

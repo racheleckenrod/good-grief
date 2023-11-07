@@ -7,7 +7,7 @@ let el
 const chatForm = document.getElementById('chat-form');
 const chatMessages = document.querySelector('.chat-messages');
 const roomName = document.getElementById('room-name');
-const userList = document.getElementById('users');
+const userList = document.getElementById('chatUsers');
 const username = document.getElementById('username').innerHTML;
 const room =  roomName.innerHTML
 
@@ -48,9 +48,9 @@ socket.on('timeData', (timeString2) => {
 socket.emit('joinRoom', {  username, room, _id });
 
 // // Get room and users
-socket.on('roomUsers', ({ room, users }) => {
+socket.on('roomUsers', ({ room, chatUsers }) => {
   outputRoomName(room);
-  outputUsers(users);
+  outputUsers(chatUsers);
 });
 
 // Recent messages
@@ -105,25 +105,24 @@ function outputRoomName(room) {
 }
 
 // // Add users to DOM
-function outputUsers(users) {
+function outputUsers(chatUsers) {
   userList.innerHTML = `
-  ${users.map(user => `<li class="${user.username}" >${user.username}</li>`).join('')}
+  ${chatUsers.map(chatUser => `<li class="${chatUser.username}" >${chatUser.username}</li>`).join('')}
   `;
   // Add event listeners to names to connect to their profile page
-  users.forEach((user) => {
-    console.log("first", user)
-    console.log("guestID=", guestID, "userStatus=", userStatus)
-    // console.log("socket.data=", socket.data, "req", req)
+  chatUsers.forEach((chatUser) => {
+    console.log("first", chatUser)
+    console.log("userStatus=", userStatus)
     
     
-       document.querySelector(`.${user.username}`).addEventListener('click', () => {
+       document.querySelector(`.${chatUser.username}`).addEventListener('click', () => {
         
       if (userStatus === 'guest') {
         alert("Guest users don't have access to user Profiles. Please sign up to see them.");
-      } else if (user.username.startsWith("guest")){
+      } else if (chatUser.username.startsWith("guest")){
         alert("Guest users do not have profiles.");
       } else {
-        window.open(`/profile/${user._id}`, '_blank');
+        window.open(`/profile/${chatUser._id}`, '_blank');
       }
       // console.log("forEach", user.username, user._id)
       //  window.location = `/profile/${user._id}`

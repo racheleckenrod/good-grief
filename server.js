@@ -41,7 +41,7 @@ const formatMessage = require("./utils/messages");
 const ChatMessage = require('./models/ChatMessage');
 const User = require("./models/User");
 
-const users = [];
+const chatUsers = [];
 const botName = "Grief Support Bot";
 
 // moment.tz.setDefault('Etc/UTC')
@@ -166,142 +166,69 @@ let userLang = "unknown"
 io.use(async (socket, next) => {
   const userTimeZone = socket.handshake.query.userTimeZone;
   const userLang = socket.handshake.query.userLang;
-  console.log("io.use userLang=", userLang)
-  // moment.tz.setDefault(userTimeZone);
+  console.log("io.use userLang=", userLang, userTimeZone);
 
-  // const currentTime = moment();
-  // console.log(userTimeZone, 'current time:', currentTime.format('YYY-MM-DD HH:mm:ss'))
-  socket.timeZone = userTimeZone;
-  if (socket.request.user) {
-      socket.request.user.timezone = userTimeZone
-      socket.request.user.userLang = userLang
-      console.log("update user timezone", socket.id, socket.request.user)
-  }
-
-  // console.log("io.use=userTimeZone=", userTimeZone, socket.handshake.headers.cookie)
-
+  socket.request.session.userTimeZone = userTimeZone;
+  socket.request.session.userLang = userLang;
+ 
   // check for guestID cookie
   const guestIDCookie = socket.handshake.headers.cookie
     .split('; ')
     .find((cookie) => cookie.startsWith('guestID='));
 
-    // let newGuestUser
-
   if (guestIDCookie) {
     const guestID = guestIDCookie.split('=')[1];
-    socket.guestID = guestID;
+    socket.request.session.guestID = guestID;
 
     const guestUser = await GuestUserID.findOne({ guestUserID: guestID });
 
     if (guestUser) {
       socket.request.session.guestUser = guestUser
       socket.data = { guestUser: guestUser }
-      // console.log("socket.data in io.use=existing guestUser", socket.data)
     }
   } else {
     // generate new guestID
-    const newGuestUser = await generateGuestID(socket.timeZone);
+    const newGuestUser = await generateGuestID(socket.request.session.timeZone, socket.request.session.userLang);
     socket.request.session.guestUser = newGuestUser
-    socket.guestID = newGuestUser.guestID
-    // console.log("socket.guestID=", socket.guestID)
+    socket.request.session.guestID = newGuestUser.guestID
     socket.data = { guestUser: newGuestUser };
-    // console.log("socket.data in io.use=", socket.data)
-    // socket.request.session.guestID = newGuestUser
+   
 
     // emit new guestID to client to set a cookie
     socket.emit('setCookie', newGuestUser.guestID);
-    // console.log("emitted cookie?", newGuestUser.guestID)
+    console.log("emitted cookie?", newGuestUser.guestID)
   }
 
 
-  // console.log("first things", socket.request.session)
   if (socket.request.user) {
-    // console.log("second")
-    socket.user = socket.request.user.userName;
-  // console.log("third socket.user", socket.user)
+    socket.chatUser = socket.request.user;
   } else {
-    // console.log('forth')
-    // socket.user = socket.newGuestID.userName
-    // socket.guestID = socket.request.session.guestID
-    // const userTimeZone = socket.request.session.timezone
-    socket.user = socket.request.session.guestUser.userName
-    // console.log('fifth socket.user', socket.guestID, socket.request.session, socket.user)
-
+    socket.chatUser = socket.request.session.guestUser;
   }
   next();
 });
 
-// create guestUserID for guests
-app.use( async (req, res, next) => {
 
-
-  if (req.user) {
-    req.user.userLang = userLang
-  }
-
-  // console.log("from app.use", req.session)
-
-  // req.session.userTimeZone = req.cookies.userTimeZone || 'error';
- 
-  // if (!req.session._id) {
-    // if (!req.user) {
-
-  //     const { guestID, userName } = await generateGuestID(req.session.userTimeZone);
-  //     const guestUser = await GuestUserID.findOne({ guestUserID: guestID });
-
-  //       if (guestUser) {
-  //         req.session._id = guestUser._id;
-          // req.session.userName = socket.data.guestID.userName;
-  //         req.session.guestID = guestUser.guestUserID
-  //         req.session.timezone = req.cookies.userTimeZone
-  //       }
-
-  //       // req.session.timezone = timezone
-      // console.log("app,use guestUser=", req.session.guestID)
-    // }
-  // }
-  // console.log("app.use2", req.session.userName, req.session.guestUser)
-  next();
-})
-
- 
 
 // Get current user
 function getCurrentUser(id) {
-  return users.find(user => user.id.includes(id));
+  return chatUsers.find(chatUser => chatUser.id.includes(id));
 }
 
-// // // User leaves chat
-// function userLeave(id) {
-//   console.log("leaving socket.id=", id)
-//   const user = users.find((user) => user.id.some(id => id === id));
-//   console.log(user)
-//   if (user) {
-//     user.userCount--;
-
-//     if (user.userCount === 0){
-//       const index = users.findIndex(user => user.id === id);
-//   if (index !== -1) {
-//     return users.splice(index, 1)[0];
-//   }
-//     }
-//   }
-  
-// }
 
 // User leaves chat
 function userLeave(id) {
   console.log("leaving socket.id=", id);
 
-  for (const user of users) {
-    const socketIndex = user.id.indexOf(id);
+  for (const chatUser of chatUsers) {
+    const socketIndex = chatUser.id.indexOf(id);
     if (socketIndex !== -1) {
-      user.id.splice(socketIndex, 1); // Remove the disconnected socket ID
-      user.userCount = user.id.length; // Update the user count
-      if (user.userCount === 0) {
+      chatUser.id.splice(socketIndex, 1); // Remove the disconnected socket ID
+      chatUser.userCount = chatUser.id.length; // Update the user count
+      if (chatUser.userCount === 0) {
         // Remove the user when the count reaches 0
-        const userIndex = users.indexOf(user);
-        users.splice(userIndex, 1);
+        const chatUserIndex = chatUsers.indexOf(chatUser);
+        chatUsers.splice(chatUserIndex, 1);
       }
     }
   }
@@ -309,35 +236,29 @@ function userLeave(id) {
 
 // // Get room users
 function getRoomUsers(room) {
-  return users.filter(user => user.room === room);
+  return chatUsers.filter(chatUser => chatUser.room === room);
 }
 
 // // Join user to chat
-function userJoin(id, username, room, _id, userTimeZone) {
-  const existingUser = users.find((user) => user.username === username && user.room === room);
-  console.log("existingUser=", existingUser)
-  if (existingUser) {
-    existingUser.userCount++;
-    existingUser.id.push(id);
-    return existingUser;
+function userJoin(id, username, room, _id) {
+  const existingChatUser = chatUsers.find((chatUser) => chatUser.username === username && chatUser.room === room);
+
+  if (existingChatUser) {
+    existingChatUser.userCount++;
+    existingChatUser.id.push(id);
+    return existingChatUser;
   }
-  const user = { id: [id], username, room, _id, userTimeZone, userCount: 1 };
-  users.push(user);
-  return user;
+  const chatUser = { id: [id], username, room, _id, userCount: 1 };
+  chatUsers.push(chatUser);
+  return chatUser;
 }
 
  
 // run when client connects
 io.on("connection", async ( socket) => {
  
-    const userTimeZone = socket.timeZone
-    // console.log(`socket ${socket.id} connected`, userTimeZone, socket.user)
-    const session = socket.request.session;
-    // console.log("socket.request.session=session=", session)
-    socket.data.username = socket.request.session.guestUser.userName;
-    // socket.data = { guestID: socket.guestID };
-    // console.log("socket.data=",socket.data)
-    session.save();
+    const userTimeZone = socket.request.session.userTimeZone;
+    const userLang = socket.request.session.userLang;
 
     const userStatus = socket.request.session.status;
     socket.emit('setStatus', userStatus)
@@ -346,24 +267,24 @@ io.on("connection", async ( socket) => {
 
         // Runs when client disconnects
         socket.on("disconnect", (reason) => {
-          const user = userLeave(socket.id);
-          console.log(`disconnected ${socket.id} user=`, user, "socket.user=",socket.user)
+          const chatUser = userLeave(socket.id);
+          console.log(`disconnected ${socket.id} chatUser=`, chatUser, "socket.user=",socket.user)
           io.emit("message",  formatMessage(botName,` user ${socket.user} has left a chat`, userTimeZone))
         
-              if(user) {
-                console.log(`${user.username} disconnected from ${user.room} because reason: ${reason}`)
+              if(chatUser) {
+                console.log(`${user.username} disconnected from ${chatUser.room} because reason: ${reason}`)
               }else{
                 console.log(`Disconnected because reason: ${reason}`)
               }
-              if (user) {
-                io.to(user.room).emit(
+              if (chatUser) {
+                io.to(chatUser.room).emit(
                   "message",
-                  formatMessage(botName, `${user.username} has left the chat because: ${reason}`, userTimeZone)
+                  formatMessage(botName, `${chatUser.username} has left the chat because: ${reason}`, userTimeZone)
                 );
                 // Send users and room info
-                io.to(user.room).emit("roomUsers", {
-                  room: user.room,
-                  users: getRoomUsers(user.room),
+                io.to(chatUser.room).emit("roomUsers", {
+                  room: chatUser.room,
+                  chatUsers: getRoomUsers(chatUser.room),
                 });
               }
         });
@@ -382,25 +303,25 @@ io.on("connection", async ( socket) => {
         socket.on("joinRoom", ({ username, room, _id, userTimeZone }) => {
           // userTimeZone = socket.timeZone
           // console.log("join room", userTimeZone)
-          const user = userJoin(socket.id, username, room, _id, userTimeZone);
-          console.log(`joined ${user.room}`, user, socket.request.session.guestID)
-          socket.join(user.room);
+          const chatUser = userJoin(socket.id, username, room, _id);
+          console.log(`joined ${chatUser.room}`, chatUser, socket.request.session.guestID)
+          socket.join(chatUser.room);
 
            // Send users and room info
-           io.to(user.room).emit("roomUsers", {
-            room: user.room,
-            users: getRoomUsers(user.room),
+           io.to(chatUser.room).emit("roomUsers", {
+            room: chatUser.room,
+            chatUsers: getRoomUsers(chatUser.room),
           });
 
           // Broadcast when a user connects
           socket.broadcast
-          .to(user.room)
+          .to(chatUser.room)
           .emit(
-            "message",  formatMessage(botName,`${user.username} has joined the chat`, userTimeZone)
+            "message",  formatMessage(botName,`${chatUser.username} has joined the chat`, userTimeZone)
           );
     
           // fetch recent messages for the room from the database
-          ChatMessage.find({room: user.room })
+          ChatMessage.find({room: chatUser.room })
             .sort({ timestamp: -1 })
             .limit(15)
             .exec(async (err, messages) => {
@@ -445,20 +366,20 @@ io.on("connection", async ( socket) => {
           socket.on("chatMessage", async (msg) => {
             // console.log("chat messages", userTimeZone)
           // console.log("socket.user=",socket.user, socket.id)
-          const user = getCurrentUser(socket.id);
+          const chatUser = getCurrentUser(socket.id);
             // console.log(user, "from getCurrentUser", socket.id)
           try {
             const newMessage = new ChatMessage({
-              room: user.room,
-              user: user._id,
+              room: chatUser.room,
+              user: chatUser._id,
               message: msg,
               timestamp: new Date(),
             });
 
             const savedMessage = await  newMessage.save();
 
-            console.log(`${user.room} Chat message saved:`, userTimeZone, savedMessage.message);
-            io.to(user.room).emit("message", formatMessage(user.username, savedMessage.message, userTimeZone));
+            console.log(`${chatUser.room} Chat message saved:`, userTimeZone, savedMessage.message);
+            io.to(chatUser.room).emit("message", formatMessage(chatUser.username, savedMessage.message, userTimeZone));
 
           } catch(error) {
               console.error('Error saving chat message:', error);
@@ -468,7 +389,7 @@ io.on("connection", async ( socket) => {
 
 
          // Welcome current user
-        socket.emit("message", formatMessage(botName, `Welcome to ${user.room} of Live Grief Support, ${user.username}.`, userTimeZone));
+        socket.emit("message", formatMessage(botName, `Welcome to ${chatUser.room} of Live Grief Support, ${chatUser.username}.`, userTimeZone));
 
     }); 
 });

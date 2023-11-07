@@ -145,9 +145,8 @@ module.exports = {
 
   },
   getFeed: async (req, res) => {
-    console.log("getFeed", req.user.timezone)
-    const userTimeZone = req.user.timezone
-    const userLang = req.user.userLang
+    const userTimeZone = req.session.timezone
+    const userLang = req.session.userLang
     console.log("also getFeed", userTimeZone, userLang)
     try {
       const posts = await Post.find().populate('user').sort({ createdAt: "desc" }).lean();
@@ -173,9 +172,8 @@ module.exports = {
   //   }
   // },
   getPost: async (req, res) => {
-    console.log("getPOST", req.user.timezone)
-    const userTimeZone = req.user.timezone
-    const userLang = req.user.userLang
+    const userTimeZone = req.session.timezone
+    const userLang = req.session.userLang
     console.log("also getPost", userTimeZone, userLang)
     try {
       const post = await Post.findById(req.params.id).populate('user');

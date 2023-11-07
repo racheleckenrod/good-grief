@@ -217,9 +217,6 @@ exports.postLogin = (req, res, next) => {
     gmail_remove_dots: false,
   });
 
-  // req.session.timezone = req.body.timezone || "UTC"
-  // console.log("timezone:", req.session.timezone, req.body.timezone, req.session)
-
   passport.authenticate("local", (err, user, info) => {
     if (err) {
       return next(err);
@@ -229,22 +226,28 @@ exports.postLogin = (req, res, next) => {
       return res.redirect("/login");
     }
     
-    // console.log(req.session, "first check")
     req.logIn(user, (err) => {
       if (err) {
         return next(err);
       }
       req.flash("success", { msg: "Success! You are logged in." });
-      // console.log(req.body.timezone, "second check")
-      // User.findByIdAndUpdate(req.user.id, { $set: { timezone: userTimeZone }}, (err, user) => {
-        User.findByIdAndUpdate(req.user.id, (err, user) => {
 
-        if (err) {
-          return next(err);
-        }
-      });
+      // check if the user's guestID is already in the database
+      if (user.guestIDs.indexOf(req.session.guestID) === -1) {
+        user.guestIDs.push(req.session.guestID);
+      }
+        // update user with session data 
+              user.timezone = req.session.userTimeZone || 'UTC';
+              user.userLang = req.session.userLang || 'default';
+            
+              user.save((err) => {
+                if (err) {
+                  return next(err);
+                }
+      
       res.redirect(req.session.returnTo || "/profile");
     });
+  });
   })(req, res, next);
 };
 
