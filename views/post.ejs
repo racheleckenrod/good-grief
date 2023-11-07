@@ -52,7 +52,7 @@
             <li class="col-6 ">
              <h4>"<%= comments[i].comment%>"</h4>
              <a href="/profile/<%= `${comments[i].user._id}`%>">By: <%= comments[i].user.userName %></a>
-             <p>At: <%= comments[i].createdAt.toLocaleTimeString() %> on <%= comments[i].createdAt.toLocaleDateString() %></p>
+             <p>At: <%= comments[i].createdAt.toLocaleString( {timeZone: userTimeZone } ) %> on <%= comments[i].createdAt.toLocaleDateString( {timeZone: userTimeZone } ) %></p>
             <form
             class=""
             action="/comment/likeComment/<%= comments[i]._id %>?_method=PUT"
