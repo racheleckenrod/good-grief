@@ -45,7 +45,7 @@ socket.on('timeData', (timeString2) => {
 
 
 // // Join chatroom
-socket.emit('joinRoom', {  username, room, _id, userTimeZone });
+socket.emit('joinRoom', {  username, room, _id });
 
 // // Get room and users
 socket.on('roomUsers', ({ room, users }) => {
@@ -112,7 +112,7 @@ function outputUsers(users) {
   // Add event listeners to names to connect to their profile page
   users.forEach((user) => {
     console.log("first", user)
-    console.log("guestID=", guestID.value, "userStatus=", userStatus)
+    console.log("guestID=", guestID, "userStatus=", userStatus)
     // console.log("socket.data=", socket.data, "req", req)
     
     

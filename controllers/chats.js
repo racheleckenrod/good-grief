@@ -5,12 +5,11 @@ module.exports = {
         if (req.user) {
           // console.log("from getlobby", req.user)
           const _id = req.user._id
-          res.render("lobby.ejs", { userName: req.user.userName, _id: _id, room: "The Lobby", session: req.session, guestID: null });
+          res.render("lobby.ejs", { userName: req.user.userName, _id: _id, room: "The Lobby", session: req.session });
         } else {
           const _id = req.session._id
-          const guestID = req.session.guestID
           // console.log("from get lobby", req.session, req.session.userName)
-          res.render("lobby.ejs", { userName: req.session.userName, _id: _id, room: "The Lobby", session: req.session, guestID: guestID })
+          res.render("lobby.ejs", { userName: req.session.userName, _id: _id, room: "The Lobby", session: req.session })
         }
        
       next()

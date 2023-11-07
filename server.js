@@ -165,7 +165,7 @@ io.use(expressSocketIoSession(sessionMiddleware));
 let userLang = "unknown"
 io.use(async (socket, next) => {
   const userTimeZone = socket.handshake.query.userTimeZone;
-  userLang = socket.handshake.query.userLang;
+  const userLang = socket.handshake.query.userLang;
   console.log("io.use userLang=", userLang)
   // moment.tz.setDefault(userTimeZone);
 

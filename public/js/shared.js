@@ -17,6 +17,7 @@ const userLang = navigator.language || navigator.userLanguage;
 console.log("userLang=", userLang)
 
 let userStatus = 'guest';
+// let guestID
 
 const socket = io({
     reconnection: true,
@@ -40,7 +41,7 @@ socket.on('setCookie', (GuestID) => {
   document.cookie = `guestID=${GuestID}; expires=Thu, 01 Jan 2099 00:00:00 UTC; path=/`;
   console.log("cookie set??NOW?", GuestID)
 });
-
+console.log("guestID=", socket.guestID)
 
 socket.on('disconnect', () => {
   console.log('socket disconnected... attempting to reconnect');
