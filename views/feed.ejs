@@ -6,6 +6,8 @@
   <div class="title">Our Community</div>
   <div class="container">
     <div class="row aln-center">
+      <p>DeBug: User's timezone: <%= userTimeZone %></p>
+
             
       <% for(var i=0; i<posts.length; i++) {%>
 
@@ -37,7 +39,7 @@
         <% if( comments[j].post  == `${posts[i]._id}` ) {%>
         <span><%= comments[j].comment %></span>
         <a href="/profile/<%= `${comments[i].user._id}`%>">By: <%= comments[i].user.userName %></a>
-        <p>At:<%= comments[i].createdAt.toLocaleString( {timeZone: userTimeZone } )%> on  <%= comments[i].createdAt.toLocaleDateString( {timeZone: userTimeZone } ) %></p>
+        <p>At:<%= comments[i].createdAt.toLocaleString( {timeZone: userTimeZone } )%> on  <%= comments[i].createdAt.toLocaleDateString() %></p>
        <%}%>
        <% } %>
       </div>

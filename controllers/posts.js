@@ -172,6 +172,8 @@ module.exports = {
   //   }
   // },
   getPost: async (req, res) => {
+    console.log("getPOST", req.user.timezone)
+    const userTimeZone = req.user.timezone
     try {
       const post = await Post.findById(req.params.id).populate('user');
       const comments = await Comment.find({post: req.params.id}).populate('user').sort({ createdAt: "desc" }).lean();
