@@ -19,7 +19,7 @@ const PORT = process.env.PORT;
 app.use(cors())
 
 const moment = require('moment-timezone');
-const { DateTime } = require('luxon');
+// const { DateTime } = require('luxon');
 const mongoose = require("mongoose");
 const passport = require("passport");
 const session = require("express-session");
@@ -43,10 +43,6 @@ const User = require("./models/User");
 
 const chatUsers = [];
 const botName = "Grief Support Bot";
-
-// moment.tz.setDefault('Etc/UTC')
-
-
 
 
 // const {
@@ -268,18 +264,18 @@ io.on("connection", async ( socket) => {
         // Runs when client disconnects
         socket.on("disconnect", (reason) => {
           const chatUser = userLeave(socket.id);
-          console.log(`disconnected ${socket.id} chatUser=`, chatUser, "socket.user=",socket.user)
-          io.emit("message",  formatMessage(botName,` user ${socket.user} has left a chat`, userTimeZone))
+          console.log(`disconnected ${socket.id} chatUser=`, chatUser, "socket.user=",socket.chatUser)
+          io.emit("message",  formatMessage(botName,` user ${socket.chatUser} has left a chat`))
         
               if(chatUser) {
-                console.log(`${user.username} disconnected from ${chatUser.room} because reason: ${reason}`)
+                console.log(`${chatUser.username} disconnected from ${chatUser.room} because reason: ${reason}`)
               }else{
                 console.log(`Disconnected because reason: ${reason}`)
               }
               if (chatUser) {
                 io.to(chatUser.room).emit(
                   "message",
-                  formatMessage(botName, `${chatUser.username} has left the chat because: ${reason}`, userTimeZone)
+                  formatMessage(botName, `${chatUser.username} has left the chat because: ${reason}`)
                 );
                 // Send users and room info
                 io.to(chatUser.room).emit("roomUsers", {
@@ -294,13 +290,16 @@ io.on("connection", async ( socket) => {
           // broadcast updates
               setInterval(() => {
 
-                const localTime = moment.tz(socket.timeZone).format('dddd, MMMM D, YYYY h:mm:ss a');
+                const postingTime = new Date();
+                const localTime = postingTime.toLocaleString( userLang, {timeZone: userTimeZone } )
+
+                // const localTime = moment.tz(socket.timeZone).format('dddd, MMMM D, YYYY h:mm:ss a');
 
               socket.emit('timeData', localTime);}, 1000);
-              socket.emit("timeClock", `It's about time... ${socket.user}, Connected= ${socket.connected}, socketID: ${socket.id}`)
+              socket.emit("timeClock", `It's about time... ${socket.chatUser}, Connected= ${socket.connected}, socketID: ${socket.id}`)
         });
       
-        socket.on("joinRoom", ({ username, room, _id, userTimeZone }) => {
+        socket.on("joinRoom", ({ username, room, _id}) => {
           // userTimeZone = socket.timeZone
           // console.log("join room", userTimeZone)
           const chatUser = userJoin(socket.id, username, room, _id);
@@ -317,7 +316,7 @@ io.on("connection", async ( socket) => {
           socket.broadcast
           .to(chatUser.room)
           .emit(
-            "message",  formatMessage(botName,`${chatUser.username} has joined the chat`, userTimeZone)
+            "message",  formatMessage(botName,`${chatUser.username} has joined the chat`)
           );
     
           // fetch recent messages for the room from the database
@@ -347,7 +346,7 @@ io.on("connection", async ( socket) => {
                     const formattedMessage = {
                       text: message.message,
                       username: username,
-                      time: moment.tz(message.timestamp, socket.timeZone).format('h:mm:ss a'),
+                      time: (message.timestamp).toLocaleString( userLang, {timeZone: userTimeZone } ),
                     };
                     formattedMessages.push(formattedMessage);
                   } catch (error) {
