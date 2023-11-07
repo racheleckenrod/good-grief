@@ -113,6 +113,23 @@ app.use(cookieParser());
 // create guestUserID for guests
 app.use( async (req, res, next) => {
 
+  if (req.isAuthenticated()) {
+    req.session.status = 'loggedIn';
+    console.log("app.use req.session=", req.session)
+  } else {
+    req.session.status = 'guest'
+    const guestIDCookie = req.cookies.guestID;
+    if (guestIDCookie) {
+      const guestUser = await GuestUserID.findOne({ guestUserID: guestIDCookie });
+      if (guestUser) {
+        req.session.user = guestUser;
+        req.session.userName = guestUser.userName;
+        req.session._id = guestUser._id
+      }
+      console.log("app.use req.session.user=", req.session.user)
+    }
+  }
+
   // req.session.userTimeZone = req.cookies.userTimeZone || 'error';
  
   // if (!req.session._id) {
@@ -132,7 +149,7 @@ app.use( async (req, res, next) => {
   //       // console.log("app,use guestUser=", guestUser)
   //   }
   // }
-  // console.log("app.use", req.session)
+  console.log("app.use", req.session)
   next();
 })
 
@@ -149,50 +166,63 @@ io.use(expressSocketIoSession(sessionMiddleware));
 io.use(async (socket, next) => {
   const userTimeZone = socket.handshake.query.userTimeZone;
   socket.timeZone = userTimeZone;
-  console.log("io.use=userTimeZone=", userTimeZone)
+  console.log("io.use=userTimeZone=", userTimeZone, socket.handshake.headers.cookie)
 
   // check for guestID cookie
   const guestIDCookie = socket.handshake.headers.cookie
     .split('; ')
     .find((cookie) => cookie.startsWith('guestID='));
 
+    // let newGuestUser
+
   if (guestIDCookie) {
     const guestID = guestIDCookie.split('=')[1];
-    socket.guestID = guestID
-    socket.data = { guestID }
+    socket.guestID = guestID;
+
+    const guestUser = await GuestUserID.findOne({ guestUserID: guestID });
+
+    if (guestUser) {
+      socket.request.session.guestUser = guestUser
+      socket.data = { guestUser: guestUser }
+      console.log("socket.data in io.use=existing guestUser", socket.data)
+    }
   } else {
     // generate new guestID
-    const newGuestID = await generateGuestID(socket.timeZone);
-    socket.guestID = newGuestID.guestID
+    const newGuestUser = await generateGuestID(socket.timeZone);
+    socket.request.session.guestUser = newGuestUser
+    socket.guestID = newGuestUser.guestID
     console.log("socket.guestID=", socket.guestID)
-    socket.data = { guestID: newGuestID };
-    socket.request.session.guestID = newGuestID.guestID
-
+    socket.data = { guestUser: newGuestUser };
+    console.log("socket.data in io.use=", socket.data)
+    // socket.request.session.guestID = newGuestUser
 
     // emit new guestID to client to set a cookie
-    socket.emit('setCookie', newGuestID.guestID);
-    console.log()
+    socket.emit('setCookie', newGuestUser.guestID);
+    console.log("emitted cookie?", newGuestUser.guestID)
   }
 
 
-  // console.log("first things", socket.request.session)
+  console.log("first things", socket.request.session)
   if (socket.request.user) {
-    // console.log("second")
+    console.log("second")
     socket.user = socket.request.user.userName;
-  // console.log("third")
+  console.log("third socket.user", socket.user)
   } else {
-    // console.log('forth')
-    socket.user = socket.request.session.userName
+    console.log('forth')
+    // socket.user = socket.newGuestID.userName
     // socket.guestID = socket.request.session.guestID
     // const userTimeZone = socket.request.session.timezone
-    // console.log('fifth', socket.guestID, socket.request.session)
-  }
+    socket.user = socket.request.session.guestUser.userName
+    console.log('fifth socket.user', socket.guestID, socket.request.session, socket.user)
 
+  }
   next();
 });
 
 // create guestUserID for guests
 app.use( async (req, res, next) => {
+
+  console.log("from app.use", req.session)
 
   // req.session.userTimeZone = req.cookies.userTimeZone || 'error';
  
@@ -210,10 +240,10 @@ app.use( async (req, res, next) => {
   //       }
 
   //       // req.session.timezone = timezone
-  //       // console.log("app,use guestUser=", guestUser)
+      console.log("app,use guestUser=", req.session.guestID)
     }
   }
-  // console.log("app.use", req.session)
+  console.log("app.use2", req.session.userName, req.session.guestUser)
   next();
 })
 
@@ -287,7 +317,7 @@ io.on("connection", async ( socket) => {
     console.log(`socket ${socket.id} connected`, userTimeZone, socket.user)
     const session = socket.request.session;
     // console.log("socket.request.session=session=", session)
-    socket.data.username = socket.request.userName;
+    socket.data.username = socket.request.session.guestUser.userName;
     // socket.data = { guestID: socket.guestID };
     console.log("socket.data=",socket.data)
     session.save();

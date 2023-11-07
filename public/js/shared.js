@@ -21,34 +21,29 @@ const socket = io({
   
 
 socket.on('connect', () => {
-
   console.log("socket connected!!", socket.timeZone, socket, socket.id, socket.data)
-  
-  socket.on('setCookie', (GuestID) => {
-    document.cookie = `guestID=${GuestID}; expires=Thu, 01 Jan 2099 00:00:00 UTC; path=/`;
-    console.log("cookie set??")
-  })
+});
 
+socket.on('setCookie', (GuestID) => {
+  document.cookie = `guestID=${GuestID}; expires=Thu, 01 Jan 2099 00:00:00 UTC; path=/`;
+  console.log("cookie set??NOW?", GuestID)
+});
 
-    // console.log("SHARED userTimeZone1:", userTimeZone)
 
 socket.on('disconnect', () => {
   console.log('socket disconnected... attempting to reconnect');
-})
+});
 
  
-  socket.on('reconnect', (attemptNumber) => {
-    console.log(`Reconnected after ${attemptNumber} attempts`);
-    // Handle any reconnection logic here.
-  });
+socket.on('reconnect', (attemptNumber) => {
+  console.log(`Reconnected after ${attemptNumber} attempts`);
+  // Handle any reconnection logic here.
+});
   
-  socket.on('reconnecting', (attemptNumber) => {
-    console.log(`Attempting to reconnect (attempt ${attemptNumber})`);
-    // You can use this event to provide feedback to the user during reconnection attempts.
-  });
+socket.on('reconnecting', (attemptNumber) => {
+  console.log(`Attempting to reconnect (attempt ${attemptNumber})`);
+  // You can use this event to provide feedback to the user during reconnection attempts.
+});
+
   
-  // console.log("SHARED userTimeZone:", userTimeZone, socket.request)
-  
-})
- 
-  export { socket };
+  export { socket, userTimeZone };

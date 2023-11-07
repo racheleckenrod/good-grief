@@ -21,11 +21,11 @@ router.post('/feedback', function(req, res) {
   });
 router.post("/feedbackGuest", homeController.postGuestFeedback)
 router.post("/feedbackUser", ensureAuth, homeController.postUserFeedback)
-router.get("/profile/:id", postsController.showProfile);
+router.get("/profile/:id", ensureAuth,postsController.showProfile);
 router.get("/profile", ensureAuth, postsController.getProfile);
 router.get("/editProfile", ensureAuth, postsController.getEditProfile);
-router.put("/editProfile/:id", postsController.editProfile)
-router.put("/profilePicture/:id", upload.single("file"), postsController.editProfilePic);
+router.put("/editProfile/:id", ensureAuth, postsController.editProfile)
+router.put("/profilePicture/:id", ensureAuth, upload.single("file"), postsController.editProfilePic);
 
 
 router.get("/welcome", ensureAuth, homeController.getWelcome);

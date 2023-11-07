@@ -1,4 +1,4 @@
-import { socket } from './js/shared.js'
+import { socket, userTimeZone } from './js/shared.js'
 
 let el
 
@@ -118,7 +118,7 @@ function outputUsers(users) {
     
        document.querySelector(`.${user.username}`).addEventListener('click', () => {
         
-      if (guestID.value) {
+      if (!socket.user) {
         alert("Guest users don't have access to user Profiles. Please sign up to see them.");
       } else if (user.username.startsWith("guest")){
         alert("Guest users do not have profiles.");
