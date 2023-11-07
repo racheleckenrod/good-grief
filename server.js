@@ -162,9 +162,11 @@ io.use(wrap(passport.initialize()));
 io.use(wrap(passport.session()));
 
 io.use(expressSocketIoSession(sessionMiddleware));
-
+const currentTime = moment();
 io.use(async (socket, next) => {
   const userTimeZone = socket.handshake.query.userTimeZone;
+  moment.tz.setDefault('userTimeZone');
+  console.log('current time:', currentTime.format('YYY-MM-DD HH:mm:ss'))
   socket.timeZone = userTimeZone;
   // console.log("io.use=userTimeZone=", userTimeZone, socket.handshake.headers.cookie)
 
