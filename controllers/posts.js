@@ -147,14 +147,15 @@ module.exports = {
   getFeed: async (req, res) => {
     console.log("getFeed", req.user.timezone)
     const userTimeZone = req.user.timezone
-    console.log("also getFeed", userTimeZone)
+    const userLang = req.user.userLang
+    console.log("also getFeed", userTimeZone, userLang)
     try {
       const posts = await Post.find().populate('user').sort({ createdAt: "desc" }).lean();
       const comments = await Comment.find().populate('user').sort({ createdAt: "asc" }).lean()
       // console.log(posts,comments, "from getFeed")
       const _id = req.user._id
 
-      res.render("feed.ejs", { posts: posts, comments: comments, user: req.user, _id: _id, userTimeZone: userTimeZone });
+      res.render("feed.ejs", { posts: posts, comments: comments, user: req.user, _id: _id, userTimeZone: userTimeZone, userLang: userLang });
       // console.log(comments, posts, "toooo much")
     } catch (err) { 
       console.log(err);

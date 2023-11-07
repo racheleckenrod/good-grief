@@ -162,9 +162,11 @@ io.use(wrap(passport.initialize()));
 io.use(wrap(passport.session()));
 
 io.use(expressSocketIoSession(sessionMiddleware));
-
+let userLang = "unknown"
 io.use(async (socket, next) => {
   const userTimeZone = socket.handshake.query.userTimeZone;
+  userLang = socket.handshake.query.userLang;
+  console.log("io.use userLang=", userLang)
   // moment.tz.setDefault(userTimeZone);
 
   // const currentTime = moment();
@@ -172,8 +174,10 @@ io.use(async (socket, next) => {
   socket.timeZone = userTimeZone;
   if (socket.request.user) {
       socket.request.user.timezone = userTimeZone
-      console.log("update user timezone", socket.id)
+      socket.request.user.userLang = userLang
+      console.log("update user timezone", socket.id, socket.request.user)
   }
+
   // console.log("io.use=userTimeZone=", userTimeZone, socket.handshake.headers.cookie)
 
   // check for guestID cookie
@@ -229,6 +233,11 @@ io.use(async (socket, next) => {
 
 // create guestUserID for guests
 app.use( async (req, res, next) => {
+
+
+  if (req.user) {
+    req.user.userLang = userLang
+  }
 
   // console.log("from app.use", req.session)
 

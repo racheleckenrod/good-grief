@@ -10,8 +10,11 @@ console.log("Shared")
 // } else {
 //   console.log("User's timezone cookie not found.");
 // }
-  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-console.log("from shared.js UTZ=", userTimeZone)
+const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+console.log("from shared.js UTZ=", userTimeZone);
+
+const userLang = navigator.language || navigator.userLanguage;
+console.log("userLang=", userLang)
 
 let userStatus = 'guest';
 
@@ -19,7 +22,7 @@ const socket = io({
     reconnection: true,
     reconnectionAttempts: 10,
     reconnectionDelay: 1000,
-    query: { userTimeZone: userTimeZone  },
+    query: { userTimeZone: userTimeZone, userLang: userLang  },
   });
   
 
