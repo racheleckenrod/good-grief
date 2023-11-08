@@ -244,35 +244,11 @@ exports.postLogin = async (req, res, next) => {
           { $addToSet: {guestIDs: guestID },
             $set: { timezone: userTimeZone, userLang: userLang }
           });
-        console.log("updates user=", user)
-        // if (!existingUser) {
-        //   return res.redirect('/login');
-        // }
-
-        console.log(guestID);
-
-
-              // if (!existingUser.guestIds) {
-              //     existingUser.guestIds = [];
-              // }
-
-              // const guestIDString = guestID.toString();
-
-              // console.log(existingUser.guestIds);
-
-              // if (!existingUser.guestIds.includes(guestIDString)) {
-              //   console.log("id to push", guestIDString);
-              //   existingUser.guestIds.push(guestIDString);
-              //   console.log("after pushing", existingUser.guestIds);
-              // }
-
-
-              console.log('user updated on login', user); 
               
               res.redirect(req.session.returnTo || "/profile");
-          } catch (err) {
-            return next(err);
-          }
+      } catch (err) {
+        return next(err);
+      }
       
         });
   })(req, res, next);
