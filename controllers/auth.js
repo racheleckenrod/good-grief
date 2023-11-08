@@ -6,12 +6,13 @@ const nodemailer = require('nodemailer');
 const { link } = require("fs");
 
 exports.getLogin = (req, res) => {
-  if (req.user) {
-    return res.redirect("/profile");
-  }
+  // if (req.user) {
+    // return res.redirect("/profile");
+  // }
   res.render("login", {
     title: "Login",
-    user: req.user,
+    user: req.user
+    // userStatus: req.session.status
   });
 };
 
@@ -237,19 +238,25 @@ exports.postLogin = async (req, res, next) => {
       if (err) {
         return next(err);
       }
+      
       req.flash("success", { msg: "Success! You are logged in." });
 
       try {
         const user = await User.updateOne({ email: req.body.email },
           { $addToSet: {guestIDs: guestID },
             $set: { timezone: userTimeZone, userLang: userLang }
-          });
-              
-              res.redirect(req.session.returnTo || "/profile");
+          });   
       } catch (err) {
         return next(err);
       }
-      
+
+      console.log("before redirect")
+
+      res.redirect("/login")
+      // setTimeout(() => {
+      //    res.redirect("/chat");
+      // }, 2000);
+     
         });
   })(req, res, next);
 };
