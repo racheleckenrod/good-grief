@@ -37,7 +37,7 @@
         <% if( comments[j].post  == `${posts[i]._id}` ) {%>
         <span><%= comments[j].comment %></span>
         <a href="/profile/<%= `${comments[i].user._id}`%>">By: <%= comments[i].user.userName %></a>
-        <p>At:<%= comments[i].createdAt.toLocaleString( {timeZone: userTimeZone } )%> on  <%= comments[i].createdAt.toLocaleDateString() %></p>
+        <p>On:<%= comments[i].createdAt.toLocaleString( {timeZone: userTimeZone } )%> </p>
        <%}%>
        <% } %>
       </div>
