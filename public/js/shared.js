@@ -41,7 +41,16 @@ socket.on('setCookie', (GuestID) => {
   document.cookie = `guestID=${GuestID}; expires=Thu, 01 Jan 2099 00:00:00 UTC; path=/`;
   console.log("cookie set??NOW?", GuestID)
 });
-console.log("guestID=", socket.guestID)
+const cookies = document.cookie.split(";");
+let guestID = null;
+for(const cookie of cookies) {
+  const [name, value] = cookie.trim().split('=');
+  if (name === 'guestID') {
+    guestID = value;
+    break;
+  }
+}
+console.log("guestID=", guestID )
 
 socket.on('disconnect', () => {
   console.log('socket disconnected... attempting to reconnect');

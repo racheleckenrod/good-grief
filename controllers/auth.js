@@ -201,7 +201,14 @@ exports.postPasswordUpdate = async (req, res) => {
   
 };
 
-exports.postLogin = (req, res, next) => {
+exports.postLogin = async (req, res, next) => {
+  console.log("from postLogin", req.session.userTimeZone, req.session.guestID, req.session.userLang);
+  const guestID = req.session.guestID;
+  const userLang = req.session.userLang;
+  const userTimeZone = req.session.userTimeZone;
+  // const userID = req.session.user._id;
+  console.log(guestID);
+  
   const validationErrors = [];
   
   if (!validator.isEmail(req.body.email))
@@ -226,28 +233,48 @@ exports.postLogin = (req, res, next) => {
       return res.redirect("/login");
     }
     
-    req.logIn(user, (err) => {
+    req.logIn(user, async (err) => {
       if (err) {
         return next(err);
       }
       req.flash("success", { msg: "Success! You are logged in." });
 
-      // check if the user's guestID is already in the database
-      if (user.guestIDs.indexOf(req.session.guestID) === -1) {
-        user.guestIDs.push(req.session.guestID);
-      }
-        // update user with session data 
-              user.timezone = req.session.userTimeZone || 'UTC';
-              user.userLang = req.session.userLang || 'default';
-            
-              user.save((err) => {
-                if (err) {
-                  return next(err);
-                }
+      try {
+        const user = await User.updateOne({ email: req.body.email },
+          { $addToSet: {guestIDs: guestID },
+            $set: { timezone: userTimeZone, userLang: userLang }
+          });
+        console.log("updates user=", user)
+        // if (!existingUser) {
+        //   return res.redirect('/login');
+        // }
+
+        console.log(guestID);
+
+
+              // if (!existingUser.guestIds) {
+              //     existingUser.guestIds = [];
+              // }
+
+              // const guestIDString = guestID.toString();
+
+              // console.log(existingUser.guestIds);
+
+              // if (!existingUser.guestIds.includes(guestIDString)) {
+              //   console.log("id to push", guestIDString);
+              //   existingUser.guestIds.push(guestIDString);
+              //   console.log("after pushing", existingUser.guestIds);
+              // }
+
+
+              console.log('user updated on login', user); 
+              
+              res.redirect(req.session.returnTo || "/profile");
+          } catch (err) {
+            return next(err);
+          }
       
-      res.redirect(req.session.returnTo || "/profile");
-    });
-  });
+        });
   })(req, res, next);
 };
 
@@ -275,7 +302,7 @@ exports.getSignup = (req, res) => {
 };
 
 exports.postSignup = (req, res, next) => {
-  console.log("calling exports.postSignup", req.body.userName, req.body.timezone)
+  console.log("calling exports.postSignup",req.session.guestID, req.body.userName, req.session.userTimeZone, req.session.userLang, req.session.user.guestUserID)
   const validationErrors = [];
   // if (validator.blacklist(req.body.userName, '\/s\[\/s\]'))
   //   validationErrors.push({ msg: "Please enter a valid user name without spaces." });
@@ -300,9 +327,9 @@ exports.postSignup = (req, res, next) => {
     userName: req.body.userName,
     email: req.body.email,
     password: req.body.password,
-    timezone: req.session.timezone,
+    timezone: req.session.usertimeZone,
     userLang: req.session.userLang,
-    guestID: [req.session.guestID],
+    guestID: [req.session.user.guestUserID],
   });
 
   User.findOne(

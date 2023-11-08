@@ -53,12 +53,11 @@ const botName = "Grief Support Bot";
 //   getAllUsers,
 // } = require("./utils/users");
 
-
 // new setup using sessionMiddleware for socket.io:
 const sessionMiddleware = session({
   secret: "goPackers",
-  resave: false,
-  saveUninitialized: false,
+  resave: true,
+  saveUninitialized: true,
   store: new MongoStore({ mongooseConnection: mongoose.connection }),
 })
 
@@ -118,7 +117,7 @@ app.use( async (req, res, next) => {
     if (guestIDCookie) {
       const guestUser = await GuestUserID.findOne({ guestUserID: guestIDCookie });
       if (guestUser) {
-        req.session.user = guestUser;
+        req.session.guestUser = guestUser;
         req.session.userName = guestUser.userName;
         req.session._id = guestUser._id
       }
@@ -126,32 +125,13 @@ app.use( async (req, res, next) => {
     }
   }
 
-  // req.session.userTimeZone = req.cookies.userTimeZone || 'error';
- 
-  // if (!req.session._id) {
-  //   if (!req.user) {
-
-  //     const { guestID, userName } = await generateGuestID(req.session.userTimeZone);
-  //     const guestUser = await GuestUserID.findOne({ guestUserID: guestID });
-
-  //       if (guestUser) {
-  //         req.session._id = guestUser._id;
-  //         req.session.userName = guestUser.userName;
-  //         req.session.guestID = guestUser.guestUserID
-  //         req.session.timezone = req.cookies.userTimeZone
-  //       }
-
-  //       // req.session.timezone = timezone
-  //       // console.log("app,use guestUser=", guestUser)
-  //   }
-  // }
-  // console.log("app.use", req.session)
+  console.log("app.use", req.session, "req.user=", req.user)
   next();
 })
 
 // convert a connect middleware to a Socket.IO middleware
 const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
-
+io.engine.use(sessionMiddleware);
 
 io.use(wrap(sessionMiddleware));
 io.use(wrap(passport.initialize()));
@@ -166,6 +146,11 @@ io.use(async (socket, next) => {
 
   socket.request.session.userTimeZone = userTimeZone;
   socket.request.session.userLang = userLang;
+
+  console.log("check socketrequestsesseion", socket.request.session.userTimeZone, socket.request.session.userLang)
+
+  
+
  
   // check for guestID cookie
   const guestIDCookie = socket.handshake.headers.cookie
@@ -189,7 +174,7 @@ io.use(async (socket, next) => {
     socket.request.session.guestID = newGuestUser.guestID
     socket.data = { guestUser: newGuestUser };
    
-
+   
     // emit new guestID to client to set a cookie
     socket.emit('setCookie', newGuestUser.guestID);
     console.log("emitted cookie?", newGuestUser.guestID)
@@ -197,13 +182,24 @@ io.use(async (socket, next) => {
 
 
   if (socket.request.user) {
-    socket.chatUser = socket.request.user;
+    socket.chatUser = socket.request.user.userName;
   } else {
-    socket.chatUser = socket.request.session.guestUser;
+    socket.chatUser = socket.request.session.guestUser.userName;
   }
+  console.log("socket.chatUser=", socket.chatUser)
+
+  const session = socket.request.session;
+  session.save();
+  console.log("Big check session=", session, "end")
+  
   next();
 });
 
+// app.get('/access-session', (req,res) => {
+//   // access session data
+//   const sessionData = req.session;
+//   res.json(sessionData)
+// })
 
 
 // Get current user
@@ -255,11 +251,23 @@ io.on("connection", async ( socket) => {
  
     const userTimeZone = socket.request.session.userTimeZone;
     const userLang = socket.request.session.userLang;
-
+    const guestID = socket.request.session.guestID;
     const userStatus = socket.request.session.status;
     socket.emit('setStatus', userStatus)
 
-  
+    GuestUserID.findOneAndUpdate(
+      { guestUserID: guestID },
+      { $set: { timezone: userTimeZone }},
+      { new: true },
+      (err, updatedGuestUser) => {
+        if (err) {
+          console.error(err);
+        } else {
+          // req.session.guestUser = updatedGuestUser
+          console.log("updatedGuestUser=", updatedGuestUser)
+        }
+      }
+    );
 
         // Runs when client disconnects
         socket.on("disconnect", (reason) => {
