@@ -210,7 +210,7 @@ function getCurrentUser(id) {
 
 // User leaves chat
 function userLeave(id) {
-  console.log("leaving socket.id=", id);
+  console.log("leaving socket.id=", id, chatUsers);
 
   for (const chatUser of chatUsers) {
     const socketIndex = chatUser.id.indexOf(id);
@@ -222,6 +222,7 @@ function userLeave(id) {
         const chatUserIndex = chatUsers.indexOf(chatUser);
         chatUsers.splice(chatUserIndex, 1);
       }
+      return chatUser
     }
   }
 }
@@ -259,20 +260,18 @@ io.on("connection", async ( socket) => {
       { guestUserID: guestID },
       { $set: { timezone: userTimeZone }},
       { new: true },
-      (err, updatedGuestUser) => {
+      (err) => {
         if (err) {
           console.error(err);
-        } else {
-          // req.session.guestUser = updatedGuestUser
-          console.log("updatedGuestUser=", updatedGuestUser)
-        }
+        } 
       }
     );
 
         // Runs when client disconnects
         socket.on("disconnect", (reason) => {
           const chatUser = userLeave(socket.id);
-          console.log(`disconnected ${socket.id} chatUser=`, chatUser, "socket.user=",socket.chatUser.userName)
+          console.log("chatUser from disconnect", chatUser)
+          // console.log(`disconnected ${socket.id} chatUser=`, chatUser.username, "socket.user=",socket.chatUser)
           io.emit("message",  formatMessage(botName,` user ${socket.chatUser} has left a chat`,  userTimeZone, userLang))
         
               if(chatUser) {
@@ -304,7 +303,7 @@ io.on("connection", async ( socket) => {
                 // const localTime = moment.tz(socket.timeZone).format('dddd, MMMM D, YYYY h:mm:ss a');
 
               socket.emit('timeData', localTime);}, 1000);
-              socket.emit("timeClock", `It's about time... ${socket.chatUser.userName}, Connected= ${socket.connected}, socketID: ${socket.id}`)
+              socket.emit("timeClock", `It's about time... ${socket.chatUser}, Connected= ${socket.connected}, socketID: ${socket.id}`)
         });
       
         socket.on("joinRoom", ({ username, room, _id}) => {
