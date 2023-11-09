@@ -9,23 +9,27 @@ const User = require("../models/User");
 module.exports = {
   getProfile: async (req, res) => {
     // console.log(req.user, req.user.profilePicture)
+    const userTimeZone = req.user.timezone || req.session.userTimeZone;
+    const userLang = req.user.userLang || req.session.userLang;
     try {
       const posts = await Post.find({ user: req.user.id });
       const likedPosts = await Post.find({ user: req.user.id }).sort({likes: "desc"}).lean();
       const _id = req.user._id || 33333333
       // console.log(req.session, req.body.timezone)
-      res.render("profile.ejs", { posts: posts, user: req.user, likedPosts: likedPosts, _id: _id });
+      res.render("profile.ejs", { posts: posts, user: req.user, likedPosts: likedPosts, _id: _id, userTimeZone: userTimeZone, userLang: userLang });
     } catch (err) {
       console.log(err);
     }
   },
   getEditProfile: async (req, res) => {
+    const userTimeZone = req.user.timezone || req.session.userTimeZone;
+    const userLang = req.user.userLang || req.session.userLang;
     try {
       const posts = await Post.find({ user: req.user.id });
       const likedPosts = await Post.find({ user: req.user.id }).sort({likes: "desc"}).lean();
       const _id = req.user._id
       // console.log(req.user)
-      res.render("editProfile.ejs", { posts: posts, user: req.user, likedPosts: likedPosts, _id: _id });
+      res.render("editProfile.ejs", { posts: posts, user: req.user, likedPosts: likedPosts, _id: _id, userTimeZone: userTimeZone, userLang: userLang });
     } catch (err) {
       console.log(err);
     }
@@ -127,6 +131,8 @@ module.exports = {
     }
   },
   showProfile: async (req, res) => {
+    const userTimeZone = req.user.timezone || req.session.userTimeZone;
+    const userLang = req.user.userLang || req.session.userLang;
     // console.log("showprofile", req.params)
     try {
       // const { id } = req.params.id
@@ -138,7 +144,7 @@ module.exports = {
       const _id = req.user._id
       const comments = await Comment.find().populate('user').sort({ createdAt: "asc" }).lean()
       // console.log(likedPosts.length, comments.length, "length of likedPost and comments")
-      res.render("userProfile.ejs", { posts: posts, user: req.user, chatUser: chatUser, comments: comments, likedPosts: likedPosts, _id: _id });
+      res.render("userProfile.ejs", { posts: posts, user: req.user, chatUser: chatUser, comments: comments, likedPosts: likedPosts, _id: _id, userTimeZone: userTimeZone, userLang: userLang });
     } catch (err) {
       console.log(err, "STOP!!");
     }
@@ -146,7 +152,7 @@ module.exports = {
   },
   getFeed: async (req, res) => {
     const userTimeZone = req.user.timezone || req.session.userTimeZone;
-    const userLang = req.user.userLang || req.session.userLang
+    const userLang = req.user.userLang || req.session.userLang;
     console.log("also getFeed", userTimeZone, userLang, req.user.timezone, req.user.userLang)
     try {
       const posts = await Post.find().populate('user').sort({ createdAt: "desc" }).lean();
@@ -160,20 +166,10 @@ module.exports = {
       console.log(err);
     }
   },
-  // getTestFeed: async (req, res) => {
-  //   try {
-  //     const posts = await Post.find().populate('user').sort({ createdAt: "desc" }).lean();
-  //     const comments = await Comment.find().sort({ createdAt: "asc" }).lean()
-    
-  //     res.render("feed.ejs", { posts: posts, comments: comments, user: req.user });
-  //     console.log("testFeed" ,posts)
-  //   } catch (err) { 
-  //     console.log(err);
-  //   }
-  // },
+ 
   getPost: async (req, res) => {
-    const userTimeZone = req.session.timezone
-    const userLang = req.session.userLang
+    const userTimeZone = req.user.timezone || req.session.userTimeZone;
+    const userLang = req.user.userLang || req.session.userLang;
     console.log("also getPost", userTimeZone, userLang)
     try {
       const post = await Post.findById(req.params.id).populate('user');
@@ -231,6 +227,8 @@ module.exports = {
     }
   },
   likePostFeed: async (req, res) => {
+    const userTimeZone = req.user.timezone || req.session.userTimeZone;
+    const userLang = req.user.userLang || req.session.userLang;
     try {
       await Post.findOneAndUpdate(
         { _id: req.params.id },
@@ -243,17 +241,19 @@ module.exports = {
       const comments = await Comment.find().populate('user').sort({ createdAt: "asc" }).lean()
       // console.log(posts,comments, "from getFeed")
       const _id = req.user._id
-      res.render("feed.ejs", { posts: posts, comments: comments, user: req.user, _id: _id });
+      res.render("feed.ejs", { posts: posts, comments: comments, user: req.user, _id: _id, userTimeZone: userTimeZone, userLang: userLang });
     } catch (err) {
       console.log(err);
     }
   },
   editPostPage:  async (req, res) => {
+    const userTimeZone = req.user.timezone || req.session.userTimeZone;
+    const userLang = req.user.userLang || req.session.userLang;
     try {
       const post = await Post.findById(req.params.id).populate('user');
       const comments = await Comment.find({post: req.params.id}).sort({ createdAt: "desc" }).lean();
       const _id = req.user._id
-      res.render("edit.ejs", { post: post, user: req.user, comments: comments, _id: _id });
+      res.render("edit.ejs", { post: post, user: req.user, comments: comments, _id: _id, userTimeZone: userTimeZone, userLang: userLang });
     } catch (err) {
       console.log(err)
     }
