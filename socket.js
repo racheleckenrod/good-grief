@@ -39,6 +39,10 @@ module.exports = (server, options) => {
           } 
         }
       );
+
+    //   socket.on("login", (message) => {
+    //     io.to("The Lobby").emit("login", message);
+    //   });
   
           // Runs when client disconnects
           socket.on("disconnect", (reason) => {

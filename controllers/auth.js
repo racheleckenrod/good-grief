@@ -4,6 +4,7 @@ const User = require("../models/User");
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const { link } = require("fs");
+const io = require('../server');
 
 exports.getLogin = (req, res) => {
   // if (req.user) {
@@ -239,23 +240,24 @@ exports.postLogin = async (req, res, next) => {
         return next(err);
       }
       
-      req.flash("success", { msg: "Success! You are logged in." });
 
       try {
         const user = await User.updateOne({ email: req.body.email },
           { $addToSet: {guestIDs: guestID },
             $set: { timezone: userTimeZone, userLang: userLang }
           });   
+
+         
+
       } catch (err) {
         return next(err);
       }
 
       console.log("before redirect")
 
+      req.flash("success", { msg: "Success! You are logged in." });
+      
       res.redirect("/login")
-      // setTimeout(() => {
-      //    res.redirect("/chat");
-      // }, 2000);
      
         });
   })(req, res, next);

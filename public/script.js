@@ -43,6 +43,13 @@ socket.on('timeData', (timeString2) => {
 
 })
 
+socket.on('tx', (message) => {
+  console.log("login received", message)
+  outputMessage(message);
+
+  //   // Scroll down
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+})
 
 // // Join chatroom
 socket.emit('joinRoom', {  username, room, _id });

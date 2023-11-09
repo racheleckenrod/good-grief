@@ -28,19 +28,19 @@ const socket = io({
   
 
 socket.on('connect', () => {
-
   console.log("socket connected!!", socket.timeZone, socket, socket.id, socket.data);
+});
 
-  socket.on('setStatus', (onlineStatus) => {
-    userStatus = onlineStatus;
-    console.log("userStatus=", userStatus);
-  });
+socket.on('setStatus', (onlineStatus) => {
+  userStatus = onlineStatus;
+  console.log("userStatus=", userStatus);
 });
 
 socket.on('setCookie', (GuestID) => {
   document.cookie = `guestID=${GuestID}; expires=Thu, 01 Jan 2099 00:00:00 UTC; path=/`;
   console.log("cookie set??NOW?", GuestID)
 });
+
 const cookies = document.cookie.split(";");
 let guestID = null;
 for(const cookie of cookies) {
@@ -68,4 +68,4 @@ socket.on('reconnecting', (attemptNumber) => {
 });
 
   
-  export { socket, userTimeZone, userStatus };
+  export { socket, userTimeZone, userStatus, userLang };
