@@ -125,7 +125,7 @@ app.use( async (req, res, next) => {
     }
   }
 
-  console.log("app.use", req.session, "req.user=", req.user.userName)
+  console.log("app.use", req.session, "req.user=", req.user)
   next();
 })
 
