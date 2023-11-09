@@ -30,7 +30,7 @@ const flash = require("express-flash");
 const logger = require("morgan");
 const cookieParser = require('cookie-parser')
 const connectDB = require("./config/database");
-const mainRoutes = require("./routes/main");
+const mainRoutes = require("./routes/main")(io);
 const postRoutes = require("./routes/posts");
 const commentRoutes = require("./routes/comments");
 const chatRoutes = require("./routes/chat");
@@ -80,6 +80,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.set("view engine", "ejs");
 
 app.set('socketio', io);
+app.io = io
 
 //Body Parsing
 app.use(express.urlencoded({ extended: true }));
@@ -409,6 +410,7 @@ app.use("/chat/:room", chatRoutes);
 app.use("/chat", chatRoutes);
 
 
+// module.exports.io = io;
 
 server.listen(PORT, () => { console.log(`Server running on port ${PORT}`)});
 

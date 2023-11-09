@@ -69,6 +69,14 @@ socket.on('message', (message) => {
   chatMessages.scrollTop = chatMessages.scrollHeight;
 });
 
+socket.on('tx', (message) => {
+  console.log("login received", message)
+  outputMessage(message);
+
+  //   // Scroll down
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+})
+
 // // Message submit- prevent default stops page reload
 chatForm.addEventListener('submit', (e) => {
   e.preventDefault();
