@@ -75,6 +75,14 @@ socket.on('tx', (message) => {
 
   //   // Scroll down
     chatMessages.scrollTop = chatMessages.scrollHeight;
+});
+
+socket.on('logout', (message) => {
+  console.log("logout received", message)
+  outputMessage(message);
+
+  //   // Scroll down
+    chatMessages.scrollTop = chatMessages.scrollHeight;
 })
 
 // // Message submit- prevent default stops page reload

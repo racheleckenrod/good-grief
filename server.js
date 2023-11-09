@@ -149,9 +149,6 @@ io.use(async (socket, next) => {
   socket.request.session.userLang = userLang;
 
   console.log("check socketrequestsesseion", socket.request.session.userTimeZone, socket.request.session.userLang)
-
-  
-
  
   // check for guestID cookie
   const guestIDCookie = socket.handshake.headers.cookie
@@ -174,13 +171,11 @@ io.use(async (socket, next) => {
     socket.request.session.guestUser = newGuestUser
     socket.request.session.guestID = newGuestUser.guestID
     socket.data = { guestUser: newGuestUser };
-   
-   
+    
     // emit new guestID to client to set a cookie
     socket.emit('setCookie', newGuestUser.guestID);
     console.log("emitted cookie?", newGuestUser.guestID)
   }
-
 
   if (socket.request.user) {
     socket.chatUser = socket.request.user.userName;
@@ -273,7 +268,7 @@ io.on("connection", async ( socket) => {
           const chatUser = userLeave(socket.id);
           console.log("chatUser from disconnect", chatUser)
           // console.log(`disconnected ${socket.id} chatUser=`, chatUser.username, "socket.user=",socket.chatUser)
-          io.emit("message",  formatMessage(botName,` user ${socket.chatUser} has left a chat`,  userTimeZone, userLang))
+          // io.emit("message",  formatMessage(botName,` user ${socket.chatUser} has left a chat`,  userTimeZone, userLang))
         
               if(chatUser) {
                 console.log(`${chatUser.username} disconnected from ${chatUser.room} because reason: ${reason}`)

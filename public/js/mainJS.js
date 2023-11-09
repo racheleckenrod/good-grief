@@ -3,34 +3,27 @@ import { socket, userTimeZone } from './shared.js'
 const chatForm = document.getElementById('chat-form');
 const chatMessages = document.querySelector('.chat-messages');
 const roomName = document.getElementById('room-name');
-const userList = document.getElementById('users');
+const userList = document.getElementById('chatUsers');
 const username = document.getElementById('username').innerHTML;
 const room =  roomName.innerHTML
 
 const _id =  document.getElementById('_id').innerHTML;
-// console.log("room=", room, username, _id)
-// my try at pulling the data into the chat
 
-// console.log(username, "username")
-// const socket = io();
-// const id = socket.id;
-// console.log("mainJS", socket, socket.connected, socket.id)
-
-// console.log(userList)
 // // Join chatroom
-socket.emit('joinRoom', { username, room, _id, userTimeZone });
+socket.emit('joinRoom', { username, room, _id});
 console.log("joinRoom", username, room, _id, userTimeZone)
 // console.log(userList)
 
 // // Get room and users
-socket.on('roomUsers', ({ room, users }) => {
+socket.on('roomUsers', ({ room, chatUsers }) => {
   // console.log("mainJS2", socket, socket.connected, socket.id)
 
-  // console.log(users)
+  console.log("from roomUsers", chatUsers)
   outputRoomName(room);
   // console.log("output", room)
-  outputUsers(users);
+  outputUsers(chatUsers);
 });
+
 
 
 // Recent messages
@@ -93,18 +86,18 @@ function outputRoomName(room) {
 }
 
 // // Add users to DOM
-function outputUsers(users) {
-  console.log("outputUsers", users)
+function outputUsers(chatUsers) {
+  console.log("outputUsers", chatUsers)
   userList.innerHTML = `
-  ${users.map(user => `<li class="${user.username}" >${user.username}</li>`).join('')}
+  ${chatUsers.map(chatUser => `<li class="${chatUser.username}" >${chatUser.username}</li>`).join('')}
   `;
 
   // Add event listeners to names to connect to their profile page
-  users.forEach((user) => {
+  chatUsers.forEach((chatUser) => {
     // console.log("first", user)
-    document.querySelector(`.${user.username}`).addEventListener('click', () => {
-      console.log("forEach", user.username, user._id)
-       window.location = `/profile/${user._id}`
+    document.querySelector(`.${chatUser.username}`).addEventListener('click', () => {
+      console.log("forEach", chatUser.username, chatUser._id)
+       window.location = `/profile/${chatUser._id}`
     })
 //     const li = document.createElement('li');
 //     li.innerText = user.username;

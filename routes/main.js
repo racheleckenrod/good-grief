@@ -47,53 +47,33 @@ router.get("/passwordReset", authController.getPasswordReset);
 router.post("/passwordUpdate/:token", authController.postPasswordUpdate);
 
 // router.get("/login", authController.getLogin);
-// // router.post("/login", authController.postLogin);
-// router.get("/login", (req, res, io) => {
-//     console.log("first login message");
-//     if (req.user) {
-//     // io.to("The Lobby").emit("login", `${req.user.userName} has logged in.`);
-//     // io.emit("test", "test message from login route.");
-//     console.log("message from the login route");
-//     req.app.io.emit('tx',  formatMessage(botName, `${req.user.userName} is logging in`,  req.session.userTimeZone, req.session.userLang));
-//     console.log("before emitting")
-//     authController.getLogin(req, res);
-//     } else {
-//         console.log("else first login");
-//         authController.getLogin(req, res);
-//         console.log("else second login")
-
-//     }
-//         // res.redirect('/login');
-    
-// });
-
-// router.get("/login", authController.getLogin);
-router.get("/login", (req, res, io) => {
+router.get("/login", (req, res) => {
     console.log("first login message");
     if (req.user) {
-    // io.to("The Lobby").emit("login", `${req.user.userName} has logged in.`);
-    // io.emit("test", "test message from login route.");
     console.log("message from the login route");
-    req.app.io.emit('tx',  formatMessage(botName, `${req.user.userName} is logging in`,  req.session.userTimeZone, req.session.userLang));
-    console.log("before emitting")
+    req.app.io.emit('tx',  formatMessage(botName, `${req.user.userName} is logging in.`,  req.session.userTimeZone, req.session.userLang));
+    console.log("after emitting")
     authController.getLogin(req, res);
     } else {
         console.log("else first login");
         authController.getLogin(req, res);
         console.log("else second login")
-
     }
         // res.redirect('/login');
-    
 });
 router.post("/login", authController.postLogin, () => {console.log("post Route")});
-//  (req, res, io) => {
-    // io.to("The Lobby").emit("login", `${req.user.userName} has logged in.`);
-    // io.emit("test", "test message from login route.");
-    // console.log("message from the login route");
-    // req.app.io.emit('tx',  formatMessage(botName, `${req.user.userName} is logging in`,  req.session.userTimeZone, req.session.userLang))
-// });
-router.get("/logout", authController.logout);
+
+router.get("/logout", (req, res) => {
+    let username;
+    if (req.user) {
+        username = req.user.userName;
+    } else {
+        username = req.session.guestUser.userName;
+    }
+    req.app.io.emit('logout', formatMessage(botName, `${username} logged out.`, req.session.userTimeZone, req.session.userLang));
+ authController.logout(req, res);
+});
+
 router.get("/signup", authController.getSignup);
 router.post("/signup", authController.postSignup);
 
