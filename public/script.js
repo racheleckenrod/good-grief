@@ -1,4 +1,4 @@
-import { socket, userTimeZone, userStatus } from './js/shared.js'
+import { socket, userTimeZone, userLang, userStatus } from './js/shared.js'
 
 let el
 
@@ -107,7 +107,10 @@ chatForm.addEventListener('submit', (e) => {
 function outputMessage(message) {
   const div = document.createElement('div');
   div.classList.add('message');
-  div.innerHTML = `<p class="meta">${message.username} <span>${message.time}</span></p>
+  
+  const localTime = (message.time).toLocaleString( userLang, {timeZone: userTimeZone } )
+
+  div.innerHTML = `<p class="meta">${message.username} <span>${localTime}</span></p>
   <p class="text">
     ${message.text}
   </p>`;

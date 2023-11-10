@@ -1,4 +1,4 @@
-import { socket, userTimeZone } from './shared.js'
+import { socket, userTimeZone, userLang } from './shared.js'
 
 const chatForm = document.getElementById('chat-form');
 const chatMessages = document.querySelector('.chat-messages');
@@ -71,7 +71,10 @@ chatForm.addEventListener('submit', (e) => {
 function outputMessage(message) {
   const div = document.createElement('div');
   div.classList.add('message');
-  div.innerHTML = `<p class="meta">${message.username} <span>${message.time}</span></p>
+
+  const localTime = (message.time).toLocaleString( userLang, {timeZone: userTimeZone } )
+
+  div.innerHTML = `<p class="meta">${message.username} <span>${localTime}</span></p>
   <p class="text">
     ${message.text}
   </p>`;

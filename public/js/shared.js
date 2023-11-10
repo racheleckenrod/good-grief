@@ -68,4 +68,4 @@ socket.on('reconnecting', (attemptNumber) => {
 });
 
   
-  export { socket, userTimeZone, userStatus };
+  export { socket, userTimeZone, userLang, userStatus };

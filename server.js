@@ -245,7 +245,7 @@ function userJoin(id, username, room, _id) {
  
 // run when client connects
 io.on("connection", async ( socket) => {
- 
+//  console.log(socket)
     const userTimeZone = socket.request.session.userTimeZone;
     const userLang = socket.request.session.userLang;
     const guestID = socket.request.session.guestID;
@@ -278,7 +278,7 @@ io.on("connection", async ( socket) => {
               if (chatUser) {
                 io.to(chatUser.room).emit(
                   "message",
-                  formatMessage(botName, `${chatUser.username} has left the chat because: ${reason}`, socket.request.session.userTimeZone, socket.request.session.userLang)
+                  formatMessage(botName, `${chatUser.username} has left the chat because: ${reason}`)
                 );
                 // Send users and room info
                 io.to(chatUser.room).emit("roomUsers", {
@@ -319,7 +319,7 @@ io.on("connection", async ( socket) => {
           socket.broadcast
           .to(chatUser.room)
           .emit(
-            "message",  formatMessage(botName,`${chatUser.username} has joined the chat`, socket.request.session.userTimeZone, socket.request.session.userLang)
+            "message",  formatMessage(botName,`${chatUser.username} has joined the chat`)
           );
     
           // fetch recent messages for the room from the database
@@ -349,7 +349,7 @@ io.on("connection", async ( socket) => {
                     const formattedMessage = {
                       text: message.message,
                       username: username,
-                      time: (message.timestamp).toLocaleString( userLang, {timeZone: userTimeZone } ),
+                      time: (message.timestamp).toLocaleString(),
                     };
                     formattedMessages.push(formattedMessage);
                   } catch (error) {
@@ -381,7 +381,7 @@ io.on("connection", async ( socket) => {
             const savedMessage = await  newMessage.save();
 
             console.log(`${chatUser.room} Chat message saved:`, userTimeZone, savedMessage.message, socket.request.session.userTimeZone);
-            io.to(chatUser.room).emit("message", formatMessage(chatUser.username, savedMessage.message,  socket.request.session.userTimeZone, socket.request.session.userLang));
+            io.to(chatUser.room).emit("message", formatMessage(chatUser.username, savedMessage.message));
 
           } catch(error) {
               console.error('Error saving chat message:', error);
@@ -391,7 +391,7 @@ io.on("connection", async ( socket) => {
 
 
          // Welcome current user
-        socket.emit("message", formatMessage(botName, `Welcome to ${chatUser.room} of Live Grief Support, ${chatUser.username}.`,  socket.request.session.userTimeZone, socket.request.session.userLang));
+        socket.emit("message", formatMessage(botName, `Welcome to ${chatUser.room} of Live Grief Support, ${chatUser.username}.`));
 
     }); 
 });
