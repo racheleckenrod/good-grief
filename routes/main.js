@@ -56,7 +56,7 @@ router.get("/login", (req, res) => {
     authController.getLogin(req, res);
     } else {
         console.log("else first login");
-        authController.getLogin(req, res);
+        authController.getGuestLogin(req, res);
         console.log("else second login")
     }
         // res.redirect('/login');

@@ -5,13 +5,25 @@ const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const { link } = require("fs");
 
+exports.getGuestLogin = (req, res) => {
+  // if (req.user) {
+    // return res.redirect("/profile");
+  // }
+  res.render("guestLogin", {
+    title: "Login",
+    user: req.user
+    // userStatus: req.session.status
+  });
+};
+
 exports.getLogin = (req, res) => {
   // if (req.user) {
     // return res.redirect("/profile");
   // }
+  console.log(req.user, "from getLogin")
   res.render("login", {
     title: "Login",
-    user: req.user
+    user: req.user, _id: req.user._id
     // userStatus: req.session.status
   });
 };

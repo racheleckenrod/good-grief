@@ -319,7 +319,7 @@ io.on("connection", async ( socket) => {
           socket.broadcast
           .to(chatUser.room)
           .emit(
-            "message",  formatMessage(botName,`${chatUser.username} has joined the chat`, userTimeZone, userLang)
+            "message",  formatMessage(botName,`${chatUser.username} has joined the chat`)
           );
     
           // fetch recent messages for the room from the database
@@ -366,10 +366,10 @@ io.on("connection", async ( socket) => {
           // Listen for chatMessage
 
           socket.on("chatMessage", async (msg) => {
-            // console.log("chat messages", userTimeZone)
-          // console.log("socket.user=",socket.user, socket.id)
+            console.log("chat messages", userTimeZone)
+          console.log("socket.user=",socket.user, socket.id)
           const chatUser = getCurrentUser(socket.id);
-            // console.log(user, "from getCurrentUser", socket.id)
+            console.log(chatUser, "from getCurrentUser", socket.id, userTimeZone)
           try {
             const newMessage = new ChatMessage({
               room: chatUser.room,
