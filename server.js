@@ -181,7 +181,7 @@ io.use(async (socket, next) => {
 
   const session = socket.request.session;
   session.save();
-  // console.log("Big check session=", session, "end")
+  console.log("Big check session=", session, "end")
   
   next();
 });
