@@ -297,7 +297,7 @@ exports.getSignup = (req, res) => {
 };
 
 exports.postSignup = (req, res, next) => {
-  console.log("calling exports.postSignup",req.session.guestID, req.body.userName, req.session.userTimeZone, req.session.userLang, req.session.user.guestUserID)
+  console.log("calling exports.postSignup")
   const validationErrors = [];
   // if (validator.blacklist(req.body.userName, '\/s\[\/s\]'))
   //   validationErrors.push({ msg: "Please enter a valid user name without spaces." });
