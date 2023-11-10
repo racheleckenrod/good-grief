@@ -20,7 +20,7 @@ exports.getLogin = (req, res) => {
   // if (req.user) {
     // return res.redirect("/profile");
   // }
-  console.log(req.user, "from getLogin")
+  console.log("req.user.userName=", req.user ? req.user.userName : "no req.user", "from getLogin")
   res.render("login", {
     title: "Login",
     user: req.user, _id: req.user._id
