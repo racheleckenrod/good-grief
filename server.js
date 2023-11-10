@@ -349,7 +349,7 @@ io.on("connection", async ( socket) => {
                     const formattedMessage = {
                       text: message.message,
                       username: username,
-                      time: (message.timestamp).toLocaleString(),
+                      time: (message.timestamp),
                     };
                     formattedMessages.push(formattedMessage);
                   } catch (error) {

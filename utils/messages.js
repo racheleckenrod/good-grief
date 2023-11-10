@@ -5,14 +5,14 @@ function formatMessage(username, text) {
   // console.log("formatMessage time", userTimeZone, userLang);
   // const utcTime = moment.utc();
   // const localTime=  moment.tz(userTimeZone).format('h:mm:ss a');
-  const postingTime = new Date();
+  // const postingTime = new Date();
   // const localTime = postingTime.toLocaleString( userLang, {timeZone: userTimeZone } )
 
   
   return {
     username,
     text,
-    time: postingTime.toLocaleString(),
+    time: new Date(),
   };
 }
 
