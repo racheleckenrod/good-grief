@@ -100,7 +100,7 @@ exports.postPasswordResetRequest = async (req, res) => {
                     from: process.env.EMAIL_USER,
                     to: email,
                     subject: "Password Reset Request",
-                    text: `Click on the following link to reset your password: ${resetLink}. It's valid for one hour.`,
+                    text: `Hello ${user.userName}, \n\nWe are glad to have you in our community. You can click on the following link to reset your password: ${resetLink}. \nIt's valid for one hour. \n\nPlease let us know if you have any other trouble by sending us an email, or submitting the form at the bottom of the website. We hope you are finding support and enjoy connecting with others. \nThank you and talk to you soon!  \n\n Good Grief Live`,
                   };
 
                   
