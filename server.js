@@ -82,9 +82,15 @@ app.use(cookieParser());
 // obtain consent for cookies before setting session cookie and others
 app.use((req, res, next) => {
   const consentCookie = req.cookies.consentCookie;
+  console.log(req.path)
+
+  if (req.path === '/consent/privacyPolicy') {
+    return res.render("privacyPolicy");
+    
+  }
 
   if (req.path === '/consent/setCookie') {
-        console.log("req,path=/consent=", req.path)
+        console.log("req,path=/consent=", req.path);
 
          // If the consent cookie is not set, handle the setCookie route
     if (!consentCookie) {
