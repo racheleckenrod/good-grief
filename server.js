@@ -29,6 +29,7 @@ const flash = require("express-flash");
 const logger = require("morgan");
 const cookieParser = require('cookie-parser')
 const connectDB = require("./config/database");
+const consentRoutes = require("./routes/consent");
 const mainRoutes = require("./routes/main")(io);
 const postRoutes = require("./routes/posts");
 const commentRoutes = require("./routes/comments");
@@ -44,6 +45,32 @@ const chatUsers = [];
 const botName = "Grief Support Bot";
 
 
+//Using EJS for views
+app.set("view engine", "ejs");
+
+app.set('socketio', io);
+app.io = io;
+
+
+//Use .env file in config folder
+require("dotenv").config({ path: "./config/.env" });
+
+//Static Folder
+app.use(express.static(path.join(__dirname, "public")));
+// server.use(express.static("public"))
+
+//Logging
+app.use(logger("dev"));
+
+
+//Body Parsing
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+
+// cookies
+app.use(cookieParser());
+
 // const {
 //   userJoin,
 //   getCurrentUser,
@@ -51,6 +78,41 @@ const botName = "Grief Support Bot";
 //   getRoomUsers,
 //   getAllUsers,
 // } = require("./utils/users");
+
+// obtain consent for cookies before setting session cookie and others
+app.use((req, res, next) => {
+  const consentCookie = req.cookies.consentCookie;
+
+  if (req.path === '/consent/setCookie') {
+        console.log("req,path=/consent=", req.path)
+
+         // If the consent cookie is not set, handle the setCookie route
+    if (!consentCookie) {
+      console.log("Setting consentCookie");
+      res.cookie('consentCookie', 'true', { maxAge: 365 * 24 * 60 * 60 * 1000, path: '/' });
+      return res.status(200).send('Consent cookie set successfully from server');
+    }
+
+
+    // res.redirect("/setCookie")
+    //     res.cookie('myCookie', 'cookieValue', { maxAge: 365 * 24 * 60 * 60 * 1000, httpOnly: true });
+        console.log('Cookie set:', req.cookies.consentCookie);
+    //     return res.redirect('/');
+      } 
+
+  if (!consentCookie) {
+    // If not set, set the cookie
+    console.log("cookie not set rendering consent");
+    res.render('consent');
+    return;
+
+  }
+    console.log('Cookie already set:', consentCookie);
+    next();
+  
+
+});
+
 
 // new setup using sessionMiddleware for socket.io:
 const sessionMiddleware = session({
@@ -60,8 +122,6 @@ const sessionMiddleware = session({
   store: new MongoStore({ mongooseConnection: mongoose.connection }),
 })
 
-//Use .env file in config folder
-require("dotenv").config({ path: "./config/.env" });
 
 // Passport config
 require("./config/passport")(passport);
@@ -70,23 +130,7 @@ require("./config/passport")(passport);
 connectDB();
 
 
-//Static Folder
-app.use(express.static(path.join(__dirname, "public")));
-// server.use(express.static("public"))
 
-
-//Using EJS for views
-app.set("view engine", "ejs");
-
-app.set('socketio', io);
-app.io = io
-
-//Body Parsing
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-
-//Logging
-app.use(logger("dev"));
 
 //Use forms for put / delete
 app.use(methodOverride("_method"));
@@ -102,8 +146,6 @@ app.use(passport.session());
 //Use flash messages for errors, info, ect...
 app.use(flash());
 
-// cookies
-app.use(cookieParser());
 
 // create guestUserID for guests
 app.use( async (req, res, next) => {
@@ -139,7 +181,7 @@ io.use(expressSocketIoSession(sessionMiddleware));
 io.use(async (socket, next) => {
   const userTimeZone = socket.handshake.query.userTimeZone;
   const userLang = socket.handshake.query.userLang;
-  // console.log("io.use userLang=", userLang, userTimeZone);
+  console.log("io.use userLang=", userLang, userTimeZone);
 
   socket.request.session.userTimeZone = userTimeZone;
   socket.request.session.userLang = userLang;
@@ -378,15 +420,15 @@ io.on("connection", async ( socket) => {
 });
 
 //Setup Routes For Which The Server Is Listening
+
 app.use("/", mainRoutes);
+app.use("/consent", consentRoutes);
 app.use("/post", postRoutes);
 app.use("/comment", commentRoutes);
 app.use("/chat/:room", chatRoutes);
 
 app.use("/chat", chatRoutes);
 
-
-// module.exports.io = io;
 
 server.listen(PORT, () => { console.log(`Server running on port ${PORT}`)});
 
