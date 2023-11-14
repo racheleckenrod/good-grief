@@ -17,6 +17,7 @@ module.exports = function (io) {
 
 //Main Routes - simplified for now
 router.get("/", homeController.getIndex);
+router.get("/privacyPolicy", homeController.getPrivacyPolicy);
 
 // router.post("/feedback", ensureFeedback, homeController.postFeedback)
 router.post('/feedback', function(req, res) {

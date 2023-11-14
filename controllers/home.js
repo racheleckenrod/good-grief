@@ -160,5 +160,35 @@ module.exports = {
                 }
 
   },
-}
-         
+      
+
+getPrivacyPolicy: (req, res) => {
+  res.render("privacyPolicy");
+},
+
+removeCookies: async (req, res) => {
+  try {
+      // Asynchronously destroy the session
+  await new Promise((resolve, reject) => {
+      req.session.destroy((err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+      res.clearCookie('consentCookie');
+      res.clearCookie('guestID');
+      res.clearCookie('connect.sid', { path: '/' }); // Specify the path for session cookie
+      res.redirect("/consent");
+  } catch (error) {
+      console.error('Error destroying session:', error);
+
+      res.status(500).send("Internal Server Error")
+  }
+  
+},
+
+};
+   
