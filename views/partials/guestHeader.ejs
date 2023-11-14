@@ -16,19 +16,30 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<link rel="stylesheet" href="/assets/css/style.css" />
-		<!-- <script>
-			function detectAndStoreTimezone() {
-				const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-				document.cookie = `userTimeZone=${userTimeZone}; expires=Thu, 01 Jan 2099 00:00:00 UTC; path=/`;
-				console.log(`detected timezone: ${userTimeZone}`);
-				console.log(`Set userTimeZone cookie: ${userTimeZone}`);
-
+	<!-- Cookie Consent Banner -->
+		<style>
+			#cookieBanner {
+			display: none;
+			position: fixed;
+			bottom: 0;
+			left: 0;
+			width: 100%;
+			background: #f0f0f0;
+			padding: 10px;
+			text-align: center;
 			}
-			detectAndStoreTimezone();
-		</script> -->
+		</style>
+	
 	</head>
 	<body class="homepage">
 		<div id="page-wrapper">
+
+			<div id="cookieBanner">
+				<p>This website uses cookies. By using this site, you agree to our use of cookies and community rules.</p>
+				<button id="acceptCookies">Accept</button>
+				<button id="declineCookies">Decline</button>
+			  </div>
+			  
 
 			<!-- Header -->
 				<section id="header" class="wrapper">

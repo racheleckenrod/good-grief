@@ -67,8 +67,8 @@
 				</section>
          </div> 
         	 -->
-
-			<!-- Intro -->
+<!-- 
+			Intro
 				<section id="intro" class="wrapper style1">
 					<div class="title">Become a Member</div>
 					<div class="container">
@@ -84,7 +84,35 @@
 								Signup</a></li>
 						</ul>
 					</div>
+				</section> -->
+
+				<!-- Intro -->
+				<section id="intro" class="wrapper style1">
+					<div class="title">Join Our Community</div>
+					<div class="container">
+						<p class="style1">You don't need to be alone in your grief.</p>
+						<p class="style2">
+							Connect with real people <br class="mobile-hide" />who know what you are going through.
+							</a>
+						</p>
+						<p class="style1">Share photos, poetry, thoughts, feelings and more  &ndash;  Right here where people care. </p>
+                        <div>
+                            <p>After spending most of my life at this point, without my child alive on Earth, I have put together a site that I hope can bring you great comfort in your times of need, and joy in celebrating with others successes we can share. It is my hope that you are supported when you need it most, and don't need to have a reason to stay and connect deeply with those who can offer a safe and supportive environment. Please be aware that being a member of this community is a privilege, and we expect you to follow certain rules in order to participate. Kindness is mandatory. As is maintaining respect for others as well as yourself. Violating these rules will result in you being banned from the site. If you ever feel bullied or experience abuse, we want to know about it right away. We will make every effort to keep this an emotionally safe space. May you find compassionate understanding here and enjoy sharing memories of your loved ones, challenges you face, and victories you have, as you offer yourself to those who have an understanding of your losses. May we learn to support each other. </p>
+
+                            <p>You are welcome to participate in a limited way as a guest. We have a live chat in our lobby where you can chat with other guests and users of the site. We encourage you to sign up and become a member. You will then be able to create your own profile, share your story, and post photos, comments and likes. You can view other members profiles and get to know who you are talking to. We also have a community feed that stays updated with users posts. The three most liked posts display in The Lobby.</p>
+
+                             <p>Please be aware that our site uses cookies to allow real time chats to guest users and provide you with the best experience we can. Some of our third party resources also use cookies. Our Privacy Policy is available in link at the bottom of each page.</p>
+
+                            <p>We require your consent before continuing.</p>
+                        </div>
+                       
+						<ul class="actions">
+							<li><a href="#" id="consent" class="button style3 large"> I accept </a></li>
+							<li><a href="/consent" class="button style3 large"> No, thanks </a></li>
+						</ul>
+					</div>
 				</section>
+
 
 			<!-- Main -->
 				<section id="main" class="wrapper style2">
@@ -207,6 +235,148 @@
 
 			<!-- Footer -->
 				
-			<%- include('partials/guestFooter') -%>
-	<!-- </body>
+			<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>   
+</body>
 </html> -->
+<!-- Footer -->
+
+<section id="footer" class="wrapper">
+    <div class="title">Our Sponsors</div>
+    <div class="container">
+        <header class="style1">
+            <h2>Looking to be in touch with us?</h2>
+            <p>
+                We value and appreciate you.
+            </p>
+        </header>
+        <div class="row">
+            <div class="col-6 col-12-medium">
+
+                <!-- Contact Form -->
+                    <section>
+                        <form method="POST" action="/feedback">
+                            <div class="row gtr-50">
+                                <div class="col-6 col-12-small">
+                                    <input type="text" name="userName" id="contact-name" placeholder="Name" />
+                                </div>
+                                <div class="col-6 col-12-small">
+                                    <input type="text" name="email" id="contact-email" placeholder="Email" />
+                                </div>
+                                <div class="col-12">
+                                    <textarea type="text" name="message" id="contact-message" placeholder="Message" rows="4"></textarea>
+                                </div>
+                                <% if (locals.messages.errors) { %>
+                                    <% messages.errors.forEach( el => { %>
+                                        <div class="alert alert-danger"><%= el.msg %></div>
+                                    <% }) %>    
+                                <% } %>
+                                <% if (locals.messages.info) { %>
+                                    <% messages.info.forEach( el => { %>
+                                        <div class="alert alert-info"><%= el.msg %></div>
+                                    <% }) %>    
+                                <% } %>
+                                <div class="col-12">
+                                    <ul class="actions">
+                                        <li><input type="submit" class="style1" value="Send" /></li>
+                                        <li><input type="reset" class="style2" value="Reset" /></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </form>
+                    </section>
+
+            </div>
+            <div class="col-6 col-12-medium">
+
+                <!-- Contact -->
+                    <section class="feature-list small">
+                        <div class="row">
+                            <div class="col-6 col-12-small">
+                                <section>
+                                    <h3 class="icon solid fa-home">Mailing Address</h3>
+                                    <p>
+                                        Back into Balance<br />
+                                        10799 Townline Rd<br />
+                                        Charlevoix, MI 49720
+                                    </p>
+                                </section>
+                            </div>
+                            <div class="col-6 col-12-small">
+                                <section>
+                                    <h3 class="icon solid fa-comment">Social</h3>
+                                    <p>
+                                        <a href="http://www.racheleckenrod.com">www.racheleckenrod.com</a><br />
+                                        <a href="https://www.linkedin.com/in/rachel-eckenrod/">linkedin.com/rachel-eckenrod</a><br />
+                                        <a href="https://www.facebook.com/rachel.eckenrod">facebook.com/rachel.eckenrod</a>
+                                    </p>
+                                </section>
+                            </div>
+                            <div class="col-6 col-12-small">
+                                <section>
+                                    <h3 class="icon solid fa-envelope">Email</h3>
+                                    <p>
+                                        <a href="mailto:goodgrieflive@gmail.com">goodgrieflive@gmail.com</a>
+                                    </p>
+                                </section>
+                            </div>
+                            <div class="col-6 col-12-small">
+                                <section>
+                                    <h3 class="icon solid fa-phone">Phone</h3>
+                                    <p>
+                                        (000) 555-0000
+                                    </p>
+                                </section>
+                            </div>
+                        </div>
+                    </section>
+
+            </div>
+        </div>
+        <div id="copyright">
+            <ul>
+                <li>&copy; Untitled.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+
+
+
+<!-- Scripts -->
+<script>
+	document.addEventListener('DOMContentLoaded', () => {
+	  const cookieBanner = document.getElementById('cookieBanner');
+	  const acceptCookiesBtn = document.getElementById('acceptCookies');
+	  const declineCookiesBtn = document.getElementById('declineCookies');
+	
+	  const userAcceptedCookies = document.cookie.includes('acceptedCookies=true');
+	
+	  if (!userAcceptedCookies) {
+		cookieBanner.style.display = 'block';
+	  }
+	
+	  acceptCookiesBtn.addEventListener('click', () => {
+		document.cookie = 'acceptedCookies=true; max-age=' + (365 * 24 * 60 * 60);
+		cookieBanner.style.display = 'none';
+	  });
+	
+	  declineCookiesBtn.addEventListener('click', () => {
+		alert('By declining, you may not have access to some features of the site.');
+		// Additional logic if needed
+	  });
+	});
+	</script>
+	
+
+<script src="/assets/js/jquery.min.js"></script>
+<script src="/assets/js/jquery.dropotron.min.js"></script>
+<script src="/assets/js/browser.min.js"></script>
+<script src="/assets/js/breakpoints.min.js"></script>
+<script src="/assets/js/util.js"></script>
+<script src="/assets/js/main.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script type="module" src="/js/shared.js"></script>
+
+</body>
+</html>
