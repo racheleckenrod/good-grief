@@ -49,17 +49,17 @@ router.post("/passwordUpdate/:token", authController.postPasswordUpdate);
 
 // router.get("/login", authController.getLogin);
 router.get("/login", (req, res) => {
-    console.log("first login message");
-    if (req.user) {
-    console.log("message from the login route");
-    req.app.io.emit('tx',  formatMessage(botName, `${req.user.userName} is logging in.`,  req.session.userTimeZone, req.session.userLang));
-    console.log("after emitting")
-    authController.getLogin(req, res);
-    } else {
+    // console.log("first login message");
+    // if (req.user) {
+    // console.log("message from the login route");
+    // req.app.io.emit('tx',  formatMessage(botName, `${req.user.userName} is logging in.`,  req.session.userTimeZone, req.session.userLang));
+    // console.log("after emitting")
+    // authController.getLogin(req, res);
+    // } else {
         console.log("else first login");
-        authController.getGuestLogin(req, res);
+        authController.getLogin(req, res);
         console.log("else second login")
-    }
+    // }
         // res.redirect('/login');
 });
 router.post("/login", authController.postLogin, () => {console.log("post Route")});

@@ -106,12 +106,13 @@
 						<ul class="actions">
                             <p>Sounds great! Sign me up.</p>
                             <li><a href="/signup" class="button style3 large">Signup</a></li>
-                            <li><a href="#" id="consent" class="button style3 large">Sign Up</a></li>
+							<p>I'm already a member.</p>
+                            <li><a href="/login" class="button style3 large">Log in</a></li>
                             <p>I'm interested, continue as a guest.</p>
-                            <li><a href="/chat"  class="button style3 large">The Lobby</a></li>
-							<li><a href="/"  class="button style3 large">Be a Guest</a></li>
+                            <li><a href="/chat"  class="button style3 large">Guest</a></li>
+							<!-- <li><a href="/"  class="button style3 large">Be a Guest</a></li> -->
                             <p>This is not for me.</p>
-							<li><a href="/consent" class="button style3 large"> No, thanks </a></li>
+							<li><a href="/" class="button style3 large"> No, thanks </a></li>
 						</ul>
 					</div>
 				</section>
@@ -292,8 +293,8 @@
 
 
 <!-- Scripts -->
-<!-- <script src="/socket.io/socket.io.js"></script> -->
-<!-- <script type="module" src="/js/shared.js"></script> -->
+<script src="/socket.io/socket.io.js"></script>
+<script type="module" src="/js/shared.js"></script>
 <script src="/assets/js/jquery.min.js"></script>
 <script src="/assets/js/jquery.dropotron.min.js"></script>
 <script src="/assets/js/browser.min.js"></script>
@@ -310,7 +311,7 @@
       window.location.href = '/';
     });
   </script> -->
-
+<!-- 
   <script>
     document.getElementById('consent').addEventListener('click', async () => {
       try {
@@ -342,7 +343,7 @@
         console.error('Error setting consent cookie', error);
       }
     });
-  </script>
+  </script> -->
 
   <script>
   // cookieBanner.js
@@ -351,15 +352,16 @@
     const acceptCookiesBtn = document.getElementById('acceptedCookies');
     const declineCookiesBtn = document.getElementById('declineCookies');
 
-    const userAcceptedCookies = document.cookie.includes('acceptedCookies=true');
+    const userAcceptedCookies = document.cookie.includes('consentCookie=true');
 
     if (!userAcceptedCookies) {
         cookieBanner.style.display = 'block';
     }
 
     acceptCookiesBtn.addEventListener('click', () => {
-        document.cookie = 'acceptedCookies=true; max-age=' + (365 * 24 * 60 * 60);
+        document.cookie = 'consentCookie=true; max-age=' + (365 * 24 * 60 * 60);
         cookieBanner.style.display = 'none';
+		window.location.reload();
     });
 
     declineCookiesBtn.addEventListener('click', () => {

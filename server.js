@@ -84,41 +84,20 @@ app.use((req, res, next) => {
   const consentCookie = req.cookies.consentCookie;
   console.log(req.path)
 
-  // if (req.path === '/privacyPolicy') {
-  //   return res.render("privacyPolicy");
-  // }
+  if (req.path === '/privacyPolicy') {
+    return res.render("privacyPolicy");
+  }
 
-  // if (req.path === '/consent/setCookie') {
-        // console.log("req,path=/consent=", req.path);
-
-         // If the consent cookie is not set, handle the setCookie route
-    if (!consentCookie && req.path !== '/privacyPolicy') {
-      console.log("no consentCookie");
-      // res.cookie('consentCookie', 'true', { maxAge: 365 * 24 * 60 * 60 * 1000, path: '/' });
-      return res.render("guestIndex");
-    } 
-        next();
-    
-
-
-    // res.redirect("/setCookie")
-    //     res.cookie('myCookie', 'cookieValue', { maxAge: 365 * 24 * 60 * 60 * 1000, httpOnly: true });
-        // console.log('Cookie set:', req.cookies.consentCookie);
-    //     return res.redirect('/');
-      // } 
-
-  // if (!consentCookie) {
-    // If not set, set the cookie
-    // console.log("cookie not set rendering consent");
-    // res.render('guestIndex');
-    // return;
-
-  // }
-    // console.log('Cookie already set:', consentCookie);
+  if (!consentCookie) {
+    console.log("no consentCookie");
+    // res.cookie('consentCookie', 'true', { maxAge: 365 * 24 * 60 * 60 * 1000, path: '/' });
+    return res.render("guestIndex");
+  } 
   
-  
+  next();
 
 });
+
 
 
 // new setup using sessionMiddleware for socket.io:
@@ -175,6 +154,26 @@ app.use( async (req, res, next) => {
   console.log("app.use", req.session.status, "req.user=", req.user ? req.user.userName : 'none');
   next();
 })
+
+// Check for cookie acceptance before wrap middleware
+io.use(async (socket, next) => {
+  // Check for cookie acceptance
+  const consentCookie = socket.handshake.headers.cookie
+    ? socket.handshake.headers.cookie
+        .split('; ')
+        .find((cookie) => cookie.startsWith('consentCookie='))
+    : undefined;
+
+  if (!consentCookie) {
+    // No cookie acceptance, reject the connection
+    return next(new Error('Cookie acceptance is required.'));
+  }
+
+  // Continue with existing logic
+  next();
+});
+
+
 
 // convert a connect middleware to a Socket.IO middleware
 const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
