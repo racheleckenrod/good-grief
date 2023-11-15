@@ -33,7 +33,7 @@
                             
 							<p>A special place to honor our loved ones</p>
                             <p>Welcome to the Lobby</p>
-                            <span>We are glad you are here, <%= userName %>.</span>
+                            <p>We are glad you are here, <%= userName %>.</p>
 
 						</div>
 
@@ -66,9 +66,9 @@
                                     					
 									</ul>
 								</li>
-                                <li><a href="/profile">Profile</a></li>
-								<li><a href="/post/newPost/:id">New Post</a></li>
-								<li><a href="/feed">Community</a></li>
+                                <li><a href="/profile" class="openModalButton" data-modal="profile">Profile</a></li>
+								<li><a href="/post/newPost/:id" class="openModalButton" data-modal="newPost">New Post</a></li>
+								<li><a href="/feed" class="openModalButton" data-modal="feed">Community</a></li>
 								<li><a href="/logout">Logout</a></li>
 							</ul>
 						</nav>
@@ -358,6 +358,7 @@
             <ul class="actions">
                 <li><a href="/login" class="button style3 small">Login</a></li>
                 <li><a href="/signup" class="button style3 small">Signup</a></li>
+                <li><a href="#" class="button style3 small continue">Continue</a></li>
             </ul>
         </div>
     </div>

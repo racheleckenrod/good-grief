@@ -157,7 +157,7 @@ function outputUsers(chatUsers) {
 //     userList.appendChild(li);
   });
 };
-{/* <script> */}
+
 document.addEventListener('DOMContentLoaded', function () {
   const modalButtons = document.querySelectorAll('.openModalButton');
   const modal = document.querySelector('.modal');
@@ -175,14 +175,20 @@ document.addEventListener('DOMContentLoaded', function () {
           if (action === 'chatRoom') {
             modalText.textContent = notLoggedInMessage + 'enter that Chat Room.'
           } else if (action === 'profile') {
-            modalText.textContent = notLoggedInMessage + 'see user Profiles.'
+            modalText.textContent = notLoggedInMessage + 'to have a Profile.'
           } else if (action === 'comment') {
             modalText.textContent = notLoggedInMessage + 'comment on Posts.'
           } else if (action === 'noAccess') {
             modalText.textContent = 'Guest users do not have access to user Profiles'
+          } else if (action === 'feed') {
+            modalText.textContent = notLoggedInMessage + 'to see our Community posts.'
+          } else if (action === 'newPost') {
+            modalText.textContent = notLoggedInMessage + 'make a new Post.'
           }
           modal.style.display = 'block';
-        };
+        } else {
+          window.location.href = button.href;
+        }
       });
   });
 
@@ -192,6 +198,13 @@ document.addEventListener('DOMContentLoaded', function () {
       modal.style.display = 'none';
   });
 
+  // Close modal when an element with the 'continue' class is clicked
+  modal.addEventListener('click', function (event) {
+    if (event.target.classList.contains('continue')) {
+      modal.style.display = 'none';
+    }
+  });
+
    // Close modal when clicking outside the modal
   window.addEventListener('click', function (event) {
   if (event.target === modal) {
@@ -199,5 +212,4 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });
 });
-{/* </script> */}
 

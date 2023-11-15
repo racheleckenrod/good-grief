@@ -1,4 +1,11 @@
-<%- include('partials/header.ejs') -%>
+<% if (!user) { %>
+    <!-- Render content for guest users -->
+		<%- include('partials/guestHeader.ejs') -%>
+	<% } else { %>
+    <!-- Render content for loggedIn users -->
+		<%- include('partials/header.ejs') -%>
+  <% } %>
+
 
 			<!-- Intro -->
 				<section id="intro" class="wrapper style1">
