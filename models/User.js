@@ -7,7 +7,7 @@ const UserSchema = new mongoose.Schema({
   password: String,
   greeting: { type: String, default: "We can honor our dead by living our best lives." },
   profilePicture: { type: String, default: "https://source.unsplash.com/random/?flowers"},
-  about: { type: String, default: "Please use this space to tell us a little bit about yourself. We would love to know why you are here, who or what you are grieving, ways you have found to express your grief, as well as whatever else you would like to share."},
+  about: { type: String, default: "Please use this space to tell us a little bit about yourself. We would love to know why you are here, who or what you are grieving, helpful ways you have found to express your grief, as well as whatever else you would like to share."},
   story: { type: String, default: "There is space here for you to tell your story. You can update or add to it as you like."},
   viewUser: { type: Boolean, default: true},
   timezone: { type: String, default: "UTC"},
