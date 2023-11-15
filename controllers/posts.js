@@ -151,9 +151,10 @@ module.exports = {
 
   },
   getFeed: async (req, res) => {
-    const userTimeZone = req.user.timezone || req.session.userTimeZone;
-    const userLang = req.user.userLang || req.session.userLang;
-    console.log("also getFeed", userTimeZone, userLang, req.user.timezone, req.user.userLang)
+
+    const userTimeZone = req.session.userTimeZone || req.user.timezone;
+    const userLang = req.session.userLang || req.user.userLang;
+    console.log("also getFeed", userTimeZone, userLang, req.user.timezone, req.user.userLang, req.session.userTimeZone)
     try {
       const posts = await Post.find().populate('user').sort({ createdAt: "desc" }).lean();
       const comments = await Comment.find().populate('user').sort({ createdAt: "asc" }).lean()

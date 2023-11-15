@@ -322,7 +322,7 @@ exports.postSignup = (req, res, next) => {
     userName: req.body.userName,
     email: req.body.email,
     password: req.body.password,
-    timezone: req.session.usertimeZone,
+    timezone: req.session.userTimeZone,
     userLang: req.session.userLang,
     guestIDs: [req.session.guestUserID],
   });
