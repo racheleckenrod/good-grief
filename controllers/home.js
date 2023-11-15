@@ -9,10 +9,11 @@ module.exports = {
     getIndex: async (req, res) => {
       try {
         // console.log("OK", req.user._id)
+        const user = req.user
         const posts = await Post.find().populate('user').sort({ likes: "desc" }).lean();
-        const comments = await Comment.find().sort({ createdAt: "asc" }).lean()
+        const comments = await Comment.find().sort({ createdAt: "asc" }).lean();
         
-        res.render("index.ejs", { posts: posts, comments: comments,  user: req.user, _id: req.user ? req.user._id : null} );
+        res.render("index.ejs", { posts: posts, comments: comments,  user: user, _id: req.user ? req.user._id : null} );
       } catch (err) {
         console.log(err)
       }

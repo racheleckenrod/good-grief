@@ -1,7 +1,10 @@
 <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>   
 </body>
 </html> -->
+<!-- Footer -->           
+
 <!-- Footer -->
+    
 
 <section id="footer" class="wrapper">
     <div class="title">Our Sponsors</div>
@@ -28,16 +31,18 @@
                                 <div class="col-12">
                                     <textarea type="text" name="message" id="contact-message" placeholder="Message" rows="4"></textarea>
                                 </div>
-                                <% if (locals.messages.errors) { %>
-                                    <% messages.errors.forEach( el => { %>
+
+                                <% if (locals.messages && locals.messages.errors) { %>
+                                    <% locals.messages.errors.forEach( el => { %>
                                         <div class="alert alert-danger"><%= el.msg %></div>
                                     <% }) %>    
                                 <% } %>
-                                <% if (locals.messages.info) { %>
-                                    <% messages.info.forEach( el => { %>
+                                <% if (locals.messages && locals.messages.info) { %>
+                                    <% locals.messages.info.forEach( el => { %>
                                         <div class="alert alert-info"><%= el.msg %></div>
                                     <% }) %>    
                                 <% } %>
+                              
                                 <div class="col-12">
                                     <ul class="actions">
                                         <li><input type="submit" class="style1" value="Send" /></li>
@@ -115,6 +120,76 @@
 <script src="/assets/js/breakpoints.min.js"></script>
 <script src="/assets/js/util.js"></script>
 <script src="/assets/js/main.js"></script>
+<!-- <script>
+    // Add an event listener to the button or link
+    document.getElementById('consent').addEventListener('click', async () => {
+      // Use fetch or any other method to send a request to the server to set the cookie
+      const response = await fetch('/setCookie', { method: 'GET' });
+  
+      // Redirect to the home page after setting the cookie
+      window.location.href = '/';
+    });
+  </script> -->
+<!-- 
+  <script>
+    document.getElementById('consent').addEventListener('click', async () => {
+      try {
+        const response = await fetch('/consent/setCookie', { method: 'GET' });
+  
+        if (response.ok) {
+          console.log('Consent cookie set successfully');
+          // Redirect to the home page or perform other actions as needed
+          window.location.href = '/signup';
+        } else {
+          console.error('Failed to set consent cookie');
+        }
+      } catch (error) {
+        console.error('Error setting consent cookie', error);
+      }
+    });
+    document.getElementById('consent2').addEventListener('click', async () => {
+      try {
+        const response = await fetch('/consent/setCookie', { method: 'GET' });
+  
+        if (response.ok) {
+          console.log('Consent cookie set successfully');
+          // Redirect to the home page or perform other actions as needed
+          window.location.href = '/chat';
+        } else {
+          console.error('Failed to set consent cookie');
+        }
+      } catch (error) {
+        console.error('Error setting consent cookie', error);
+      }
+    });
+  </script> -->
+
+  <script>
+  // cookieBanner.js
+    document.addEventListener('DOMContentLoaded', () => {
+    const cookieBanner = document.getElementById('cookieBanner');
+    const acceptCookiesBtn = document.getElementById('acceptedCookies');
+    const declineCookiesBtn = document.getElementById('declineCookies');
+
+    const userAcceptedCookies = document.cookie.includes('consentCookie=true');
+
+    if (!userAcceptedCookies) {
+        cookieBanner.style.display = 'block';
+    }
+
+    acceptCookiesBtn.addEventListener('click', () => {
+        document.cookie = 'consentCookie=true; max-age=' + (365 * 24 * 60 * 60);
+        cookieBanner.style.display = 'none';
+		window.location.reload();
+    });
+
+    declineCookiesBtn.addEventListener('click', () => {
+        alert('By declining, you may not have access to the site.');
+        // Additional logic if needed
+    });
+});
+
+  </script>
 
 </body>
 </html>
