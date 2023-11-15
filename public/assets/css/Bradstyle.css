@@ -121,6 +121,7 @@ a {
 }
 
 .chat-form-container input[type='text'] {
+	color: #2b244d;
 	font-size: 16px;
 	padding: 5px;
 	height: 40px;
