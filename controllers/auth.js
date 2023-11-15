@@ -5,27 +5,28 @@ const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const { link } = require("fs");
 
-exports.getGuestLogin = (req, res) => {
-  // if (req.user) {
-    // return res.redirect("/profile");
-  // }
-  res.render("guestLogin", {
-    title: "Login",
-    user: req.user
-    // userStatus: req.session.status
-  });
-};
+// exports.getGuestLogin = (req, res) => {
+//   // if (req.user) {
+//     // return res.redirect("/profile");
+//   // }
+//   res.render("guestLogin", {
+//     title: "Login",
+//     user: req.user
+//     // userStatus: req.session.status
+//   });
+// };
 
 exports.getLogin = (req, res) => {
   // if (req.user) {
     // return res.redirect("/profile");
   // }
   console.log("req.user.userName=", req.user ? req.user.userName : "no req.user", "from getLogin")
-  res.render("login", {
-    title: "Login",
-    user: req.user, _id: req.user._id
+  res.render("login");
+  // , {
+    // title: "Login",
+    // user: req.user, _id: req.user._id
     // userStatus: req.session.status
-  });
+  // });
 };
 
 exports.getPasswordResetRequest = (req, res) => {
@@ -264,7 +265,7 @@ exports.postLogin = async (req, res, next) => {
 
       console.log("before redirect")
 
-      res.redirect("/login")
+      res.redirect("/chat")
       // setTimeout(() => {
       //    res.redirect("/chat");
       // }, 2000);
