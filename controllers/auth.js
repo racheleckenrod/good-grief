@@ -324,7 +324,7 @@ exports.postSignup = (req, res, next) => {
     password: req.body.password,
     timezone: req.session.userTimeZone,
     userLang: req.session.userLang,
-    guestIDs: [req.session.guestUserID],
+    guestIDs: [req.session.guestID],
   });
 
   User.findOne(
