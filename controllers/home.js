@@ -1,6 +1,6 @@
 const Post = require("../models/Post");
 const Comment = require("../models/Comment")
-const GuestUserID = require("../models/GuestUserID")
+const Guest = require("../models/Guest")
 const Feedback = require("../models/Feedback")
 const validator = require("validator");
 
@@ -69,7 +69,7 @@ module.exports = {
           });
         } else {
           // Handle guest feedback
-          const existingGuest = await GuestUserID.findOne({
+          const existingGuest = await Guest.findOne({
             _id: req.session.guestUser._id,
           });
     

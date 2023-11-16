@@ -1,4 +1,4 @@
-const GuestUserID = require("../models/GuestUserID");
+const Guest = require("../models/Guest");
 
 async function generateGuestID(userTimeZone, userLang) {
     let guestID
@@ -10,11 +10,11 @@ async function generateGuestID(userTimeZone, userLang) {
         guestID = Math.floor(Math.random() * 100000).toString();
         userName = `guestUserID_${guestID}`;
 
-        const existingGuest = await GuestUserID.findOne({ GuestUserID: guestID });
+        const existingGuest = await Guest.findOne({ Guest: guestID });
 
         if (!existingGuest) {
 
-            const newGuest = GuestUserID({ 
+            const newGuest = Guest({ 
                 guestUserID: guestID,
                 userName: userName,
                 timezone: userTimeZone,

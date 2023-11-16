@@ -1,13 +1,15 @@
-// still to come
 const mongoose = require("mongoose");
 
 const GuestSchema = new mongoose.Schema({
-    userName: { type: String, unique: false },
-    email: { type: String, unique: true },
+    guestUserID: { type: String, required: true, unique: true },
+    userName: { type: String, unique: true },
+    timezone: { type: String, default: 'UTC' },
+    userLang: { type: String, default: 'en-US'},
     createdAt: {
       type: Date,
       default: Date.now,
     },
+    leftAt: { type: Date},
   
   });
 
