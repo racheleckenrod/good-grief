@@ -5,16 +5,6 @@ const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const { link } = require("fs");
 
-// exports.getGuestLogin = (req, res) => {
-//   // if (req.user) {
-//     // return res.redirect("/profile");
-//   // }
-//   res.render("guestLogin", {
-//     title: "Login",
-//     user: req.user
-//     // userStatus: req.session.status
-//   });
-// };
 
 exports.getLogin = (req, res) => {
   // if (req.user) {
@@ -28,6 +18,67 @@ exports.getLogin = (req, res) => {
     // userStatus: req.session.status
   // });
 };
+
+
+exports.postLogin = async (req, res, next) => {
+  console.log("from postLogin", req.session.userTimeZone, req.session.guestID, req.session.userLang);
+  const guestID = req.session.guestID;
+  const userLang = req.session.userLang;
+  const userTimeZone = req.session.userTimeZone;
+  // const userID = req.session.user._id;
+  console.log(guestID);
+  
+  const validationErrors = [];
+  
+  if (!validator.isEmail(req.body.email))
+    validationErrors.push({ msg: "Please enter a valid email address." });
+  if (validator.isEmpty(req.body.password))
+    validationErrors.push({ msg: "Password cannot be blank." });
+
+  if (validationErrors.length) {
+    req.flash("errors", validationErrors);
+    return res.redirect("/login");
+  }
+  req.body.email = validator.normalizeEmail(req.body.email, {
+    gmail_remove_dots: false,
+  });
+
+  passport.authenticate("local", (err, user, info) => {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      req.flash("errors", info);
+      return res.redirect("/login");
+    }
+    
+    req.logIn(user, async (err) => {
+      if (err) {
+        return next(err);
+      }
+      
+      req.flash("success", { msg: "Success! You are logged in." });
+
+      try {
+        const user = await User.updateOne({ email: req.body.email },
+          { $addToSet: {guestIDs: guestID },
+            $set: { timezone: userTimeZone, userLang: userLang }
+          });   
+      } catch (err) {
+        return next(err);
+      }
+
+      console.log("before redirect")
+
+      res.redirect("/chat")
+      // setTimeout(() => {
+      //    res.redirect("/chat");
+      // }, 2000);
+     
+        });
+  })(req, res, next);
+};
+
 
 exports.getPasswordResetRequest = (req, res) => {
   res.render("passwordResetRequest", { title: "Password Reset Request" });
@@ -213,65 +264,6 @@ exports.postPasswordUpdate = async (req, res) => {
     res.redirect(`/passwordResetRequest`);
   }
   
-};
-
-exports.postLogin = async (req, res, next) => {
-  console.log("from postLogin", req.session.userTimeZone, req.session.guestID, req.session.userLang);
-  const guestID = req.session.guestID;
-  const userLang = req.session.userLang;
-  const userTimeZone = req.session.userTimeZone;
-  // const userID = req.session.user._id;
-  console.log(guestID);
-  
-  const validationErrors = [];
-  
-  if (!validator.isEmail(req.body.email))
-    validationErrors.push({ msg: "Please enter a valid email address." });
-  if (validator.isEmpty(req.body.password))
-    validationErrors.push({ msg: "Password cannot be blank." });
-
-  if (validationErrors.length) {
-    req.flash("errors", validationErrors);
-    return res.redirect("/login");
-  }
-  req.body.email = validator.normalizeEmail(req.body.email, {
-    gmail_remove_dots: false,
-  });
-
-  passport.authenticate("local", (err, user, info) => {
-    if (err) {
-      return next(err);
-    }
-    if (!user) {
-      req.flash("errors", info);
-      return res.redirect("/login");
-    }
-    
-    req.logIn(user, async (err) => {
-      if (err) {
-        return next(err);
-      }
-      
-      req.flash("success", { msg: "Success! You are logged in." });
-
-      try {
-        const user = await User.updateOne({ email: req.body.email },
-          { $addToSet: {guestIDs: guestID },
-            $set: { timezone: userTimeZone, userLang: userLang }
-          });   
-      } catch (err) {
-        return next(err);
-      }
-
-      console.log("before redirect")
-
-      res.redirect("/chat")
-      // setTimeout(() => {
-      //    res.redirect("/chat");
-      // }, 2000);
-     
-        });
-  })(req, res, next);
 };
 
 exports.logout = (req, res) => {

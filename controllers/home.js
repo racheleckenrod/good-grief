@@ -1,8 +1,35 @@
 const Post = require("../models/Post");
-const Comment = require("../models/Comment")
-const Guest = require("../models/Guest")
-const Feedback = require("../models/Feedback")
+const Comment = require("../models/Comment");
+const Guest = require("../models/Guest");
+const Feedback = require("../models/Feedback");
 const validator = require("validator");
+const nodemailer = require('nodemailer');
+
+// create nodemailer transporter
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
+// function to send email notification
+const sendEmailNotification = async (feedback, recipients) => {
+  const mailOptions = {
+    from: 'goodgrieflive@gmail.com',
+    to: recipients.join(', '),
+    subject: 'New Feedback Received',
+    text: `New feedback received:\n\n${JSON.stringify(feedback, null, 2)}`,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log('Email notification sent:', mailOptions);
+  } catch (error) {
+    console.error('Error sending email notification:', error);
+  }
+};
 
 
 module.exports = {
@@ -98,6 +125,14 @@ module.exports = {
             req.user ? req.user.userName : req.body.inputName
           }, for your feedback!`,
         });
+        try {
+          const recipients = ['backintobalance@gmail.com', 'rachel@racheleckenrod.com', 'goodgrieflive@gmail.com'];
+          await sendEmailNotification(feedback, recipients);
+
+        } catch (err) {
+          console.error(err, 'from home controller postfeedback multiple emails');
+          return next(err);
+        }
 
         const redirectURL = req.session.returnTo || '/';
         delete req.session.returnTo;
@@ -109,33 +144,33 @@ module.exports = {
     },
     
 
-getPrivacyPolicy: (req, res) => {
-  res.render("privacyPolicy");
-},
+    getPrivacyPolicy: (req, res) => {
+      res.render("privacyPolicy");
+    },
 
-removeCookies: async (req, res) => {
-  try {
-      // Asynchronously destroy the session
-  await new Promise((resolve, reject) => {
-      req.session.destroy((err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
-    });
-      res.clearCookie('consentCookie');
-      res.clearCookie('guestID');
-      res.clearCookie('connect.sid', { path: '/' }); // Specify the path for session cookie
-      res.redirect("/consent");
-  } catch (error) {
-      console.error('Error destroying session:', error);
+    removeCookies: async (req, res) => {
+      try {
+          // Asynchronously destroy the session
+      await new Promise((resolve, reject) => {
+          req.session.destroy((err) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve();
+            }
+          });
+        });
+          res.clearCookie('consentCookie');
+          res.clearCookie('guestID');
+          res.clearCookie('connect.sid', { path: '/' }); // Specify the path for session cookie
+          res.redirect("/consent");
+      } catch (error) {
+          console.error('Error destroying session:', error);
 
-      res.status(500).send("Internal Server Error")
-  }
-  
-},
+          res.status(500).send("Internal Server Error")
+      }
+      
+    },
 
-};
-   
+    };
+      
