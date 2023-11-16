@@ -19,16 +19,7 @@ module.exports = function (io) {
 router.get("/", homeController.getIndex);
 router.get("/privacyPolicy", homeController.getPrivacyPolicy);
 
-// router.post("/feedback", ensureFeedback, homeController.postFeedback)
-router.post('/feedback', function(req, res) {
-    if(!req.user){
-        res.redirect(307, '/feedbackGuest');
-    }else {
-        res.redirect(307, '/feedbackUser');
-    }
-  });
-router.post("/feedbackGuest", homeController.postGuestFeedback)
-router.post("/feedbackUser", ensureAuth, homeController.postUserFeedback)
+router.post("/feedback", homeController.postFeedback)
 router.get("/profile/:id", ensureAuth,postsController.showProfile);
 router.get("/profile", ensureAuth, postsController.getProfile);
 router.get("/editProfile", ensureAuth, postsController.getEditProfile);

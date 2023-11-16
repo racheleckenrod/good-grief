@@ -1,6 +1,6 @@
 const Post = require("../models/Post");
 const Comment = require("../models/Comment")
-const Guest = require("../models/Guest")
+const GuestUserID = require("../models/GuestUserID")
 const Feedback = require("../models/Feedback")
 const validator = require("validator");
 
@@ -31,126 +31,83 @@ module.exports = {
       }
 
     },
-    postUserFeedback: async (req,res, next) => {
-      // console.log("wowowo",req.body)
+    postFeedback: async (req, res, next) => {
       const validationErrors = [];
+    
       if (!validator.isEmail(req.body.email))
         validationErrors.push({ msg: "Please enter a valid email address." });
     
-      if (!validator.isLength(req.body.userName, { min: 1 }))
-      validationErrors.push({
-        msg: "Please enter your name.",
-      });
+      if (!validator.isLength(req.body.inputName, { min: 1 }))
+        validationErrors.push({
+          msg: "Please enter a name.",
+        });
+
+        req.session.returnTo = req.headers.referer || '/';
     
       if (validationErrors.length) {
         req.flash("errors", validationErrors);
-        return res.redirect("/#footer");
+
+        const redirectURL = req.session.returnTo || '/';
+        return res.redirect(`${redirectURL}#footer`);
       }
+    
       req.body.email = validator.normalizeEmail(req.body.email, {
         gmail_remove_dots: false,
       });
-        // there is a req.user
-        try {
-              await Feedback.create({
-                user: req.user.id,
-                guest: req.user.id,
-                email: req.body.email,
-                message: req.body.message,
-                userName: req.body.userName,
-              });
-      
-              console.log("Feedback has been added!YAYYAAY");
-              req.flash("info", {
-                    msg: `Your message was sent. Thank you, ${req.user.userName} for your feedback!`,
-                  });
-              res.redirect("/#footer");
-            } catch (err) {
-              console.log(err, "from home controller postFeedback");
-            } 
-  },
-  postGuestFeedback: async (req,res, next) => {
-    console.log("GUEST feedback")
-    const validationErrors = [];
-    if (!validator.isEmail(req.body.email))
-      validationErrors.push({ msg: "Please enter a valid email address." });
-  
-    if (!validator.isLength(req.body.userName, { min: 1 }))
-    validationErrors.push({
-      msg: "Please enter your name.",
-    });
-  
-    if (validationErrors.length) {
-      req.flash("errors", validationErrors);
-      return res.redirect("/#footer");
-    }
-    req.body.email = validator.normalizeEmail(req.body.email, {
-      gmail_remove_dots: false,
-    });
-  
-      
-        // two options here- either new guest(if) or returning guest(else)
-        // get guest then post then logout guest
-        try {
-            console.log(req.url, "postingGuestFeedback")
-            // duplicate posts from same guest
-            const guest = await new Guest({
-              userName: req.body.userName,
+    
+      try {
+        let feedback;
+    
+        if (req.user) {
+          // Handle user feedback
+          feedback = await Feedback.create({
+            user: req.user.id,
+            inputName: req.body.inputName,
+            email: req.body.email,
+            message: req.body.message,
+            userName: req.user.userName,
+          });
+        } else {
+          // Handle guest feedback
+          const existingGuest = await GuestUserID.findOne({
+            _id: req.session.guestUser._id,
+          });
+    
+          if (existingGuest) {
+            // Use the existing guest for feedback
+            feedback = await Feedback.create({
+              guest: existingGuest._id,
+              inputName: req.body.inputName, // Adjust this based on your schema
               email: req.body.email,
+              message: req.body.message,
+              userName: req.session.guestUser.userName,
             });
-            console.log(guest)
-            Guest.findOne(
-              { $or: [{ email: req.body.email }, { userName: req.body.userName }] },
-              (err, existingGuest) => {
-                console.log("small")
-                if (err) {
-                  console.log("small error")
+          } else {
+            // No need to explicitly create a new guest; it's handled by your schema
+            feedback = await Feedback.create({
+              email: req.body.email,
+              message: req.body.message,
+              userName: req.body.userName,
+            });
+          }
+        }
+    
+        console.log("Feedback has been added!");
+        req.flash("info", {
+          msg: `Your message was sent. Thank you, ${
+            req.user ? req.user.userName : req.body.inputName
+          }, for your feedback!`,
+        });
 
-                  return next(err);
-                }
-                else if (existingGuest) {
-                  console.log(guest, "closer")
-                  
-                }else{
-                  console.log("new guest")
-                  // make new guest
-                  guest.save(() => {
-                    console.log(guest, "saving")
-                      if (err) {
-                        return next(err);
-                      }
-                  })
-                }
-              })
-              } catch (err){
-                console.log(err)
-              }
-              
-          // now make feedback post then logout guest
-
-             try {
-                  const feedback = await Feedback.create({
-                      
-                      userName: req.body.userName,
-                      email: req.body.email,
-                      message: req.body.message,
-
-                  })
-                  // save feedback?
-                 
-                  console.log(feedback, feedback._id, "winninging")
-                //  console.log(req.body)
-                 req.flash("info", {
-                  msg: `Your message was sent. Thank you, ${req.body.userName} for your feedback!`,
-                });
-                 return res.redirect("/#footer")
-               
-                  
-                }catch (err){
-                  console.log(err)
-                }
-
-  },
-      
+        const redirectURL = req.session.returnTo || '/';
+        delete req.session.returnTo;
+        return res.redirect(`${redirectURL}#footer`);
+      } catch (err) {
+        console.error(err, "from home controller postFeedback");
+        return next(err);
+      }
+    },
+    
 
 getPrivacyPolicy: (req, res) => {
   res.render("privacyPolicy");

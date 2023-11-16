@@ -13,7 +13,11 @@ const FeedbackSchema = new mongoose.Schema({
     },
     userName: {
         type: String,
-        required: true
+        required: true,
+    },
+    inputName: {
+        type: String,
+        required: true,
     },
     email: {
         type: String,
