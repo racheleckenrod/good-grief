@@ -22,7 +22,8 @@ let userStatus = 'guest';
 const socket = io({
     reconnection: true,
     reconnectionAttempts: 10,
-    reconnectionDelay: 1000,
+    reconnectionDelay: 5000,
+    reconnectionDelayMax: 30000,  // 30 seconds
     query: { userTimeZone: userTimeZone, userLang: userLang  },
   });
   

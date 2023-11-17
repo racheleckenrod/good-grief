@@ -9,7 +9,7 @@ const io = socketio(server, {
   reconnectionAttempts: 10,
   reconnectionDelay: 1000,
   pingInterval: 25000,
-  pingTimeout: 5000,
+  pingTimeout: 60000,
 });
 const socketIoCookie = require("socket.io-cookie")
 const cors = require('cors');
