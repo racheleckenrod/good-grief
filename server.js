@@ -202,19 +202,20 @@ io.use(async (socket, next) => {
   if (guestIDCookie) {
     const guestID = guestIDCookie.split('=')[1];
     socket.request.session.guestID = guestID;
-
+    console.log("if guestIDCookie socket.request.session.guestID=", socket.request.session.guestID)
+    
     const guestUser = await Guest.findOne({ guestUserID: guestID });
 
     if (guestUser) {
       socket.request.session.guestUser = guestUser
-      socket.data = { guestUser: guestUser }
+      // socket.data = { guestUser: guestUser }
     }
   } else {
     // generate new guestID
     const newGuestUser = await generateGuestID(socket.request.session.timeZone, socket.request.session.userLang);
     socket.request.session.guestUser = newGuestUser
     socket.request.session.guestID = newGuestUser.guestID
-    socket.data = { guestUser: newGuestUser };
+    // socket.data = { guestUser: newGuestUser };
     
     // emit new guestID to client to set a cookie
     socket.emit('setCookie', newGuestUser.guestID);
@@ -226,7 +227,7 @@ io.use(async (socket, next) => {
   } else {
     socket.chatUser = socket.request.session.guestUser.userName;
   }
-  // console.log("socket.chatUser=", socket.chatUser)
+  console.log("socket.chatUser=", socket.chatUser)
 
   const session = socket.request.session;
   session.save();
