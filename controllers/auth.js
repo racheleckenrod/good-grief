@@ -3,20 +3,108 @@ const validator = require("validator");
 const User = require("../models/User");
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
-const { link } = require("fs");
+// const { link } = require("fs");
+
+
+  // Create a Nodemailer transporter
+  const transporter = nodemailer.createTransport({
+    service: "Gmail",
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+
+
+
+exports.getSignup = (req, res) => {
+  if (req.user) {
+    return res.redirect("/welcome");
+  }
+  res.render("signup", {
+    title: "Create Account",
+    user: req.user,
+  });
+};
+
+exports.postSignup = (req, res, next) => {
+  console.log("calling exports.postSignup")
+  const validationErrors = [];
+  
+  if (!validator.isEmail(req.body.email))
+    validationErrors.push({ msg: "Please enter a valid email address." });
+  if (!validator.isLength(req.body.password, { min: 8 }))
+    validationErrors.push({
+      msg: "Password must be at least 8 characters long",
+    });
+  if (req.body.password !== req.body.confirmPassword)
+    validationErrors.push({ msg: "Passwords do not match" });
+
+  if (validationErrors.length) {
+    req.flash("errors", validationErrors);
+    return res.redirect("../signup");
+  }
+  req.body.email = validator.normalizeEmail(req.body.email, {
+    gmail_remove_dots: false,
+  });
+
+  const user = new User({
+    userName: req.body.userName,
+    email: req.body.email,
+    password: req.body.password,
+    timezone: req.session.userTimeZone,
+    userLang: req.session.userLang,
+    guestIDs: [req.session.guestID],
+  });
+
+  User.findOne(
+    { $or: [{ email: req.body.email }, { userName: req.body.userName }] },
+    (err, existingUser) => {
+      if (err) {
+        return next(err);
+      }
+      if (existingUser) {
+        req.flash("errors", {
+          msg: "Account with that email address or username already exists.",
+        });
+        return res.redirect("../signup");
+      }
+      user.save((err) => {
+        if (err) {
+          return next(err);
+        }
+        req.logIn(user, (err) => {
+          if (err) {
+            return next(err);
+          }
+
+                    // Send an email notification to yourself
+            const emailOptions = {
+              from: process.env.EMAIL_USER,
+              to: ['rachel@racheleckenrod.com', 'backintobalance@gmail.com', 'goodgrieflive@gmail.com'], 
+              subject: 'A New User Signed Up for Good Greif Live',
+              text: `A new user has signed up:\n\nUsername: ${user.userName}\nEmail: ${user.email}`,
+            };
+
+            transporter.sendMail(emailOptions, (error) => {
+              if (error) {
+                console.error('Error sending new user notification email:', error);
+              } else {
+                console.log('New user notification email sent successfully.');
+              }
+            });
+
+            res.redirect("/welcome");
+        });
+      });
+    }
+  );
+};
 
 
 exports.getLogin = (req, res) => {
-  // if (req.user) {
-    // return res.redirect("/profile");
-  // }
   console.log("req.user.userName=", req.user ? req.user.userName : "no req.user", "from getLogin")
   res.render("login");
-  // , {
-    // title: "Login",
-    // user: req.user, _id: req.user._id
-    // userStatus: req.session.status
-  // });
 };
 
 
@@ -138,14 +226,7 @@ exports.postPasswordResetRequest = async (req, res) => {
                   // send an email to the user with a link containing the token
                   const resetLink = `https://www.good-grief-live.com/passwordReset/${token}`;
 
-                  // Create a Nodemailer transporter
-                  const transporter = nodemailer.createTransport({
-                    service: "Gmail",
-                    auth: {
-                      user: process.env.EMAIL_USER,
-                      pass: process.env.EMAIL_PASS,
-                    },
-                  });
+                
 
                   // send the reset link in the email
                   const mailOptions = {
@@ -266,87 +347,6 @@ exports.postPasswordUpdate = async (req, res) => {
   
 };
 
-exports.logout = (req, res) => {
-  const username = "unknown" || req.user.userName
-  req.logout(() => {
-    console.log(`User ${username} has logged out.`)
-  })
-  req.session.destroy((err) => {
-    if (err)
-      console.log("Error : Failed to destroy the session during logout.", err);
-    req.user = null;
-    res.redirect("/");
-  });
-};
-
-exports.getSignup = (req, res) => {
-  if (req.user) {
-    return res.redirect("/welcome");
-  }
-  res.render("signup", {
-    title: "Create Account",
-    user: req.user,
-  });
-};
-
-exports.postSignup = (req, res, next) => {
-  console.log("calling exports.postSignup")
-  const validationErrors = [];
-  // if (validator.blacklist(req.body.userName, '\/s\[\/s\]'))
-  //   validationErrors.push({ msg: "Please enter a valid user name without spaces." });
-  if (!validator.isEmail(req.body.email))
-    validationErrors.push({ msg: "Please enter a valid email address." });
-  if (!validator.isLength(req.body.password, { min: 8 }))
-    validationErrors.push({
-      msg: "Password must be at least 8 characters long",
-    });
-  if (req.body.password !== req.body.confirmPassword)
-    validationErrors.push({ msg: "Passwords do not match" });
-
-  if (validationErrors.length) {
-    req.flash("errors", validationErrors);
-    return res.redirect("../signup");
-  }
-  req.body.email = validator.normalizeEmail(req.body.email, {
-    gmail_remove_dots: false,
-  });
-
-  const user = new User({
-    userName: req.body.userName,
-    email: req.body.email,
-    password: req.body.password,
-    timezone: req.session.userTimeZone,
-    userLang: req.session.userLang,
-    guestIDs: [req.session.guestID],
-  });
-
-  User.findOne(
-    { $or: [{ email: req.body.email }, { userName: req.body.userName }] },
-    (err, existingUser) => {
-      if (err) {
-        return next(err);
-      }
-      if (existingUser) {
-        req.flash("errors", {
-          msg: "Account with that email address or username already exists.",
-        });
-        return res.redirect("../signup");
-      }
-      user.save((err) => {
-        if (err) {
-          return next(err);
-        }
-        req.logIn(user, (err) => {
-          if (err) {
-            return next(err);
-          }
-          res.redirect("/welcome");
-        });
-      });
-    }
-  );
-};
-
 exports.postFeedback = (req, res, next) => {
   console.log("exports.postFeedback")
   const validationErrors = [];
@@ -368,6 +368,15 @@ exports.postFeedback = (req, res, next) => {
 
 };
 
-
-// manipulation of user Name tool tip
-// userNameHelp.addEventListener('click', () => {console.log('namespace')})
+exports.logout = (req, res) => {
+  const username = "unknown" || req.user.userName
+  req.logout(() => {
+    console.log(`User ${username} has logged out.`)
+  })
+  req.session.destroy((err) => {
+    if (err)
+      console.log("Error : Failed to destroy the session during logout.", err);
+    req.user = null;
+    res.redirect("/");
+  });
+};

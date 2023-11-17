@@ -27,8 +27,9 @@ const expressSocketIoSession = require("express-socket.io-session");
 const methodOverride = require("method-override");
 const flash = require("express-flash");
 const logger = require("morgan");
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
 const connectDB = require("./config/database");
+const nodemailer = require("nodemailer");
 // const consentRoutes = require("./routes/consent");
 const mainRoutes = require("./routes/main")(io);
 const postRoutes = require("./routes/posts");
@@ -234,6 +235,14 @@ io.use(async (socket, next) => {
   next();
 });
 
+// create a Nodemailer transporter
+const transporter = nodemailer.createTransport({
+  service: 'Gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
 
 // Get current user
 function getCurrentUser(id) {
@@ -337,7 +346,7 @@ io.on("connection", async ( socket) => {
         });
       
         socket.on("joinRoom", ({ username, room, _id}) => {
-          
+
           const chatUser = userJoin(socket.id, username, room, _id);
           console.log(`joined ${chatUser.room}`, chatUser, socket.request.session.guestID)
           socket.join(chatUser.room);
@@ -347,6 +356,28 @@ io.on("connection", async ( socket) => {
             room: chatUser.room,
             chatUsers: getRoomUsers(chatUser.room),
           });
+
+           // send email notification
+           const roomUsers = getRoomUsers(chatUser.room);
+           const usernames = roomUsers.map(user => user.username).join(', ');
+           const mailOptions = {
+            from: process.env.EMAIL_USER,
+             to: ['rachel@racheleckenrod.com', 'backintobalance@gmail.com', 'goodgrieflive@gmail.com'],
+             subject: `${username} joined ${room}`,
+             text: `Current users in ${room}:  ${usernames}`
+           };
+
+           // Send the email
+              transporter.sendMail(mailOptions, (emailError) => {
+                if (emailError) {
+                  console.error("Error sending email", emailError);
+                  // Handle the error, e.g., log it or emit an error event
+                } else {
+                  console.log("chatroom Email sent successfully");
+                  // Email sent successfully, you can add further logic if needed
+                }
+              });
+            
 
           // Broadcast when a user connects
           socket.broadcast
