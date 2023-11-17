@@ -319,7 +319,7 @@ io.on("connection", async ( socket) => {
               if(chatUser) {
                 console.log(`${chatUser.username} disconnected from ${chatUser.room} because reason: ${reason}`)
               }else{
-                console.log(`Disconnected because reason: ${reason}`)
+                console.log(`${socket.chatUser} Disconnected because reason: ${reason}`)
               }
               if (chatUser) {
                 io.to(chatUser.room).emit(
