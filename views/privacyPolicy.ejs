@@ -67,9 +67,9 @@
        <div class="">
         <ul class="actions">
             <li><a href="#" id="consent" class="button style3 large"> I give my consent </a></li>
-		    <li><a href="/consent" class="button style3 large"> No, thanks </a></li>
-            <li><a href="/consent/removeCookies" class="button style3 large">Revoke Consent</a></li>
-            <p>Please clear all my cookies.</p>
+		    <li><a href="/" class="button style3 large"> No, thanks </a></li>
+            <li><a href="/removeCookies" class="button style3 large">Revoke Consent</a></li>
+            <p>Please clear my cookies.</p>
         
         </div>
       </div>
@@ -190,20 +190,16 @@
 <script src="/assets/js/util.js"></script>
 <script src="/assets/js/main.js"></script>
 <script>
-    document.getElementById('consent').addEventListener('click', async () => {
-      try {
-        const response = await fetch('/consent/setCookie', { method: 'GET' });
-  
-        if (response.ok) {
-          console.log('Consent cookie set successfully');
-          // Redirect to the home page or perform other actions as needed
-          window.location.href = '/';
-        } else {
-          console.error('Failed to set consent cookie');
-        }
-      } catch (error) {
-        console.error('Error setting consent cookie', error);
-      }
+    document.getElementById('consent').addEventListener('click', () => {
+     
+        document.cookie ='consentCookie = true; max-age=' + (365 * 24 * 60 * 60);
+
+        window.location.href = '/';
+    });
+
+    document.getElementById('noThanks').addEventListener('click', () => {
+
+        alert('By declining, you may not use our site.')
     });
   </script>
 

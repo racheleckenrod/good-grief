@@ -1,3 +1,8 @@
+
+
+
+
+
 <!DOCTYPE HTML>
 <!--
 	Escape Velocity by HTML5 UP
@@ -214,7 +219,7 @@
                         <form method="POST" action="/feedback">
                             <div class="row gtr-50">
                                 <div class="col-6 col-12-small">
-                                    <input type="text" name="inputName" id="contact-name" placeholder="Name" />
+                                    <input type="text" name="userName" id="contact-name" placeholder="Name" />
                                 </div>
                                 <div class="col-6 col-12-small">
                                     <input type="text" name="email" id="contact-email" placeholder="Email" />
@@ -222,16 +227,7 @@
                                 <div class="col-12">
                                     <textarea type="text" name="message" id="contact-message" placeholder="Message" rows="4"></textarea>
                                 </div>
-								<% if (locals.messages && locals.messages.errors) { %>
-                                    <% locals.messages.errors.forEach( el => { %>
-                                        <div class="alert alert-danger"><%= el.msg %></div>
-                                    <% }) %>    
-                                <% } %>
-                                <% if (locals.messages && locals.messages.info) { %>
-                                    <% locals.messages.info.forEach( el => { %>
-                                        <div class="alert alert-info"><%= el.msg %></div>
-                                    <% }) %>    
-                                <% } %>
+                              
                                 <div class="col-12">
                                     <ul class="actions">
                                         <li><input type="submit" class="style1" value="Send" /></li>
@@ -302,56 +298,13 @@
 
 <!-- Scripts -->
 <script src="/socket.io/socket.io.js"></script>
-<script type="module" src="/js/shared.js"></script>
 <script src="/assets/js/jquery.min.js"></script>
 <script src="/assets/js/jquery.dropotron.min.js"></script>
 <script src="/assets/js/browser.min.js"></script>
 <script src="/assets/js/breakpoints.min.js"></script>
 <script src="/assets/js/util.js"></script>
 <script src="/assets/js/main.js"></script>
-<!-- <script>
-    // Add an event listener to the button or link
-    document.getElementById('consent').addEventListener('click', async () => {
-      // Use fetch or any other method to send a request to the server to set the cookie
-      const response = await fetch('/setCookie', { method: 'GET' });
-  
-      // Redirect to the home page after setting the cookie
-      window.location.href = '/';
-    });
-  </script> -->
-<!-- 
-  <script>
-    document.getElementById('consent').addEventListener('click', async () => {
-      try {
-        const response = await fetch('/consent/setCookie', { method: 'GET' });
-  
-        if (response.ok) {
-          console.log('Consent cookie set successfully');
-          // Redirect to the home page or perform other actions as needed
-          window.location.href = '/signup';
-        } else {
-          console.error('Failed to set consent cookie');
-        }
-      } catch (error) {
-        console.error('Error setting consent cookie', error);
-      }
-    });
-    document.getElementById('consent2').addEventListener('click', async () => {
-      try {
-        const response = await fetch('/consent/setCookie', { method: 'GET' });
-  
-        if (response.ok) {
-          console.log('Consent cookie set successfully');
-          // Redirect to the home page or perform other actions as needed
-          window.location.href = '/chat';
-        } else {
-          console.error('Failed to set consent cookie');
-        }
-      } catch (error) {
-        console.error('Error setting consent cookie', error);
-      }
-    });
-  </script> -->
+
 
   <script>
   // cookieBanner.js
@@ -364,7 +317,9 @@
 
     if (!userAcceptedCookies) {
         cookieBanner.style.display = 'block';
-    }
+    } else {
+		loadScript('/js/shared.js');
+	}
 
     acceptCookiesBtn.addEventListener('click', () => {
         document.cookie = 'consentCookie=true; max-age=' + (365 * 24 * 60 * 60);
@@ -376,9 +331,19 @@
         alert('By declining, you may not have access to the site.');
         // Additional logic if needed
     });
+
+	function loadScript(src) {
+    const script = document.createElement('script');
+    script.type = 'module';
+    script.src = src;
+    document.head.appendChild(script);
+  }
 });
 
   </script>
+<!-- <script type="module" src="/js/shared.js"></script> -->
 
 </body>
 </html>
+
+
