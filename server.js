@@ -91,7 +91,7 @@ app.use((req, res, next) => {
   if (!consentCookie) {
     console.log("no consentCookie");
     // res.cookie('consentCookie', 'true', { maxAge: 365 * 24 * 60 * 60 * 1000, path: '/' });
-    return res.render("guestIndex");
+    return res.render("guestIndex2");
   } 
   
   next();
