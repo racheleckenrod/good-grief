@@ -312,9 +312,6 @@ io.on("connection", async ( socket) => {
         // Runs when client disconnects
         socket.on("disconnect", (reason) => {
           const chatUser = userLeave(socket.id);
-          // console.log("chatUser from disconnect", chatUser)
-          // console.log(`disconnected ${socket.id} chatUser=`, chatUser.username, "socket.user=",socket.chatUser)
-          // io.emit("message",  formatMessage(botName,` user ${socket.chatUser} has left a chat`,  userTimeZone, userLang))
         
               if(chatUser) {
                 console.log(`${chatUser.username} disconnected from ${chatUser.room} because reason: ${reason}`)
