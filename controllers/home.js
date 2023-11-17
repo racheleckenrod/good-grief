@@ -163,7 +163,7 @@ module.exports = {
           res.clearCookie('consentCookie');
           res.clearCookie('guestID');
           res.clearCookie('connect.sid', { path: '/' }); // Specify the path for session cookie
-          res.redirect("/consent");
+          res.redirect("/");
       } catch (error) {
           console.error('Error destroying session:', error);
 

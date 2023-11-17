@@ -113,10 +113,10 @@
 							<p>I'm already a member.</p>
                             <li><a href="/login" class="button style3 large">Log in</a></li>
                             <p>I'm interested, continue as a guest.</p>
-                            <li><a href="/chat"  class="button style3 large">Guest</a></li>
+                            <li><a href="/chat"  class="button style3 large">To The Lobby</a></li>
 							<!-- <li><a href="/"  class="button style3 large">Be a Guest</a></li> -->
                             <p>This is not for me.</p>
-							<li><a href="/" class="button style3 large"> No, thanks </a></li>
+							<li><a href="/removeCookies" class="button style3 large"> No, thanks </a></li>
 						</ul>
 					</div>
 				</section>
@@ -324,7 +324,7 @@
     acceptCookiesBtn.addEventListener('click', () => {
         document.cookie = 'consentCookie=true; max-age=' + (365 * 24 * 60 * 60);
         cookieBanner.style.display = 'none';
-		window.location.reload();
+		window.location.reload('/');
     });
 
     declineCookiesBtn.addEventListener('click', () => {
