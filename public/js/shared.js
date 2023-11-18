@@ -10,7 +10,7 @@ let userStatus = 'guest';
 // let guestID
 
 // Disconnect existing socket if connected
-if (socket && socket.connected) {
+if (socket.id && socket.connected) {
   socket.disconnect();
 }
 

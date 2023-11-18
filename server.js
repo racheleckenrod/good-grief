@@ -432,7 +432,7 @@ io.on("connection", async ( socket) => {
             // console.log("chat messages", userTimeZone, socket.request.session.userTimeZone)
           // console.log("socket.user=",socket.user, socket.id)
           const chatUser = getCurrentUser(socket.chatusername);
-            // console.log(chatUser, "from getCurrentUser", socket.id, userTimeZone, socket.request.session.userTimeZone)
+            console.log(chatUser, "from getCurrentUser", socket.id, socket.chatusername)
           try {
             const newMessage = new ChatMessage({
               room: chatUser.room,

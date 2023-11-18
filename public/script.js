@@ -18,7 +18,6 @@ const _id =  document.getElementById('_id').innerHTML;
 //   reconnectionAttempts: 10,
 //   reconnectionDelay: 1000,
 // });
-const id = socket.id;
 
 let timeClock =  document.getElementById('time');
 
