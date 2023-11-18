@@ -314,6 +314,7 @@ io.on("connection", async ( socket) => {
     
         // Runs when client disconnects
         socket.on("disconnect", (reason) => {
+          console.log("fix disconnect")
           const chatUser = userLeave(socket.id);
         
               if(chatUser) {

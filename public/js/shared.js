@@ -8,6 +8,13 @@ console.log("userLang=", userLang)
 
 let userStatus = 'guest';
 // let guestID
+
+// Disconnect existing socket if connected
+if (socket && socket.connected) {
+  socket.disconnect();
+}
+
+
 const socket = io({
     reconnection: true,
     reconnectionAttempts: 10,
@@ -24,7 +31,7 @@ const socket = io({
 window.addEventListener('beforeunload', function () {
   // Disconnect the socket before the page is unloaded
   console.log("before unload disconnect")
-  if (id && socket.connected) {
+  if (socket.id && socket.connected) {
     socket.disconnect();
   }
 });
