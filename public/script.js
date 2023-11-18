@@ -77,7 +77,7 @@ socket.on('tx', (message) => {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 });
 
-socket.on('logout', (message) => {
+socket.on('loggedOut', (message) => {
   console.log("logout received", message)
   outputMessage(message);
 

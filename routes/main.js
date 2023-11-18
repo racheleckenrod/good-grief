@@ -57,13 +57,14 @@ router.get("/login", (req, res) => {
 router.post("/login", authController.postLogin, () => {console.log("post Route")});
 
 router.get("/logout", (req, res) => {
+    console.log("logpout router");
     let username;
     if (req.user) {
         username = req.user.userName;
     } else {
         username = req.session.guestUser.userName;
     }
-    req.app.io.emit('logout', formatMessage(botName, `${username} logged out.`, req.session.userTimeZone, req.session.userLang));
+    req.app.io.emit('loggedOut', formatMessage(botName, `${username} logged out.`));
  authController.logout(req, res);
 });
 
