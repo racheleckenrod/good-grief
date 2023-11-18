@@ -8,7 +8,6 @@ console.log("userLang=", userLang)
 
 let userStatus = 'guest';
 // let guestID
-
 const socket = io({
     reconnection: true,
     reconnectionAttempts: 10,
@@ -41,22 +40,30 @@ for(const cookie of cookies) {
     break;
   }
 }
+
+
+
+
+
+
+
 console.log("guestID=", guestID )
 
 socket.on('disconnect', () => {
   console.log('socket disconnected... attempting to reconnect');
 });
-
  
-socket.on('reconnect', (attemptNumber) => {
+socket.io.on("reconnect_attempt", (attemptNumber) => {
+  // Handle reconnect attempt
+  console.log("Reconnect attempt", attemptNumber);
+  // console.log(`Attempt numbrt : (attempt ${attemptNumber})`);
+});
+  
+socket.io.on('reconnect', (attemptNumber) => {
+  // console.log("trying")
   console.log(`Reconnected after ${attemptNumber} attempts`);
   // Handle any reconnection logic here.
 });
   
-socket.on('reconnecting', (attemptNumber) => {
-  console.log(`Attempting to reconnect (attempt ${attemptNumber})`);
-  // You can use this event to provide feedback to the user during reconnection attempts.
-});
 
-  
   export { socket, userTimeZone, userLang, userStatus };

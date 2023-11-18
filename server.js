@@ -223,11 +223,11 @@ io.use(async (socket, next) => {
   }
 
   if (socket.request.user) {
-    socket.chatUser = socket.request.user.userName;
+    socket.chatusername = socket.request.user.userName;
   } else {
-    socket.chatUser = socket.request.session.guestUser.userName;
+    socket.chatusername = socket.request.session.guestUser.userName;
   }
-  console.log("socket.chatUser=", socket.chatUser)
+  console.log("socket.chatuser=", socket.chatusername)
 
   const session = socket.request.session;
   session.save();
@@ -246,19 +246,19 @@ const transporter = nodemailer.createTransport({
 });
 
 // Get current user
-function getCurrentUser(id) {
-  return chatUsers.find(chatUser => chatUser.id.includes(id));
+function getCurrentUser(username) {
+  return chatUsers.find(chatUser => chatUser.username === username);
 }
 
 
 // User leaves chat
-function userLeave(id) {
+function userLeave(socketID) {
 
   for (const chatUser of chatUsers) {
-    const socketIndex = chatUser.id.indexOf(id);
+    const socketIndex = chatUser.socketIDs.indexOf(socketID);
     if (socketIndex !== -1) {
-      chatUser.id.splice(socketIndex, 1); // Remove the disconnected socket ID
-      chatUser.userCount = chatUser.id.length; // Update the user count
+      chatUser.socketIDs.splice(socketIndex, 1); // Remove the disconnected socket ID
+      chatUser.userCount = chatUser.socketIDs.length; // Update the user count
       if (chatUser.userCount === 0) {
         // Remove the user when the count reaches 0
         const chatUserIndex = chatUsers.indexOf(chatUser);
@@ -275,15 +275,17 @@ function getRoomUsers(room) {
 }
 
 // // Join user to chat
-function userJoin(id, username, room, _id) {
-  const existingChatUser = chatUsers.find((chatUser) => chatUser.username === username && chatUser.room === room);
+// userJoin(chatusername, username, room, _id, socketID);
+function userJoin(chatusername, username, room, _id, socketID) {
+  const existingChatUser = chatUsers.find((chatUser) => chatusername === chatUser.username && chatUser.room === room);
 
   if (existingChatUser) {
+    
     existingChatUser.userCount++;
-    existingChatUser.id.push(id);
+    existingChatUser.socketIDs.push(socketID);
     return existingChatUser;
   }
-  const chatUser = { id: [id], username, room, _id, userCount: 1 };
+  const chatUser = { socketIDs: [socketID], username, room, _id, userCount: 1 };
   chatUsers.push(chatUser);
   return chatUser;
 }
@@ -309,16 +311,13 @@ io.on("connection", async ( socket) => {
       }
     );
 
+    
         // Runs when client disconnects
         socket.on("disconnect", (reason) => {
           const chatUser = userLeave(socket.id);
         
               if(chatUser) {
                 console.log(`${chatUser.username} disconnected from ${chatUser.room} because reason: ${reason}`)
-              }else{
-                console.log(`${socket.chatUser} Disconnected because reason: ${reason}`)
-              }
-              if (chatUser) {
                 io.to(chatUser.room).emit(
                   "message",
                   formatMessage(botName, `${chatUser.username} has left the chat because: ${reason}`)
@@ -328,8 +327,11 @@ io.on("connection", async ( socket) => {
                   room: chatUser.room,
                   chatUsers: getRoomUsers(chatUser.room),
                 });
+              } else{
+                console.log(`${socket.chatusername} Disconnected because reason: ${reason}`)
               }
         });
+
       
         socket.on("joinLobby", () =>  {
 
@@ -340,12 +342,12 @@ io.on("connection", async ( socket) => {
                 const localTime = postingTime.toLocaleString( userLang, {timeZone: userTimeZone } )
 
               socket.emit('timeData', localTime);}, 1000);
-              socket.emit("timeClock", `It's about time... ${socket.chatUser}, Connected= ${socket.connected}, socketID: ${socket.id}`)
+              socket.emit("timeClock", `It's about time... ${socket.chatusername}, Connected= ${socket.connected}, socketID: ${socket.id}`)
         });
       
         socket.on("joinRoom", ({ username, room, _id}) => {
 
-          const chatUser = userJoin(socket.id, username, room, _id);
+          const chatUser = userJoin(socket.chatusername, username, room, _id, socket.id);
           console.log(`joined ${chatUser.room}`, chatUser, socket.request.session.guestID)
           socket.join(chatUser.room);
 
@@ -428,7 +430,7 @@ io.on("connection", async ( socket) => {
           socket.on("chatMessage", async (msg) => {
             // console.log("chat messages", userTimeZone, socket.request.session.userTimeZone)
           // console.log("socket.user=",socket.user, socket.id)
-          const chatUser = getCurrentUser(socket.id);
+          const chatUser = getCurrentUser(socket.chatusername);
             // console.log(chatUser, "from getCurrentUser", socket.id, userTimeZone, socket.request.session.userTimeZone)
           try {
             const newMessage = new ChatMessage({

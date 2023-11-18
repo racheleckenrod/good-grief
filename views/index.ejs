@@ -21,7 +21,8 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<link rel="stylesheet" href="/assets/css/style.css" />
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
+        <!-- Add this to the head of your HTML file -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
 
 	</head>
 	<body class="homepage">
@@ -320,6 +321,7 @@
     if (!userAcceptedCookies) {
         cookieBanner.style.display = 'block';
     } else {
+		console.log("loading script")
 		loadScript('/js/shared.js');
 	}
 

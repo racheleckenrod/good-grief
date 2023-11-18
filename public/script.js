@@ -126,11 +126,14 @@ function outputMessage(message) {
 function outputRoomName(room) {
   roomName.innerText = room;
 }
-
+// create display names with window count
+function getDisplayName(username, userCount) {
+  return userCount > 1 ? `${username} (${userCount})` : username;
+}
 // // Add users to DOM
 function outputUsers(chatUsers) {
   userList.innerHTML = `
-  ${chatUsers.map(chatUser => `<li class="${chatUser.username}" >${chatUser.username}</li>`).join('')}
+  ${chatUsers.map(chatUser => `<li class="${chatUser.username}" >${getDisplayName(chatUser.username, chatUser.userCount)}</li>`).join('')}
   `;
   // Add event listeners to names to connect to their profile page
   chatUsers.forEach((chatUser) => {
