@@ -9,10 +9,10 @@ console.log("userLang=", userLang)
 let userStatus = 'guest';
 // let guestID
 
-// Disconnect existing socket if connected
-if (socket.id && socket.connected) {
-  socket.disconnect();
-}
+// // Disconnect existing socket if connected
+// if (socket.id && socket.connected) {
+//   socket.disconnect();
+// }
 
 
 const socket = io({
