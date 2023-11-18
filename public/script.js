@@ -165,15 +165,6 @@ socket.on('timeData', (timeString2) => {
 
 
 
-// Optionally, you can also handle the case when the user closes the tab or navigates away
-window.addEventListener('beforeunload', function () {
-  // Disconnect the socket before the page is unloaded
-  if (id && socket.connected) {
-    socket.disconnect();
-  }
-});
-
-
 
 document.addEventListener('DOMContentLoaded', function () {
   const modalButtons = document.querySelectorAll('.openModalButton');
