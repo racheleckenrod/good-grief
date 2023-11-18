@@ -16,7 +16,7 @@ const socket = io({
     query: { userTimeZone: userTimeZone, userLang: userLang  },
   });
   
-  socket.connect();
+  // socket.connect();
 
 
 socket.on('connect', () => {
@@ -27,6 +27,16 @@ socket.on('connect', () => {
     userStatus = onlineStatus;
     console.log("userStatus=", userStatus);
   });
+
+
+
+
+
+  socket.on('disconnect', () => {
+    console.log('socket disconnected... attempting to reconnect');
+  });
+
+
 });
 
 socket.on('setCookie', (GuestID) => {
@@ -51,9 +61,7 @@ for(const cookie of cookies) {
 
 console.log("guestID=", guestID )
 
-socket.on('disconnect', () => {
-  console.log('socket disconnected... attempting to reconnect');
-});
+
  
 socket.io.on("reconnect_attempt", (attemptNumber) => {
   // Handle reconnect attempt

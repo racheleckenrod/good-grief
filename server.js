@@ -334,7 +334,7 @@ io.on("connection", async ( socket) => {
 
       
         socket.on("joinLobby", () =>  {
-
+              console.log("joined lobby on the server for time output")
           // broadcast updates
               setInterval(() => {
 

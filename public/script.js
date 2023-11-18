@@ -23,7 +23,127 @@ const id = socket.id;
 let timeClock =  document.getElementById('time');
 
 socket.on('connect', () => {
-console.log('lobby connected')
+  
+  console.log('lobby connected')
+
+
+        // // Join chatroom
+      socket.emit('joinRoom', {  username, room, _id });
+
+      // // Get room and users
+      socket.on('roomUsers', ({ room, chatUsers }) => {
+        outputRoomName(room);
+        outputUsers(chatUsers);
+      });
+
+      // Recent messages
+      socket.on("recentMessages", (messages) => {
+        // display the recent messages in the chatroom
+        messages.forEach((message) => {
+          outputMessage(message);
+        });
+      });
+
+      // // Message from server
+      socket.on('message', (message) => {
+        outputMessage(message);
+
+      //   // Scroll down
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      });
+
+      socket.on('tx', (message) => {
+        console.log("login received", message)
+        outputMessage(message);
+
+        //   // Scroll down
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+      });
+
+      socket.on('loggedOut', (message) => {
+        console.log("logout received", message)
+        outputMessage(message);
+
+        //   // Scroll down
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+      })
+
+      // // Message submit- prevent default stops page reload
+      chatForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+      //   // Get message text
+        let msg = e.target.elements.msg.value;
+        console.log("msg", msg)
+      //   msg = msg.trim();
+
+      //   // Emit message to server
+        socket.emit('chatMessage', msg);
+
+
+      //   // Clear input
+        e.target.elements.msg.value = '';
+        e.target.elements.msg.focus();
+      });
+
+      // // Output message to DOM
+      function outputMessage(message) {
+        const div = document.createElement('div');
+        div.classList.add('message');
+
+        console.log(message)
+
+        const timestamp = new Date(message.time)
+        
+        const localTime = timestamp.toLocaleString( userLang, {timeZone: userTimeZone } )
+
+        div.innerHTML = `<p class="meta">${message.username} <span>${localTime}</span></p>
+        <p class="text">
+          ${message.text}
+        </p>`;
+
+        document.querySelector('.chat-messages').appendChild(div);
+      }
+
+      // // Add room name to DOM
+      function outputRoomName(room) {
+        roomName.innerText = room;
+      }
+      // create display names with window count
+      function getDisplayName(username, userCount) {
+        return userCount > 1 ? `${username} (${userCount})` : username;
+      }
+      // // Add users to DOM
+      function outputUsers(chatUsers) {
+        userList.innerHTML = `
+        ${chatUsers.map(chatUser => `<li class="${chatUser.username}" >${getDisplayName(chatUser.username, chatUser.userCount)}</li>`).join('')}
+        `;
+        // Add event listeners to names to connect to their profile page
+        chatUsers.forEach((chatUser) => {
+          console.log("first", chatUser)
+          console.log("userStatus=", userStatus)
+          
+          
+            document.querySelector(`.${chatUser.username}`).addEventListener('click', () => {
+              
+            if (userStatus === 'guest') {
+              alert("Guest users don't have access to user Profiles. Please sign up to see them.");
+            } else if (chatUser.username.startsWith("guest")){
+              alert("Guest users do not have profiles.");
+            } else {
+              window.open(`/profile/${chatUser._id}`, '_blank');
+            }
+            // console.log("forEach", user.username, user._id)
+            //  window.location = `/profile/${user._id}`
+          });
+          
+        
+      //     const li = document.createElement('li');
+      //     li.innerText = user.username;
+      //     userList.appendChild(li);
+        });
+  };
+
 });
 socket.on('reconnect', (attemptNumber) => {
   console.log(`Reconnected after ${attemptNumber} attempts`);
@@ -44,122 +164,6 @@ socket.on('timeData', (timeString2) => {
 })
 
 
-// // Join chatroom
-socket.emit('joinRoom', {  username, room, _id });
-
-// // Get room and users
-socket.on('roomUsers', ({ room, chatUsers }) => {
-  outputRoomName(room);
-  outputUsers(chatUsers);
-});
-
-// Recent messages
-socket.on("recentMessages", (messages) => {
-  // display the recent messages in the chatroom
-  messages.forEach((message) => {
-    outputMessage(message);
-  });
-});
-
-// // Message from server
-socket.on('message', (message) => {
-  outputMessage(message);
-
-//   // Scroll down
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-});
-
-socket.on('tx', (message) => {
-  console.log("login received", message)
-  outputMessage(message);
-
-  //   // Scroll down
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-});
-
-socket.on('loggedOut', (message) => {
-  console.log("logout received", message)
-  outputMessage(message);
-
-  //   // Scroll down
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-})
-
-// // Message submit- prevent default stops page reload
-chatForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-
-//   // Get message text
-  let msg = e.target.elements.msg.value;
-  console.log("msg", msg)
-//   msg = msg.trim();
-
-//   // Emit message to server
-  socket.emit('chatMessage', msg);
-
-
-//   // Clear input
-  e.target.elements.msg.value = '';
-  e.target.elements.msg.focus();
-});
-
-// // Output message to DOM
-function outputMessage(message) {
-  const div = document.createElement('div');
-  div.classList.add('message');
-
-  console.log(message)
-
-  const timestamp = new Date(message.time)
-  
-  const localTime = timestamp.toLocaleString( userLang, {timeZone: userTimeZone } )
-
-  div.innerHTML = `<p class="meta">${message.username} <span>${localTime}</span></p>
-  <p class="text">
-    ${message.text}
-  </p>`;
-
-  document.querySelector('.chat-messages').appendChild(div);
-}
-
-// // Add room name to DOM
-function outputRoomName(room) {
-  roomName.innerText = room;
-}
-// create display names with window count
-function getDisplayName(username, userCount) {
-  return userCount > 1 ? `${username} (${userCount})` : username;
-}
-// // Add users to DOM
-function outputUsers(chatUsers) {
-  userList.innerHTML = `
-  ${chatUsers.map(chatUser => `<li class="${chatUser.username}" >${getDisplayName(chatUser.username, chatUser.userCount)}</li>`).join('')}
-  `;
-  // Add event listeners to names to connect to their profile page
-  chatUsers.forEach((chatUser) => {
-    console.log("first", chatUser)
-    console.log("userStatus=", userStatus)
-    
-    
-       document.querySelector(`.${chatUser.username}`).addEventListener('click', () => {
-        
-      if (userStatus === 'guest') {
-        alert("Guest users don't have access to user Profiles. Please sign up to see them.");
-      } else if (chatUser.username.startsWith("guest")){
-        alert("Guest users do not have profiles.");
-      } else {
-        window.open(`/profile/${chatUser._id}`, '_blank');
-      }
-      // console.log("forEach", user.username, user._id)
-      //  window.location = `/profile/${user._id}`
-    });
-    
-   
-//     const li = document.createElement('li');
-//     li.innerText = user.username;
-//     userList.appendChild(li);
-  });
-};
 
 document.addEventListener('DOMContentLoaded', function () {
   const modalButtons = document.querySelectorAll('.openModalButton');
