@@ -16,6 +16,8 @@ const socket = io({
     query: { userTimeZone: userTimeZone, userLang: userLang  },
   });
   
+  socket.connect();
+
 
 socket.on('connect', () => {
 
