@@ -334,7 +334,7 @@ io.on("connection", async ( socket) => {
 
       
         socket.on("joinLobby", () =>  {
-              console.log("joined lobby on the server for time output")
+              console.log(`${socket.chatusername} joined The Lobby`)
           // broadcast updates
               setInterval(() => {
 
@@ -348,7 +348,7 @@ io.on("connection", async ( socket) => {
         socket.on("joinRoom", ({ username, room, _id}) => {
 
           const chatUser = userJoin(socket.chatusername, username, room, _id, socket.id);
-          console.log(`joined ${chatUser.room}`, chatUser, socket.request.session.guestID)
+          console.log(`${socket.chatusername} joined ${chatUser.room}`, chatUser, socket.request.session.guestID)
           socket.join(chatUser.room);
 
            // Send users and room info
