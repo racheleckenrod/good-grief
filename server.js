@@ -169,7 +169,6 @@ io.use(async (socket, next) => {
     // No cookie acceptance, reject the connection
     return next(new Error('Cookie acceptance is required.'));
   }
-
   // Continue with existing logic
   next();
 });

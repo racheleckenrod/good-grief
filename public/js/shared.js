@@ -39,8 +39,8 @@ window.addEventListener('beforeunload', function () {
 
 
 socket.on('connect', () => {
-
-  console.log("socket connected!!", socket.timeZone, socket, socket.id, socket.data);
+  console.log("before curious")
+  console.log("socket connected!!", socket.id, socket);
 
   socket.on('setStatus', (onlineStatus) => {
     userStatus = onlineStatus;
