@@ -21,8 +21,9 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<link rel="stylesheet" href="/assets/css/style.css" />
-        <!-- Add this to the head of your HTML file -->
-		<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script> -->
+		<link rel="stylesheet" href="/style.css" />
+
+		
 
 	</head>
 	<body class="homepage">
@@ -105,6 +106,11 @@
                             <p>Our Story and Rules</p>
                             <p>After spending most of my life, at this point, without my child alive on Earth, I have put together this site that I hope can bring you great comfort in your times of need, and joy in celebrating with others successes we can share. It is my hope that you are supported when you need it most, and don't need to have a reason to stay and connect deeply with those who can offer a safe and supportive environment. Please be aware that being a member of this community is a privilege, and we expect you to follow certain rules in order to participate. Kindness is mandatory. As is maintaining respect for others as well as yourself. Violating these rules will result in you being banned from the site. If you ever feel bullied or experience abuse, we want to know about it right away. We will make every effort to keep this an emotionally safe space. May you find compassionate understanding here and enjoy sharing memories of your loved ones, challenges you face, and victories you have- as you offer yourself to those who have an understanding of your losses. May we learn to support each other. </p>
 
+							<!-- Checkbox -->
+							<label for="agreeCheckbox">I agree to the rules</label>
+							<input type="checkbox" id="agreeCheckbox">
+
+
                             <p>Guests</p>
                             <p>You are welcome to participate in a limited way as a guest. We have a live chat in our lobby where you can chat with other guests and users of the site. We encourage you to sign up and become a member. You will then be able to create your own profile, share your story, and post photos, comments and likes. You can view other members profiles and get to know who you are talking to. We also have a community feed that stays updated with users posts. The three most liked posts display in The Lobby.</p>
 
@@ -112,11 +118,11 @@
                        
 						<ul class="actions">
                             <p>Sounds great! Sign me up.</p>
-                            <li><a href="/signup" class="button style3 large">Signup</a></li>
+                            <li><a href="#" onclick="handleLinkClick('/signup')" class="button style3 large">Signup</a></li>
 							<p>I'm already a member.</p>
-                            <li><a href="/login" class="button style3 large">Log in</a></li>
+                            <li><a href="#" onclick="handleLinkClick('/login')" class="button style3 large">Log in</a></li>
                             <p>I'm interested, continue as a guest.</p>
-                            <li><a href="/chat"  class="button style3 large">To The Lobby</a></li>
+                            <li><a href="#"  onclick="handleLinkClick('/chat')" class="button style3 large">To The Lobby</a></li>
 							<!-- <li><a href="/"  class="button style3 large">Be a Guest</a></li> -->
                             <p>This is not for me.</p>
 							<li><a href="/removeCookies" class="button style3 large"> No, thanks </a></li>
@@ -296,6 +302,27 @@
     </div>
 </section>
 
+<!-- Modal HTML structure -->
+<div id="myModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+		<p id="modalAcceptRulesText">You haven't agreed to our Rules.<br>We require respectful and inclusive behavior, and encourage kindness above all else. <br>Please be compassionate with yourself and others as we navigate the world of grief.</p>
+		<!-- Checkbox -->
+		<!-- Checkbox -->
+		<!-- <label for="agreeCheckbox">I agree to the rules</label>
+		<input type="checkbox" id="agreeCheckbox"> -->
+
+		<input type="checkbox" id="modalAgreeCheckbox">
+		<label for="agreeCheckbox">I agree to be kind and respectful.</label>
+		<div class="container">
+            <ul class="actions">
+                <li><a href="#" onclick="handleModalContinue()" class="button style3 small continue">Continue</a></li>
+            </ul>
+        </div>
+
+    </div>
+</div>
+
 
 
 
@@ -345,6 +372,92 @@
 });
 
   </script>
+
+<!-- Script to check the cookie on page load and set the checkbox -->
+<script>
+    // Function to check the cookie on page load and set the checkbox
+    window.onload = function() {
+        const userAgreed = getCookie('userAgreed');
+		console.log(userAgreed, "cookie")
+        const agreeCheckbox = document.getElementById('agreeCheckbox');
+
+        // Set the checkbox state based on the cookie
+        agreeCheckbox.checked = userAgreed === 'true';
+
+        // Add an event listener to the checkbox to handle changes
+        agreeCheckbox.addEventListener('change', function() {
+            // Update the cookie based on the checkbox state
+            document.cookie = 'userAgreed=' + this.checked + '; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/';
+        });
+    };
+
+    // Function to handle link clicks
+    function handleLinkClick(route) {
+        const agreeCheckbox = document.getElementById('agreeCheckbox');
+
+        // Check if the checkbox is checked
+        if (agreeCheckbox.checked) {
+            // Checkbox is checked, set a cookie to remember the user's agreement
+            document.cookie = 'userAgreed=true; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/';
+            // Proceed with the route logic
+            window.location.href = route;
+        } else {
+            // Checkbox is not checked, show the modal
+            showModal('myModal', route);
+        }
+    }
+
+    // Function to show the modal
+    function showModal(modalId, route) {
+        const modal = document.getElementById(modalId);
+        modal.style.display = 'block';
+		modal.setAttribute('data-route', route);
+    }
+
+    // Function to close the modal
+    function closeModal() {
+        const modal = document.getElementById('myModal');
+        modal.style.display = 'none';
+    }
+
+    // Function to handle the modal checkbox
+    function handleModalContinue() {
+        const modalAgreeCheckbox = document.getElementById('modalAgreeCheckbox');
+
+        // Update the variable to track the state of the modal checkbox
+        const modalCheckboxChecked = modalAgreeCheckbox.checked;
+
+        if (modalCheckboxChecked) {
+            // Checkbox in the modal is checked, close the modal
+            closeModal();
+
+			// Get the route from the data attribute of the modal
+            const route = document.getElementById('myModal').getAttribute('data-route');
+            
+            if (route) {
+                // Proceed with the stored route logic
+                window.location.href = route;
+				// Set the cookie when the checkbox is checked in the modal
+				document.cookie = 'userAgreed=true; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/';
+            }
+        } else {
+            // Checkbox in the modal is not checked, you can show a message or take appropriate action
+            alert('You will need to check the box and agree to the rules before proceeding.');
+        }
+    }
+
+    // Function to get the cookie value by name
+    function getCookie(name) {
+        const cookieArr = document.cookie.split(';');
+        for (const cookie of cookieArr) {
+            const [cookieName, cookieValue] = cookie.split('=').map(c => c.trim());
+            if (cookieName === name) {
+                return cookieValue;
+            }
+        }
+        return null;
+    }
+</script>
 
 </body>
 </html>

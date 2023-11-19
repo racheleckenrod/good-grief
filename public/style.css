@@ -5,10 +5,28 @@
 img{
     width: 100%;
 }
-/* .triage li::marker {
-    color:red !important;
-    list-style-type: none;
-} */
+
+
+#agreeCheckbox {
+  margin-right: 5px;
+  margin-left: 5px;
+  display: inline-block;
+  appearance: checkbox;
+
+}
+
+#modalAgreeCheckbox {
+  margin-right: 5px;
+  margin-left: 5px;
+  display: inline-block;
+  appearance: checkbox;
+
+}
+
+label[for="agreeCheckbox"] {
+  font-size: 16px;
+}
+
 
 /* The Modal */
 .modal {
