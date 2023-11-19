@@ -9,10 +9,14 @@ const room =  roomName.innerHTML
 
 const _id =  document.getElementById('_id').innerHTML;
 
-// // Join chatroom
-socket.emit('joinRoom', { username, room, _id});
-console.log("joinRoom", username, room, _id, userTimeZone)
-// console.log(userList)
+
+socket.on('connect', () => {
+    // // Join chatroom
+  socket.emit('joinRoom', { username, room, _id});
+  console.log(username, "connected to", room )
+  // console.log(userList)
+})
+
 
 // // Get room and users
 socket.on('roomUsers', ({ room, chatUsers }) => {
@@ -67,12 +71,17 @@ chatForm.addEventListener('submit', (e) => {
   e.target.elements.msg.focus();
 });
 
+
 // // Output message to DOM
 function outputMessage(message) {
   const div = document.createElement('div');
   div.classList.add('message');
 
-  const localTime = (message.time).toLocaleString( userLang, {timeZone: userTimeZone } )
+  console.log(message)
+
+  const timestamp = new Date(message.time)
+  
+  const localTime = timestamp.toLocaleString( userLang, {timeZone: userTimeZone } )
 
   div.innerHTML = `<p class="meta">${message.username} <span>${localTime}</span></p>
   <p class="text">
@@ -81,6 +90,7 @@ function outputMessage(message) {
 
   document.querySelector('.chat-messages').appendChild(div);
 }
+
 
 // // Add room name to DOM
 function outputRoomName(room) {

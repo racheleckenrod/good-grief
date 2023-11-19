@@ -33,9 +33,9 @@ socket.on('connect', () => {
 
 
 });
-socket.on('reconnect', (attemptNumber) => {
-  console.log(`Reconnected after ${attemptNumber} attempts`);
-});
+// socket.on('reconnect', (attemptNumber) => {
+//   console.log(`Reconnected after ${attemptNumber} attempts`);
+// });
 
 
 socket.on('timeClock', data => {
