@@ -24,17 +24,22 @@ let timeClock =  document.getElementById('time');
 
 socket.on('connect', () => {
 console.log('lobby connected')
+
+  socket.emit("joinLobby")
+
+
+  // // Join chatroom
+  socket.emit('joinRoom', {  username, room, _id });
+
+
 });
 socket.on('reconnect', (attemptNumber) => {
   console.log(`Reconnected after ${attemptNumber} attempts`);
 });
 
-socket.emit("joinLobby")
 
 socket.on('timeClock', data => {
- 
   timeClock.innerHTML = data
-
 })
 
 socket.on('timeData', (timeString2) => {
@@ -43,9 +48,6 @@ socket.on('timeData', (timeString2) => {
 
 })
 
-
-// // Join chatroom
-socket.emit('joinRoom', {  username, room, _id });
 
 // // Get room and users
 socket.on('roomUsers', ({ room, chatUsers }) => {
