@@ -51,8 +51,8 @@ socket.on('connect', () => {
 
 
 
-  socket.on('disconnect', () => {
-    console.log('socket disconnected... attempting to reconnect');
+  socket.on('disconnect', (reason) => {
+    console.log(`socket disconnected... ${reason} attempting to reconnect`);
   });
 
 
