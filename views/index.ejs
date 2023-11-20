@@ -52,33 +52,33 @@
 					<!-- Nav -->
 						<nav id="nav">
 							<ul>
-								<li class="current"><a href="#" onclick="handleLinkClick('/chat')">The Lobby</a></li>
+								<li class="current"><a href="#" class="nav-link" data-route="/chat">The Lobby</a></li>
 								<li>
-									<a href="#" onclick="handleLinkClick('/chat')">Chat Rooms</a>
+									<a href="#" class="nav-link" data-route="/chat">Chat Rooms</a>
 									<ul>
-										<li><a href="#" onclick="handleLinkClick('/login')">Login</a></li>
-										<li><a href="#" onclick="handleLinkClick('/signup')">Sign Up</a></li>
+										<li><a href="#" class="nav-link" data-route="/login">Login</a></li>
+										<li><a href="#" class="nav-link" data-route="/signup">Sign Up</a></li>
 									</ul>
 								</li>
                                 <li>
-									<a href="/profile" class="openModalButton" data-modal="profile" onclick="handleLinkClick('/profile')">Profile</a>
+									<a href="/profile" class="openModalButton" data-modal="profile" class="nav-link" data-route="/profile">Profile</a>
 									<ul>
-										<li><a href="#" onclick="handleLinkClick('/login')">Login</a></li>
-										<li><a href="#" onclick="handleLinkClick('/signup')">Sign Up</a></li>
+										<li><a href="#" class="nav-link" data-route="/login">Login</a></li>
+										<li><a href="#" class="nav-link" data-route="/signup">Sign Up</a></li>
 									</ul>
 								</li>
 								<li>
-									<a href="#" onclick="handleLinkClick('/post/newPost/:id')" class="openModalButton" data-modal="newPost">New Post</a>
+									<a href="#" class="nav-link" data-route="/post/newPost/:id" class="openModalButton" data-modal="newPost">New Post</a>
 									<ul>
-										<li><a href="#" onclick="handleLinkClick('/login')">Login</a></li>
-										<li><a href="#" onclick="handleLinkClick('/signup')">Sign Up</a></li>
+										<li><a href="#" class="nav-link" data-route="/login">Login</a></li>
+										<li><a href="#" class="nav-link" data-route="/signup">Sign Up</a></li>
 									</ul>
 								</li>
 								<li>
-									<a href="/feed" class="openModalButton" data-modal="feed"onclick="handleLinkClick('/feed')" >Community</a>
+									<a href="/feed" class="openModalButton" data-modal="feed" class="nav-link" data-route="/feed" >Community</a>
 									<ul>
-										<li><a href="#" onclick="handleLinkClick('/login')">Login</a></li>
-										<li><a href="#" onclick="handleLinkClick('/signup')">Sign Up</a></li>
+										<li><a href="#" class="nav-link" data-route="/login">Login</a></li>
+										<li><a href="#" class="nav-link" data-route="/signup">Sign Up</a></li>
 									</ul>
 								</li>
 								<li><a href="/logout">Logout</a></li>
@@ -321,21 +321,35 @@
 
 
 <!-- Modal HTML structure -->
-<div id="loginRequiredModal" class="modal logInModal" style="display: none;">
+<!-- <div id="loginReqModal" class="modal logInModal" style="display: none;">
     <div class="modal-content">
         <span class="close">&times;</span>
         <p id="modalLoginText"></p>
         <div class="container">
             <ul class="actions">
-				<li><a href="#" class="button style3 small" onclick="handleLinkClick('/login')">Login</a></li>
-				<li><a href="#" class="button style3 small" onclick="handleLinkClick('/signup')">Sign Up</a></li>
+				<li><a href="#" class="button nav-link style3 small" data-route="/login" >Login</a></li>
+				<li><a href="#" class="button nav-link style3 small" data-route="/signup">Sign Up</a></li>
+                <li><a href="#" class="button style3 small continue">Continue</a></li>
+            </ul>
+        </div>
+    </div>
+</div> -->
+
+
+<!-- Modal HTML structure -->
+<div id="loginReqModal" class="modal logInModal" style="display: none;">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <p id="modalLoginText"></p>
+        <div class="container">
+            <ul class="actions">
+                <li><a href="/login" class="button style3 small">Login</a></li>
+                <li><a href="/signup" class="button style3 small">Signup</a></li>
                 <li><a href="#" class="button style3 small continue">Continue</a></li>
             </ul>
         </div>
     </div>
 </div>
-
-
 
 
 <!-- Scripts -->
@@ -408,12 +422,15 @@
     function handleLinkClick(route) {
         const agreeCheckbox = document.getElementById('agreeCheckbox');
 
+		// event.preventDefault();
+
         // Check if the checkbox is checked
         if (agreeCheckbox.checked) {
             // Checkbox is checked, set a cookie to remember the user's agreement
             document.cookie = 'userAgreed=true; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/';
             // Proceed with the route logic
-            window.location.href = route;
+            // window.location.href = route;
+			showModal('loginReqModal', route)
         } else {
             // Checkbox is not checked, show the modal
             showModal('rulesModal', route);
@@ -449,7 +466,7 @@
             
             if (route) {
                 // Proceed with the stored route logic
-                window.location.href = route;
+				showModal('loginReqModal', route);
 				// Set the cookie when the checkbox is checked in the modal
 				document.cookie = 'userAgreed=true; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/';
             }
@@ -472,7 +489,7 @@
     }
 </script>
 
-<script>
+<script defer>
 
 
 // LoggedIn Required Modal
@@ -486,6 +503,8 @@ document.addEventListener('DOMContentLoaded', function () {
   modalButtons.forEach(function (button) {
       button.addEventListener('click', function (event) {
           event.preventDefault();
+		  const route = button.getAttribute('data-route');
+		  handleLinkClick(route);
 
           if (userStatus !== 'loggedIn') {
             console.log("user status===", userStatus)
@@ -534,15 +553,20 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 });
 
-
-
 </script>
 <script>
-	// function to handle nav bar links	
+	document.addEventListener('DOMContentLoaded', function () {
+		const navLinks = document.querySelectorAll('.nav-link');
 
-	// function handleNavBarLink(route, modalType) {
-	// 	handleLinkClick(route);
-	// }
+		navLinks.forEach(function (link) {
+			link.addEventListener('click', function (event) {
+				event.preventDefault();
+				const route = link.getAttribute('data-route');
+				handleLinkClick(route);
+			});
+		});
+	});
+
 
 
 </script>

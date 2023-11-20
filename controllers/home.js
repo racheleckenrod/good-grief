@@ -162,6 +162,7 @@ module.exports = {
         });
           res.clearCookie('consentCookie');
           res.clearCookie('guestID');
+          res.clearCookie('userAgreed');
           res.clearCookie('connect.sid', { path: '/' }); // Specify the path for session cookie
           res.redirect("/");
       } catch (error) {
