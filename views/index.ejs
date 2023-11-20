@@ -52,33 +52,33 @@
 					<!-- Nav -->
 						<nav id="nav">
 							<ul>
-								<li class="current"><a href="/chat">The Lobby</a></li>
+								<li class="current"><a href="#" onclick="handleLinkClick('/chat')">The Lobby</a></li>
 								<li>
-									<a href="/chat">Chat Rooms</a>
+									<a href="#" onclick="handleLinkClick('/chat')">Chat Rooms</a>
 									<ul>
-										<li><a href="/login">Login</a></li>
-										<li><a href="/signup">Sign Up</a></li>
+										<li><a href="#" onclick="handleLinkClick('/login')">Login</a></li>
+										<li><a href="#" onclick="handleLinkClick('/signup')">Sign Up</a></li>
 									</ul>
 								</li>
                                 <li>
-									<a href="/profile">Profile</a>
+									<a href="/profile" class="openModalButton" data-modal="profile" onclick="handleLinkClick('/profile')">Profile</a>
 									<ul>
-										<li><a href="/login">Login</a></li>
-										<li><a href="/signup">Sign Up</a></li>
+										<li><a href="#" onclick="handleLinkClick('/login')">Login</a></li>
+										<li><a href="#" onclick="handleLinkClick('/signup')">Sign Up</a></li>
 									</ul>
 								</li>
 								<li>
-									<a href="/post/newPost/:id">New Post</a>
+									<a href="#" onclick="handleLinkClick('/post/newPost/:id')" class="openModalButton" data-modal="newPost">New Post</a>
 									<ul>
-										<li><a href="/login">Login</a></li>
-										<li><a href="/signup">Sign Up</a></li>
+										<li><a href="#" onclick="handleLinkClick('/login')">Login</a></li>
+										<li><a href="#" onclick="handleLinkClick('/signup')">Sign Up</a></li>
 									</ul>
 								</li>
 								<li>
-									<a href="/feed">Community</a>
+									<a href="/feed" class="openModalButton" data-modal="feed"onclick="handleLinkClick('/feed')" >Community</a>
 									<ul>
-										<li><a href="/login">Login</a></li>
-										<li><a href="/signup">Sign Up</a></li>
+										<li><a href="#" onclick="handleLinkClick('/login')">Login</a></li>
+										<li><a href="#" onclick="handleLinkClick('/signup')">Sign Up</a></li>
 									</ul>
 								</li>
 								<li><a href="/logout">Logout</a></li>
@@ -122,7 +122,7 @@
 							<p>I'm already a member.</p>
                             <li><a href="#" onclick="handleLinkClick('/login')" class="button style3 large">Log in</a></li>
                             <p>I'm interested, continue as a guest.</p>
-                            <li><a href="#"  onclick="handleLinkClick('/chat')" class="button style3 large">To The Lobby</a></li>
+                            <li><a href="#" onclick="handleLinkClick('/chat')" class="button style3 large">To The Lobby</a></li>
 							<!-- <li><a href="/"  class="button style3 large">Be a Guest</a></li> -->
                             <p>This is not for me.</p>
 							<li><a href="/removeCookies" class="button style3 large"> No, thanks </a></li>
@@ -303,15 +303,11 @@
 </section>
 
 <!-- Modal HTML structure -->
-<div id="myModal" class="modal" style="display: none;">
+<div id="rulesModal" class="modal" style="display: none;">
     <div class="modal-content">
         <span class="close" onclick="closeModal()">&times;</span>
 		<p id="modalAcceptRulesText">You haven't agreed to our Rules.<br>We require respectful and inclusive behavior, and encourage kindness above all else. <br>Please be compassionate with yourself and others as we navigate the world of grief.</p>
 		<!-- Checkbox -->
-		<!-- Checkbox -->
-		<!-- <label for="agreeCheckbox">I agree to the rules</label>
-		<input type="checkbox" id="agreeCheckbox"> -->
-
 		<input type="checkbox" id="modalAgreeCheckbox">
 		<label for="agreeCheckbox">I agree to be kind and respectful.</label>
 		<div class="container">
@@ -319,7 +315,22 @@
                 <li><a href="#" onclick="handleModalContinue()" class="button style3 small continue">Continue</a></li>
             </ul>
         </div>
+    </div>
+</div>
 
+
+<!-- Modal HTML structure -->
+<div id="loginRequiredModal" class="modal logInModal" style="display: none;">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <p id="modalLoginText"></p>
+        <div class="container">
+            <ul class="actions">
+				<li><a href="#" class="button style3 small" onclick="handleLinkClick('/login')">Login</a></li>
+				<li><a href="#" class="button style3 small" onclick="handleLinkClick('/signup')">Sign Up</a></li>
+                <li><a href="#" class="button style3 small continue">Continue</a></li>
+            </ul>
+        </div>
     </div>
 </div>
 
@@ -334,7 +345,8 @@
 <script src="/assets/js/breakpoints.min.js"></script>
 <script src="/assets/js/util.js"></script>
 <script src="/assets/js/main.js"></script>
-
+<!-- <script type="module" src="/js/shared.js"></script> -->
+<script id="sharedScript"></script>
 
   <script>
   // cookieBanner.js
@@ -349,7 +361,7 @@
         cookieBanner.style.display = 'block';
     } else {
 		console.log("loading script")
-		loadScript('/js/shared.js');
+		loadSharedScript();
 	}
 
     acceptCookiesBtn.addEventListener('click', () => {
@@ -363,11 +375,11 @@
         // Additional logic if needed
     });
 
-	function loadScript(src) {
+	function loadSharedScript(src) {
     const script = document.createElement('script');
     script.type = 'module';
-    script.src = src;
-    document.head.appendChild(script);
+    script.src = '/js/shared.js'
+    document.getElementById('sharedScript').appendChild(script);
   }
 });
 
@@ -403,7 +415,7 @@
             window.location.href = route;
         } else {
             // Checkbox is not checked, show the modal
-            showModal('myModal', route);
+            showModal('rulesModal', route);
         }
     }
 
@@ -416,7 +428,7 @@
 
     // Function to close the modal
     function closeModal() {
-        const modal = document.getElementById('myModal');
+        const modal = document.getElementById('rulesModal');
         modal.style.display = 'none';
     }
 
@@ -432,7 +444,7 @@
             closeModal();
 
 			// Get the route from the data attribute of the modal
-            const route = document.getElementById('myModal').getAttribute('data-route');
+            const route = document.getElementById('rulesModal').getAttribute('data-route');
             
             if (route) {
                 // Proceed with the stored route logic
@@ -457,6 +469,81 @@
         }
         return null;
     }
+</script>
+
+<script>
+
+
+// LoggedIn Required Modal
+console.log("Check")
+let userStatus
+document.addEventListener('DOMContentLoaded', function () {
+  const modalButtons = document.querySelectorAll('.openModalButton');
+  const logInModal = document.querySelector('.logInModal');
+  const modalText = document.getElementById('modalLoginText');
+
+  modalButtons.forEach(function (button) {
+      button.addEventListener('click', function (event) {
+          event.preventDefault();
+
+          if (userStatus !== 'loggedIn') {
+            console.log("user status===", userStatus)
+          let action = button.getAttribute('data-modal');
+
+          const notLoggedInMessage = 'You need to be logged in to ';
+
+          if (action === 'chatRoom') {
+            modalText.textContent = notLoggedInMessage + 'enter that Chat Room.'
+          } else if (action === 'profile') {
+            modalText.textContent = notLoggedInMessage + 'to have a Profile.'
+          } else if (action === 'comment') {
+            modalText.textContent = notLoggedInMessage + 'comment on Posts.'
+          } else if (action === 'noAccess') {
+            modalText.textContent = 'Guest users do not have access to user Profiles'
+          } else if (action === 'feed') {
+            modalText.textContent = notLoggedInMessage + 'to see our Community posts.'
+          } else if (action === 'newPost') {
+            modalText.textContent = notLoggedInMessage + 'make a new Post.'
+          }
+          logInModal.style.display = 'block';
+        } else {
+          window.location.href = button.href;
+        }
+      });
+  });
+
+  // Close modal when the close button is clicked
+  let closeButton = logInModal.querySelector('.close');
+  closeButton.addEventListener('click', function () {
+      logInModal.style.display = 'none';
+  });
+
+  // Close modal when an element with the 'continue' class is clicked
+  logInModal.addEventListener('click', function (event) {
+    if (event.target.classList.contains('continue')) {
+      logInModal.style.display = 'none';
+    }
+  });
+
+   // Close modal when clicking outside the modal
+  window.addEventListener('click', function (event) {
+  if (event.target === logInModal) {
+    logInModal.style.display = 'none';
+  }
+});
+});
+
+
+
+</script>
+<script>
+	// function to handle nav bar links	
+
+	// function handleNavBarLink(route, modalType) {
+	// 	handleLinkClick(route);
+	// }
+
+
 </script>
 
 </body>

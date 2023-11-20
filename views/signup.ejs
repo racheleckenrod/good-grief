@@ -47,3 +47,18 @@
 <!-- Footer -->
 
 <%- include('partials/footer') -%>
+<!-- Modal HTML structure -->
+<div id="loginRequiredModal" class="modal logInModal" style="display: none;">
+  <div class="modal-content">
+      <span class="close">&times;</span>
+      <p id="modalLoginText"></p>
+      <div class="container">
+          <ul class="actions">
+              <li><a href="/login" class="button style3 small">Login</a></li>
+              <li><a href="/signup" class="button style3 small">Signup</a></li>
+              <li><a href="#" class="button style3 small continue">Continue</a></li>
+          </ul>
+      </div>
+  </div>
+</div>
+

@@ -16,6 +16,8 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<link rel="stylesheet" href="/assets/css/style.css" />
+		<link rel="stylesheet" href="/style.css" />
+
 	<!-- Cookie Consent Banner -->
 		<style>
 			#cookieBanner {
@@ -41,6 +43,21 @@
 			  </div>
 			  
 
+<!-- Modal HTML structure -->
+<div id="loginRequiredModal" class="modal logInModal" style="display: none;">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <p id="modalLoginText"></p>
+        <div class="container">
+            <ul class="actions">
+                <li><a href="/login" class="button style3 small">Login</a></li>
+                <li><a href="/signup" class="button style3 small">Signup</a></li>
+                <li><a href="#" class="button style3 small continue">Continue</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
 			<!-- Header -->
 				<section id="header" class="wrapper">
 
@@ -53,35 +70,34 @@
 					<!-- Nav -->
 						<nav id="nav">
 							<ul>
-								<li class="current"><a href="/chat">The Lobby</a></li>
+								<li class="current"><a href="/chat">the Lobby</a></li>
 								<li>
 									<a href="/chat">Chat Rooms</a>
 									<ul>
-										<li><a href="/login">Login</a></li>
-										<li><a href="/signup">Sign Up</a></li>
+										<li><a href="/chat/room/Child/%>" class="openModalButton" data-modal="chatRoom">I have lost a child.</a></li>
+										<li><a href="/chat/room/Parent/%>" class="openModalButton" data-modal="chatRoom">I have lost a parent.</a></li>
+										<li><a href="/chat/room/Spouse%2FPartner/%>" class="openModalButton" data-modal="chatRoom">I have lost my spouse/partner.</a></li>
+										<li><a href="/chat/room/Sibling/%>" class="openModalButton" data-modal="chatRoom">I have lost a sibling.</a></li>
+										<li><a href="/chat/room/Friend/%>" class="openModalButton" data-modal="chatRoom">I have lost a friend</a></li>
+										<li><a href="/chat/room/Suicide/%>" class="openModalButton" data-modal="chatRoom">I have lost someone to suicide.</a></li>
+										<li><a href="/chat/room/Terminal/%>" class="openModalButton" data-modal="chatRoom">I have a terminal diagnosis.</a></li>
+										<li>
+											<a href="#">Community tragedy.</a>
+											<ul>
+												<li><a href="/chat/room/Natural%20Disaster/%>" class="openModalButton" data-modal="chatRoom">Natural Disaster</a></li>
+												<li><a href="/chat/room/Act%20of%20Violence/%>" class="openModalButton" data-modal="chatRoom">Act of Human Violence</a></li>
+												<li><a href="/chat/room/Global%20Pandemic/%>" class="openModalButton" data-modal="chatRoom">Global Pandemic</a></li>
+												<li><a href="/chat/room/Poverty/%>" class="openModalButton" data-modal="chatRoomM">Poverty</a></li>
+												<li><a href="/chat/room/War/%>" class="openModalButton" data-modal="chatRoom">War</a></li>
+											</ul>
+										</li>
+										<li><a href="/chat/room/Different/%>" class="openModalButton" data-modal="chatRoom">My grief is different</a></li>
+                                    					
 									</ul>
 								</li>
-                                <li>
-									<a href="/profile">Profile</a>
-									<ul>
-										<li><a href="/login">Login</a></li>
-										<li><a href="/signup">Sign Up</a></li>
-									</ul>
-								</li>
-								<li>
-									<a href="/post/newPost/:id">New Post</a>
-									<ul>
-										<li><a href="/login">Login</a></li>
-										<li><a href="/signup">Sign Up</a></li>
-									</ul>
-								</li>
-								<li>
-									<a href="/feed">Community</a>
-									<ul>
-										<li><a href="/login">Login</a></li>
-										<li><a href="/signup">Sign Up</a></li>
-									</ul>
-								</li>
+                                <li><a href="/profile" class="openModalButton" data-modal="profile">Profile</a></li>
+								<li><a href="/post/newPost/:id" class="openModalButton" data-modal="newPost">New Post</a></li>
+								<li><a href="/feed" class="openModalButton" data-modal="feed">Community</a></li>
 								<li><a href="/logout">Logout</a></li>
 							</ul>
 						</nav>
@@ -91,3 +107,5 @@
     
 
             
+
+
