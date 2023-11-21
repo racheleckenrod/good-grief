@@ -52,33 +52,33 @@
 					<!-- Nav -->
 						<nav id="nav">
 							<ul>
-								<li class="current"><a href="/chat" class="">The Lobby</a></li>
+								<li class="current"><a href="/chat" class="rules">The Lobby</a></li>
 								<li>
-									<a href="#" class="nav-link openModalButton" data-modal="chatRoom" data-route="/chat">Chat Rooms</a>
+									<a href="#" class="loginReqRoute" data-modal="chatRoom">Chat Rooms</a>
 									<ul>
-										<li><a href="#" class="nav-link" data-route="/login">Login</a></li>
-										<li><a href="#" class="nav-link" data-route="/signup">Sign Up</a></li>
+										<li><a href="#" class="rules" data-route="/login">Login</a></li>
+										<li><a href="#" class="rules" data-route="/signup">Sign Up</a></li>
 									</ul>
 								</li>
                                 <li>
-									<a href="/profile" class="openModalButton nav-link" data-modal="profile" data-route="/profile">Profile</a>
+									<a href="/profile" class="loginReqRoute" data-modal="profile" >Profile</a>
 									<ul>
-										<li><a href="#" class="nav-link" data-route="/login" >Login</a></li>
-										<li><a href="#" class="nav-link" data-route="/signup">Sign Up</a></li>
+										<li><a href="#" class="rules" data-route="/login" >Login</a></li>
+										<li><a href="#" class="rules" data-route="/signup">Sign Up</a></li>
 									</ul>
 								</li>
 								<li>
-									<a href="#" data-route="/post/newPost/:id" class="openModalButton nav-link " data-modal="newPost">New Post</a>
+									<a href="/post/newPost/:id" class="loginReqRoute" data-modal="newPost">New Post</a>
 									<ul>
-										<li><a href="#" class="nav-link" data-route="/login">Login</a></li>
-										<li><a href="#" class="nav-link" data-route="/signup">Sign Up</a></li>
+										<li><a href="#" class="rules" data-route="/login">Login</a></li>
+										<li><a href="#" class="rules" data-route="/signup">Sign Up</a></li>
 									</ul>
 								</li>
 								<li>
-									<a href="/feed" class="openModalButton nav-link" data-modal="feed" data-route="/feed" >Community</a>
+									<a href="/feed" class="loginReqRoute" data-modal="feed" data-route="/feed" >Community</a>
 									<ul>
-										<li><a href="#" class="nav-link" data-route="/login">Login</a></li>
-										<li><a href="#" class="nav-link" data-route="/signup">Sign Up</a></li>
+										<li><a href="#" class="rules" data-route="/login">Login</a></li>
+										<li><a href="#" class="rules" data-route="/signup">Sign Up</a></li>
 									</ul>
 								</li>
 								<li><a href="/logout">Logout</a></li>
@@ -118,11 +118,11 @@
                        
 						<ul class="actions">
                             <p>Sounds great! Sign me up.</p>
-                            <li><a href="#" onclick="handleLinkClick('/signup')" class="button style3 large">Signup</a></li>
+                            <li><a href="/signup" class="rules button style3 large">Signup</a></li>
 							<p>I'm already a member.</p>
-                            <li><a href="#" onclick="handleLinkClick('/login')" class="button style3 large">Log in</a></li>
+                            <li><a href="/login" class="rules button style3 large">Log in</a></li>
                             <p>I'm interested, continue as a guest.</p>
-                            <li><a href="#" onclick="handleLinkClick('/chat')" class="button style3 large">To The Lobby</a></li>
+                            <li><a href="/chat" class="rules button style3 large">To The Lobby</a></li>
 							<!-- <li><a href="/"  class="button style3 large">Be a Guest</a></li> -->
                             <p>This is not for me.</p>
 							<li><a href="/removeCookies" class="button style3 large"> No, thanks </a></li>
@@ -199,7 +199,7 @@
 									</div>
 								</div>
 								<ul class="actions special">
-									<li><a href="#" onclick="handleLinkClick('/signup')" class="button style1 large">Get Started</a></li>
+									<li><a href="/signup" class="rules button style1 large">Get Started</a></li>
 									<!-- <li><a href="/signup" class="button style1 large">Get Started</a></li> -->
 									<!-- <li><a href="#" class="button style2 large">More Info</a></li> -->
 								</ul>
@@ -320,21 +320,6 @@
 </div>
 
 
-<!-- Modal HTML structure -->
-<!-- <div id="loginReqModal" class="modal logInModal" style="display: none;">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <p id="modalLoginText"></p>
-        <div class="container">
-            <ul class="actions">
-				<li><a href="#" class="button nav-link style3 small" data-route="/login" >Login</a></li>
-				<li><a href="#" class="button nav-link style3 small" data-route="/signup">Sign Up</a></li>
-                <li><a href="#" class="button style3 small continue">Continue</a></li>
-            </ul>
-        </div>
-    </div>
-</div> -->
-
 
 <!-- Modal HTML structure -->
 <div id="loginReqModal" class="modal logInModal" style="display: none;">
@@ -343,9 +328,9 @@
         <p id="modalLoginText"></p>
         <div class="container">
             <ul class="actions">
-                <li><a href="/login" class="button style3 small">Login</a></li>
-                <li><a href="/signup" class="button style3 small">Signup</a></li>
-                <li><a href="#" class="button style3 small continue">Continue</a></li>
+                <li><a href="/login" class="rules button style3 small">Login</a></li>
+                <li><a href="/signup" class="rules button style3 small">Signup</a></li>
+                <li><a href="#" class="rules button style3 small continue">Continue</a></li>
             </ul>
         </div>
     </div>
