@@ -27,14 +27,14 @@ const socket = io({
 
 
 
-// Optionally, you can also handle the case when the user closes the tab or navigates away
-window.addEventListener('beforeunload', function () {
-  // Disconnect the socket before the page is unloaded
-  console.log("before unload disconnect")
-  if (socket.id && socket.connected) {
-    socket.disconnect();
-  }
-});
+// // Optionally, you can also handle the case when the user closes the tab or navigates away
+// window.addEventListener('beforeunload', function () {
+//   // Disconnect the socket before the page is unloaded
+//   console.log("before unload disconnect")
+//   if (socket.id && socket.connected) {
+//     socket.disconnect();
+//   }
+// });
 
 
 

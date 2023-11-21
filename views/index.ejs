@@ -52,30 +52,30 @@
 					<!-- Nav -->
 						<nav id="nav">
 							<ul>
-								<li class="current"><a href="#" class="nav-link" data-route="/chat">The Lobby</a></li>
+								<li class="current"><a href="/chat" class="">The Lobby</a></li>
 								<li>
-									<a href="#" class="nav-link" data-route="/chat">Chat Rooms</a>
+									<a href="#" class="nav-link openModalButton" data-modal="chatRoom" data-route="/chat">Chat Rooms</a>
 									<ul>
 										<li><a href="#" class="nav-link" data-route="/login">Login</a></li>
 										<li><a href="#" class="nav-link" data-route="/signup">Sign Up</a></li>
 									</ul>
 								</li>
                                 <li>
-									<a href="/profile" class="openModalButton" data-modal="profile" class="nav-link" data-route="/profile">Profile</a>
+									<a href="/profile" class="openModalButton nav-link" data-modal="profile" data-route="/profile">Profile</a>
+									<ul>
+										<li><a href="#" class="nav-link" data-route="/login" >Login</a></li>
+										<li><a href="#" class="nav-link" data-route="/signup">Sign Up</a></li>
+									</ul>
+								</li>
+								<li>
+									<a href="#" data-route="/post/newPost/:id" class="openModalButton nav-link " data-modal="newPost">New Post</a>
 									<ul>
 										<li><a href="#" class="nav-link" data-route="/login">Login</a></li>
 										<li><a href="#" class="nav-link" data-route="/signup">Sign Up</a></li>
 									</ul>
 								</li>
 								<li>
-									<a href="#" class="nav-link" data-route="/post/newPost/:id" class="openModalButton" data-modal="newPost">New Post</a>
-									<ul>
-										<li><a href="#" class="nav-link" data-route="/login">Login</a></li>
-										<li><a href="#" class="nav-link" data-route="/signup">Sign Up</a></li>
-									</ul>
-								</li>
-								<li>
-									<a href="/feed" class="openModalButton" data-modal="feed" class="nav-link" data-route="/feed" >Community</a>
+									<a href="/feed" class="openModalButton nav-link" data-modal="feed" data-route="/feed" >Community</a>
 									<ul>
 										<li><a href="#" class="nav-link" data-route="/login">Login</a></li>
 										<li><a href="#" class="nav-link" data-route="/signup">Sign Up</a></li>
@@ -306,14 +306,14 @@
 <!-- Modal HTML structure -->
 <div id="rulesModal" class="modal" style="display: none;">
     <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
+        <span class="close">&times;</span>
 		<p id="modalAcceptRulesText">You haven't agreed to our Rules.<br>We require respectful and inclusive behavior, and encourage kindness above all else. <br>Please be compassionate with yourself and others as we navigate the world of grief.</p>
 		<!-- Checkbox -->
 		<input type="checkbox" id="modalAgreeCheckbox">
 		<label for="agreeCheckbox">I agree to be kind and respectful.</label>
 		<div class="container">
             <ul class="actions">
-                <li><a href="#" onclick="handleModalContinue()" class="button style3 small continue">Continue</a></li>
+                <li><a href="#" id="rulesModalContinueBtn" class="button style3 small ">Continue</a></li>
             </ul>
         </div>
     </div>
@@ -362,6 +362,7 @@
 <script src="/assets/js/main.js"></script>
 <!-- <script type="module" src="/js/shared.js"></script> -->
 <script id="sharedScript"></script>
+<script type="module" src="/landingPage.js"></script>
 
   <script>
   // cookieBanner.js
@@ -400,176 +401,6 @@
 
   </script>
 
-<!-- Script to check the cookie on page load and set the checkbox -->
-<script>
-    // Function to check the cookie on page load and set the checkbox
-    window.onload = function() {
-        const userAgreed = getCookie('userAgreed');
-		console.log(userAgreed, "cookie")
-        const agreeCheckbox = document.getElementById('agreeCheckbox');
-
-        // Set the checkbox state based on the cookie
-        agreeCheckbox.checked = userAgreed === 'true';
-
-        // Add an event listener to the checkbox to handle changes
-        agreeCheckbox.addEventListener('change', function() {
-            // Update the cookie based on the checkbox state
-            document.cookie = 'userAgreed=' + this.checked + '; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/';
-        });
-    };
-
-    // Function to handle link clicks
-    function handleLinkClick(route) {
-        const agreeCheckbox = document.getElementById('agreeCheckbox');
-
-		// event.preventDefault();
-
-        // Check if the checkbox is checked
-        if (agreeCheckbox.checked) {
-            // Checkbox is checked, set a cookie to remember the user's agreement
-            document.cookie = 'userAgreed=true; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/';
-            // Proceed with the route logic
-            // window.location.href = route;
-			showModal('loginReqModal', route)
-        } else {
-            // Checkbox is not checked, show the modal
-            showModal('rulesModal', route);
-        }
-    }
-
-    // Function to show the modal
-    function showModal(modalId, route) {
-        const modal = document.getElementById(modalId);
-        modal.style.display = 'block';
-		modal.setAttribute('data-route', route);
-    }
-
-    // Function to close the modal
-    function closeModal() {
-        const modal = document.getElementById('rulesModal');
-        modal.style.display = 'none';
-    }
-
-    // Function to handle the modal checkbox
-    function handleModalContinue() {
-        const modalAgreeCheckbox = document.getElementById('modalAgreeCheckbox');
-
-        // Update the variable to track the state of the modal checkbox
-        const modalCheckboxChecked = modalAgreeCheckbox.checked;
-
-        if (modalCheckboxChecked) {
-            // Checkbox in the modal is checked, close the modal
-            closeModal();
-
-			// Get the route from the data attribute of the modal
-            const route = document.getElementById('rulesModal').getAttribute('data-route');
-            
-            if (route) {
-                // Proceed with the stored route logic
-				showModal('loginReqModal', route);
-				// Set the cookie when the checkbox is checked in the modal
-				document.cookie = 'userAgreed=true; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/';
-            }
-        } else {
-            // Checkbox in the modal is not checked, you can show a message or take appropriate action
-            alert('You will need to check the box and agree to the rules before proceeding.');
-        }
-    }
-
-    // Function to get the cookie value by name
-    function getCookie(name) {
-        const cookieArr = document.cookie.split(';');
-        for (const cookie of cookieArr) {
-            const [cookieName, cookieValue] = cookie.split('=').map(c => c.trim());
-            if (cookieName === name) {
-                return cookieValue;
-            }
-        }
-        return null;
-    }
-</script>
-
-<script defer>
-
-
-// LoggedIn Required Modal
-console.log("Check")
-let userStatus
-document.addEventListener('DOMContentLoaded', function () {
-  const modalButtons = document.querySelectorAll('.openModalButton');
-  const logInModal = document.querySelector('.logInModal');
-  const modalText = document.getElementById('modalLoginText');
-
-  modalButtons.forEach(function (button) {
-      button.addEventListener('click', function (event) {
-          event.preventDefault();
-		  const route = button.getAttribute('data-route');
-		  handleLinkClick(route);
-
-          if (userStatus !== 'loggedIn') {
-            console.log("user status===", userStatus)
-          let action = button.getAttribute('data-modal');
-
-          const notLoggedInMessage = 'You need to be logged in to ';
-
-          if (action === 'chatRoom') {
-            modalText.textContent = notLoggedInMessage + 'enter that Chat Room.'
-          } else if (action === 'profile') {
-            modalText.textContent = notLoggedInMessage + 'to have a Profile.'
-          } else if (action === 'comment') {
-            modalText.textContent = notLoggedInMessage + 'comment on Posts.'
-          } else if (action === 'noAccess') {
-            modalText.textContent = 'Guest users do not have access to user Profiles'
-          } else if (action === 'feed') {
-            modalText.textContent = notLoggedInMessage + 'to see our Community posts.'
-          } else if (action === 'newPost') {
-            modalText.textContent = notLoggedInMessage + 'make a new Post.'
-          }
-          logInModal.style.display = 'block';
-        } else {
-          window.location.href = button.href;
-        }
-      });
-  });
-
-  // Close modal when the close button is clicked
-  let closeButton = logInModal.querySelector('.close');
-  closeButton.addEventListener('click', function () {
-      logInModal.style.display = 'none';
-  });
-
-  // Close modal when an element with the 'continue' class is clicked
-  logInModal.addEventListener('click', function (event) {
-    if (event.target.classList.contains('continue')) {
-      logInModal.style.display = 'none';
-    }
-  });
-
-   // Close modal when clicking outside the modal
-  window.addEventListener('click', function (event) {
-  if (event.target === logInModal) {
-    logInModal.style.display = 'none';
-  }
-});
-});
-
-</script>
-<script>
-	document.addEventListener('DOMContentLoaded', function () {
-		const navLinks = document.querySelectorAll('.nav-link');
-
-		navLinks.forEach(function (link) {
-			link.addEventListener('click', function (event) {
-				event.preventDefault();
-				const route = link.getAttribute('data-route');
-				handleLinkClick(route);
-			});
-		});
-	});
-
-
-
-</script>
 
 </body>
 </html>
