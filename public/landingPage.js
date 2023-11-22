@@ -42,87 +42,97 @@ import { socket, userTimeZone, userLang, userStatus } from './js/shared.js'
         const rulesModalButtons = document.querySelectorAll('.rules')
         const logInModal = document.querySelector('.logInModal');
         const rulesModal = document.getElementById('rulesModal');
+        const modals = [logInModal, rulesModal];
         const modalText = document.getElementById('modalLoginText');
         const modalAgreeCheckbox = document.getElementById('modalAgreeCheckbox');
         const rulesModalContinueBtn = document.getElementById('rulesModalContinueBtn');
 
         let route;
+        let originalAnchor;
 
-        rulesModalButtons.forEach(function (button) {
-            button.addEventListener('click', function (event) {
+        rulesModalButtons.forEach(function (anchor) {
+            anchor.addEventListener('click', function (event) {
                 event.preventDefault();
 
-                route = button.href;
-                handleRulesClick(route);
+                route = anchor.href;
+                originalAnchor = anchor;
+                handleRulesClick(route, originalAnchor);
             });
         });
 
-        loginReqModalButtons.forEach(function (button) {
-        button.addEventListener('click', function (event) {
+        loginReqModalButtons.forEach(function (anchor) {
+            anchor.addEventListener('click', function (event) {
             event.preventDefault();
 
-            route = button.href;
+            route = anchor.href;
+            originalAnchor = anchor;
+            console.log(originalAnchor, "original anchor")
     
             // Check if the user has accepted the rules
             const userAgreedToRules = document.cookie.includes('userAgreed=true');
     
             if (!userAgreedToRules) {
                 // Show the rules modal and wait for user agreement
-                rulesModal.style.display = 'block';
+            showModal('rulesModal', route, originalAnchor);
+            console.log(route, originalAnchor,"route and anchor from loginreq ")
             } else if (userStatus !== 'loggedIn') {
-            let action = button.getAttribute('data-modal');
+            // let action = originalAnchor.getAttribute('data-modal');
     
-            const notLoggedInMessage = 'You need to be logged in to ';
+            // const notLoggedInMessage = 'You need to be logged in to ';
     
-            if (action === 'chatRoom') {
-                modalText.textContent = notLoggedInMessage + 'enter that Chat Room.';
-            } else if (action === 'profile') {
-                modalText.textContent = notLoggedInMessage + 'to have a Profile.';
-            } else if (action === 'comment') {
-                modalText.textContent = notLoggedInMessage + 'comment on Posts.';
-            } else if (action === 'noAccess') {
-                modalText.textContent = 'Guest users do not have access to user Profiles.';
-            } else if (action === 'feed') {
-                modalText.textContent = notLoggedInMessage + 'to see our Community posts.';
-            } else if (action === 'newPost') {
-                modalText.textContent = notLoggedInMessage + 'make a new Post.';
-            }
-    
+            // if (action === 'chatRoom') {
+            //     modalText.textContent = notLoggedInMessage + 'enter the Chat Rooms.';
+            // } else if (action === 'profile') {
+            //     modalText.textContent = notLoggedInMessage + 'to have a Profile.';
+            // } else if (action === 'comment') {
+            //     modalText.textContent = notLoggedInMessage + 'comment on Posts.';
+            // } else if (action === 'noAccess') {
+            //     modalText.textContent = 'Guest users do not have access to user Profiles.';
+            // } else if (action === 'feed') {
+            //     modalText.textContent = notLoggedInMessage + 'to see our Community posts.';
+            // } else if (action === 'newPost') {
+            //     modalText.textContent = notLoggedInMessage + 'make a new Post.';
+            // }
+            const action = originalAnchor.getAttribute('data-modal');
+
+            document.getElementById('modalLoginText').textContent = dataModalMessage(action);
+
             // Show only the login modal if not logged in
             logInModal.style.display = 'block';
+            // showModal(logInModal, route, action)
+
             } else {
             // Redirect if the user is logged in
-            window.location.href = button.href;
+            window.location.href = originalAnchor.href;
             }
         
+            });
         });
-    });
 
         rulesModalContinueBtn.addEventListener('click', function () {
-           console.log("adding event listener", route)
-            handleRulesModalContinue(route);
+           console.log("adding event listener", route, originalAnchor)
+            handleRulesModalContinue(route, originalAnchor);
         
-        });
-        
-        // Close modal when the close button is clicked
-        let closeButton = logInModal.querySelector('.close');
-        closeButton.addEventListener('click', function () {
-            logInModal.style.display = 'none';
         });
 
-        // Close modal when an element with the 'continue' class is clicked
-        logInModal.addEventListener('click', function (event) {
-            if (event.target.classList.contains('continue')) {
-            logInModal.style.display = 'none';
-            }
+        modals.forEach(function (modal) {
+             // Close modal when the close button is clicked
+            let closeButtons = modal.querySelectorAll('.close, .closebutton');
+            closeButtons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    closeModal(modal);
+            });
         });
 
         // Close modal when clicking outside the modal
         window.addEventListener('click', function (event) {
-        if (event.target === logInModal) {
-            logInModal.style.display = 'none';
-        }
+            if (event.target === modal) {
+                closeModal(modal);
+            }
+            });
         });
+        
+
     });
 
 
@@ -148,23 +158,36 @@ import { socket, userTimeZone, userLang, userStatus } from './js/shared.js'
     }
 
     // Function to show the modal
-    function showModal(modalId, route) {
+    function showModal(modalId, route, originalAnchor) { 
+        console.log(route, originalAnchor, "checking in showModal");
+
         const modal = document.getElementById(modalId);
-        const action = modal.getAttribute('data-modal');
-        
+
+        if (modal !== rulesModal) {
+             const action = originalAnchor.getAttribute('data-modal');
+        console.log(modal,action, "modal and action from showmodal")
+        console.log(dataModalMessage(action))
+        modal.setAttribute('modalLoginText', action);
+        document.getElementById('modalLoginText').textContent = dataModalMessage(action);
+        }
+       
+        // if (modalLoginText) {
+        //     modalLoginText.textContent = dataModalMessage(action);
+        //     console.log(modal, modalloginText, "from action return")
+        // }
         modal.style.display = 'block';
-        modal.setAttribute('data-route', route);
-        modal.setAttribute('data-modal', action);
+        // modal.setAttribute('data-route', route);
+        
     }
 
     // Function to close the modal
-    function closeModal(modalId) {
-        const modal = document.getElementById(modalId);
+    function closeModal(modal) {
         modal.style.display = 'none';
     }
 
     // Function to handle the modal checkbox
-    function handleRulesModalContinue(route) {
+    function handleRulesModalContinue(route, originalAnchor) {
+        console.log(route, originalAnchor, "from the continue ")
         const modalAgreeCheckbox = document.getElementById('modalAgreeCheckbox');
 
         // Update the variable to track the state of the modal checkbox
@@ -178,13 +201,48 @@ import { socket, userTimeZone, userLang, userStatus } from './js/shared.js'
 
             // Set the checkbox state based on the cookie
             agreeCheckbox.checked = 'true';
-            // Checkbox in the modal is checked, close the modal
-            closeModal('rulesModal');
 
-            window.location.href = route;
+            const rulesModal = document.getElementById('rulesModal');
+            console.log(route, originalAnchor, "route from after contine close modal")
+
+            // Checkbox in the modal is checked, close the modal
+            closeModal(rulesModal);
+
+
+            if (originalAnchor.classList.contains('loginReqRoute')) {
+                console.log(route, originalAnchor, "routesecond  from after contine close modal")
+                showModal('loginReqModal', route, originalAnchor);
+            } else {
+               
+                window.location = originalAnchor.href;
+            }
+
+            
 
         } else {
             // Checkbox in the modal is not checked, you can show a message or take appropriate action
             alert('You will need to check the box and agree to the rules before proceeding.');
         }
     };
+
+    function dataModalMessage (action) {
+        // let action = originalAnchor.getAttribute('data-modal');
+    
+            const notLoggedInMessage = 'You need to be logged in to ';
+    
+            if (action === 'chatRoom') {
+                return notLoggedInMessage + 'enter the Chat Rooms.';
+            } else if (action === 'profile') {
+                return notLoggedInMessage + 'to have a Profile.';
+            } else if (action === 'comment') {
+                return notLoggedInMessage + 'comment on Posts.';
+            } else if (action === 'noAccess') {
+                return 'Guest users do not have access to user Profiles.';
+            } else if (action === 'feed') {
+                return notLoggedInMessage + 'to see our Community posts.';
+            } else if (action === 'newPost') {
+                return notLoggedInMessage + 'make a new Post.';
+            }
+            return '';
+        
+    }
