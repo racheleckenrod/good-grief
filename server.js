@@ -388,7 +388,7 @@ io.on("connection", async ( socket) => {
           // fetch recent messages for the room from the database
           ChatMessage.find({room: chatUser.room })
             .sort({ timestamp: -1 })
-            .limit(15)
+            .limit(10)
             .exec(async (err, messages) => {
               if (err) {
                 console.log(err)
