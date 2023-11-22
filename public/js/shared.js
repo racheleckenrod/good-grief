@@ -21,7 +21,7 @@ const socket = io({
   // socket.connect();
 
 
-
+// added this back in with last commit
 // Optionally, you can also handle the case when the user closes the tab or navigates away
 window.addEventListener('beforeunload', function () {
   // Disconnect the socket before the page is unloaded
