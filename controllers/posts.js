@@ -133,7 +133,7 @@ module.exports = {
   showProfile: async (req, res) => {
     const userTimeZone = req.user.timezone || req.session.userTimeZone;
     const userLang = req.user.userLang || req.session.userLang;
-    // console.log("showprofile", req.params)
+    console.log("showprofile", req.params, userTimeZone, userLang)
     try {
       // const { id } = req.params.id
       const chatUser = await User.findOne( { _id: req.params.id } )

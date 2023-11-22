@@ -2708,7 +2708,7 @@ input, select, textarea {
 				}
 
 				#navPanel .indent-2 {
-					display: inline-block;
+					display: none;
 					width: 2em;
 				}
 
@@ -2730,6 +2730,17 @@ input, select, textarea {
 				#navPanel .depth-0 {
 					color: #fff;
 				}
+
+				#navPanel .depth-2 {
+					display: none;
+				  }
+				  
+
+				/* Optionally, show depth-2 items when depth-1 item is hovered */
+				#navPanel .depth-1:hover .depth-2 {
+					display: block;
+				} 
+				  
 
 			body.navPanel-visible #page-wrapper {
 				-moz-transform: translateX(275px);
