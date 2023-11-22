@@ -229,7 +229,7 @@ io.use(async (socket, next) => {
 
   const session = socket.request.session;
   session.save();
-  console.log("Big check session=", session, "end")
+  console.log("Big check session=", session, "end", req.session)
   
   next();
 });
@@ -356,7 +356,7 @@ io.on("connection", async ( socket) => {
             chatUsers: getRoomUsers(chatUser.room),
           });
 
-           // send email notification
+           // create email notification
            const roomUsers = getRoomUsers(chatUser.room);
            const usernames = roomUsers.map(user => user.username).join(', ');
            const mailOptions = {
@@ -430,7 +430,7 @@ io.on("connection", async ( socket) => {
             // console.log("chat messages", userTimeZone, socket.request.session.userTimeZone)
           // console.log("socket.user=",socket.user, socket.id)
           const chatUser = getCurrentUser(socket.chatusername);
-            console.log(chatUser, "from getCurrentUser", socket.id, socket.chatusername)
+            // console.log(chatUser, "from getCurrentUser", socket.id, socket.chatusername)
           try {
             const newMessage = new ChatMessage({
               room: chatUser.room,
@@ -441,7 +441,7 @@ io.on("connection", async ( socket) => {
 
             const savedMessage = await  newMessage.save();
 
-            console.log(`${chatUser.room} Chat message saved:`, userTimeZone, savedMessage.message);
+            console.log(`${chatUser.username} said "${savedMessage.message}" in the ${chatUser.room} from  ${userTimeZone} socket.id= ${socket.id}`);
             io.to(chatUser.room).emit("message", formatMessage(chatUser.username, savedMessage.message));
           } catch(error) {
               console.error('Error saving chat message:', error);
