@@ -66,7 +66,7 @@ import { socket, userTimeZone, userLang, userStatus } from './js/shared.js'
 
             route = anchor.href;
             originalAnchor = anchor;
-            console.log(originalAnchor, "original anchor")
+            // console.log(originalAnchor, "original anchor")
     
             // Check if the user has accepted the rules
             const userAgreedToRules = document.cookie.includes('userAgreed=true');
@@ -74,7 +74,7 @@ import { socket, userTimeZone, userLang, userStatus } from './js/shared.js'
             if (!userAgreedToRules) {
                 // Show the rules modal and wait for user agreement
             showModal('rulesModal', route, originalAnchor);
-            console.log(route, originalAnchor,"route and anchor from loginreq ")
+            // console.log(route, originalAnchor,"route and anchor from loginreq ")
             } else if (userStatus !== 'loggedIn') {
             // let action = originalAnchor.getAttribute('data-modal');
     
@@ -110,7 +110,7 @@ import { socket, userTimeZone, userLang, userStatus } from './js/shared.js'
         });
 
         rulesModalContinueBtn.addEventListener('click', function () {
-           console.log("adding event listener", route, originalAnchor)
+        //    console.log("adding event listener", route, originalAnchor)
             handleRulesModalContinue(route, originalAnchor);
         
         });
@@ -159,14 +159,14 @@ import { socket, userTimeZone, userLang, userStatus } from './js/shared.js'
 
     // Function to show the modal
     function showModal(modalId, route, originalAnchor) { 
-        console.log(route, originalAnchor, "checking in showModal");
+        // console.log(route, originalAnchor, "checking in showModal");
 
         const modal = document.getElementById(modalId);
 
         if (modal !== rulesModal) {
              const action = originalAnchor.getAttribute('data-modal');
-        console.log(modal,action, "modal and action from showmodal")
-        console.log(dataModalMessage(action))
+        // console.log(modal,action, "modal and action from showmodal")
+        // console.log(dataModalMessage(action))
         modal.setAttribute('modalLoginText', action);
         document.getElementById('modalLoginText').textContent = dataModalMessage(action);
         }
@@ -187,7 +187,7 @@ import { socket, userTimeZone, userLang, userStatus } from './js/shared.js'
 
     // Function to handle the modal checkbox
     function handleRulesModalContinue(route, originalAnchor) {
-        console.log(route, originalAnchor, "from the continue ")
+        // console.log(route, originalAnchor, "from the continue ")
         const modalAgreeCheckbox = document.getElementById('modalAgreeCheckbox');
 
         // Update the variable to track the state of the modal checkbox
@@ -203,14 +203,14 @@ import { socket, userTimeZone, userLang, userStatus } from './js/shared.js'
             agreeCheckbox.checked = 'true';
 
             const rulesModal = document.getElementById('rulesModal');
-            console.log(route, originalAnchor, "route from after contine close modal")
+            // console.log(route, originalAnchor, "route from after contine close modal")
 
             // Checkbox in the modal is checked, close the modal
             closeModal(rulesModal);
 
 
             if (originalAnchor.classList.contains('loginReqRoute')) {
-                console.log(route, originalAnchor, "routesecond  from after contine close modal")
+                // console.log(route, originalAnchor, "routesecond  from after contine close modal")
                 showModal('loginReqModal', route, originalAnchor);
             } else {
                

@@ -9,11 +9,6 @@ console.log("userLang=", userLang)
 let userStatus = 'guest';
 // let guestID
 
-// // Disconnect existing socket if connected
-// if (socket.id && socket.connected) {
-//   socket.disconnect();
-// }
-
 
 const socket = io({
     reconnection: true,
@@ -39,17 +34,12 @@ const socket = io({
 
 
 socket.on('connect', () => {
-  console.log("before curious")
   console.log("socket connected!!", socket.id, socket);
 
   socket.on('setStatus', (onlineStatus) => {
     userStatus = onlineStatus;
     console.log("userStatus=", userStatus);
   });
-
-
-
-
 
   socket.on('disconnect', (reason) => {
     console.log(`socket disconnected... ${reason} attempting to reconnect`);
@@ -73,15 +63,8 @@ for(const cookie of cookies) {
 }
 
 
-
-
-
-
-
 console.log("guestID=", guestID )
 
-
- 
 socket.io.on("reconnect_attempt", (attemptNumber) => {
   // Handle reconnect attempt
   console.log("Reconnect attempt", attemptNumber);

@@ -163,62 +163,6 @@ function outputUsers(chatUsers) {
   });
 };
 
-// // LoggedIn Required Modal
-// document.addEventListener('DOMContentLoaded', function () {
-//   const modalButtons = document.querySelectorAll('.openModalButton');
-//   const modal = document.querySelector('.modal');
-//   const modalText = document.getElementById('modalLoginText');
-
-//   modalButtons.forEach(function (button) {
-//       button.addEventListener('click', function (event) {
-//           event.preventDefault();
-
-//           if (userStatus !== 'loggedIn') {
-//           let action = button.getAttribute('data-modal');
-
-//           const notLoggedInMessage = 'You need to be logged in to ';
-
-//           if (action === 'chatRoom') {
-//             modalText.textContent = notLoggedInMessage + 'enter that Chat Room.'
-//           } else if (action === 'profile') {
-//             modalText.textContent = notLoggedInMessage + 'to have a Profile.'
-//           } else if (action === 'comment') {
-//             modalText.textContent = notLoggedInMessage + 'comment on Posts.'
-//           } else if (action === 'noAccess') {
-//             modalText.textContent = 'Guest users do not have access to user Profiles'
-//           } else if (action === 'feed') {
-//             modalText.textContent = notLoggedInMessage + 'to see our Community posts.'
-//           } else if (action === 'newPost') {
-//             modalText.textContent = notLoggedInMessage + 'make a new Post.'
-//           }
-//           modal.style.display = 'block';
-//         } else {
-//           window.location.href = button.href;
-//         }
-//       });
-//   });
-
-//   // Close modal when the close button is clicked
-//   let closeButton = modal.querySelector('.close');
-//   closeButton.addEventListener('click', function () {
-//       modal.style.display = 'none';
-//   });
-
-//   // Close modal when an element with the 'continue' class is clicked
-//   modal.addEventListener('click', function (event) {
-//     if (event.target.classList.contains('continue')) {
-//       modal.style.display = 'none';
-//     }
-//   });
-
-//    // Close modal when clicking outside the modal
-//   window.addEventListener('click', function (event) {
-//   if (event.target === modal) {
-//     modal.style.display = 'none';
-//   }
-// });
-// });
-
 // LoggedIn Required Modal
 
 console.log("Check")

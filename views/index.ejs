@@ -226,10 +226,15 @@
 
                 <!-- Contact Form -->
                     <section>
+						<div class=""> 
+                            <p class="style1">
+                                 Your comments are welcome here, <br>please report any issuse you discover as you explore the site. We are working to improve it!
+                            <p>
+                        </div>
                         <form method="POST" action="/feedback">
                             <div class="row gtr-50">
                                 <div class="col-6 col-12-small">
-                                    <input type="text" name="userName" id="contact-name" placeholder="Name" />
+                                    <input type="text" name="inputName" id="contact-name" placeholder="Name" />
                                 </div>
                                 <div class="col-6 col-12-small">
                                     <input type="text" name="email" id="contact-email" placeholder="Email" />
@@ -237,7 +242,16 @@
                                 <div class="col-12">
                                     <textarea type="text" name="message" id="contact-message" placeholder="Message" rows="4"></textarea>
                                 </div>
-                              
+                                <% if (locals.messages && locals.messages.errors) { %>
+                                    <% locals.messages.errors.forEach( el => { %>
+                                        <div class="alert alert-danger"><%= el.msg %></div>
+                                    <% }) %>    
+                                <% } %>
+                                <% if (locals.messages && locals.messages.info) { %>
+                                    <% locals.messages.info.forEach( el => { %>
+                                        <div class="alert alert-info"><%= el.msg %></div>
+                                    <% }) %>    
+                                <% } %>
                                 <div class="col-12">
                                     <ul class="actions">
                                         <li><input type="submit" class="style1" value="Send" /></li>
