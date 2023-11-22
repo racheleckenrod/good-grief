@@ -103,7 +103,7 @@ exports.postSignup = (req, res, next) => {
 
 
 exports.getLogin = (req, res) => {
-  console.log("req.user.userName=", req.user ? req.user.userName : "no req.user", "from getLogin")
+  console.log("req.user.userName=", req.user ? req.user.userName : "no req.user", "from getLogin", req.session)
   res.render("login");
 };
 
@@ -147,16 +147,31 @@ exports.postLogin = async (req, res, next) => {
       
       req.flash("success", { msg: "Success! You are logged in." });
 
-      try {
-        const user = await User.updateOne({ email: req.body.email },
-          { $addToSet: {guestIDs: guestID },
-            $set: { timezone: userTimeZone, userLang: userLang }
-          });   
-      } catch (err) {
-        return next(err);
-      }
 
-      console.log("before redirect")
+      if (userTimeZone != null && userLang != null && guestID != null) {
+          try {
+          const user = await User.updateOne({ email: req.body.email },
+            { $addToSet: {guestIDs: guestID },
+              $set: { timezone: userTimeZone, userLang: userLang }
+            });   
+          } catch (err) {
+          return next(err);
+          }
+        console.log("updated user in database on login.");
+      } else if (guestID != null) {
+          try {
+            const user = await User.updateOne({ email: req.body.email },
+              { $addToSet: {guestIDs: guestID }
+              });   
+          } catch (err) {
+            return next(err);
+          }
+          console.log("updated guestID only in database on login.");
+      } else {
+        console.log("all user data is not available, skipping update.")
+      }
+      
+     
 
       res.redirect("/chat")
       // setTimeout(() => {
@@ -171,6 +186,7 @@ exports.postLogin = async (req, res, next) => {
 exports.getPasswordResetRequest = (req, res) => {
   res.render("passwordResetRequest", { title: "Password Reset Request" });
 };
+
 
 
 exports.postPasswordResetRequest = async (req, res) => {
