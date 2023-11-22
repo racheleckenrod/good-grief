@@ -229,7 +229,7 @@ io.use(async (socket, next) => {
 
   const session = socket.request.session;
   session.save();
-  console.log("Big check session=", session, "end", req.session)
+  console.log("Big check session=", session, "end")
   
   next();
 });
