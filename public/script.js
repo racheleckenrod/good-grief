@@ -135,20 +135,28 @@ function getDisplayName(username, userCount) {
 // // Add users to DOM
 function outputUsers(chatUsers) {
   userList.innerHTML = `
-  ${chatUsers.map(chatUser => `<li class="${chatUser.username}" >${getDisplayName(chatUser.username, chatUser.userCount)}</li>`).join('')}
+  ${chatUsers.map(chatUser => `<li class="${chatUser.username} openModalButton" data-modal="noAccess" >${getDisplayName(chatUser.username, chatUser.userCount)}</li>`).join('')}
   `;
   // Add event listeners to names to connect to their profile page
   chatUsers.forEach((chatUser) => {
     console.log("first", chatUser)
     console.log("userStatus=", userStatus)
-    
+    const modalText = document.getElementById('modalLoginText');
+    const logInModal = document.querySelector('.logInModal');
+    const noProfileModal = document.getElementById('noProfileModal')
+
     
        document.querySelector(`.${chatUser.username}`).addEventListener('click', () => {
-        
+        console.log("click")
       if (userStatus === 'guest') {
-        alert("Guest users don't have access to user Profiles. Please sign up to see them.");
+        modalText.textContent = 'Guest users do not have access to user Profiles'
+        logInModal.style.display = 'block';
+
+        // alert("Guest users don't have access to user Profiles. Please sign up to see them.");
       } else if (chatUser.username.startsWith("guest")){
-        alert("Guest users do not have profiles.");
+        // openModal(noProfileModal)
+        noProfileModal.style.display = 'block';
+        // alert("Guest users do not have profiles.");
       } else {
         window.open(`/profile/${chatUser._id}`, '_blank');
       }
@@ -170,10 +178,12 @@ document.addEventListener('DOMContentLoaded', function () {
   const modalButtons = document.querySelectorAll('.openModalButton');
   const logInModal = document.querySelector('.logInModal');
   const modalText = document.getElementById('modalLoginText');
+  const noProfileModal = document.getElementById('noProfileModal')
 
   modalButtons.forEach(function (button) {
       button.addEventListener('click', function (event) {
           event.preventDefault();
+          console.log("button clicked")
 
           if (userStatus !== 'loggedIn') {
             console.log("user status===", userStatus)
@@ -194,30 +204,71 @@ document.addEventListener('DOMContentLoaded', function () {
           } else if (action === 'newPost') {
             modalText.textContent = notLoggedInMessage + 'make a new Post.'
           }
-          logInModal.style.display = 'block';
+          openModal(logInModal);
         } else {
           window.location.href = button.href;
         }
       });
   });
 
+  // let scrollPosition = 0;
+  function openModal(modal) {
+    // scrollPosition = window.scrollY || window.pageYOffset;
+    modal.style.display = 'block'
+  };
+
   // Close modal when the close button is clicked
   let closeButton = logInModal.querySelector('.close');
   closeButton.addEventListener('click', function () {
       logInModal.style.display = 'none';
+      // window.scrollTo(0, scrollPosition);
   });
 
-  // Close modal when an element with the 'continue' class is clicked
-  logInModal.addEventListener('click', function (event) {
-    if (event.target.classList.contains('continue')) {
+
+  let continueButton = logInModal.querySelector('.continue');
+  continueButton.addEventListener('click', function () {
       logInModal.style.display = 'none';
-    }
+      // window.scrollTo(0, scrollPosition);
   });
+  // // Close modal when an element with the 'continue' class is clicked
+  // logInModal.addEventListener('click', function (event) {
+  //   if (event.target.classList.contains('continue')) {
+  //     logInModal.style.display = 'none';
+  //     console.log("continue b4", scrollPosition);
+  //     let continueButton = document.getElementById('continueButton');
+  //     if (continueButton) {
+  //       .scrollTo(0, scrollPosition);
+  //     console.log("continue after")
+  //     };
+  //   }
+  // });
 
    // Close modal when clicking outside the modal
   window.addEventListener('click', function (event) {
   if (event.target === logInModal) {
     logInModal.style.display = 'none';
+    // window.scrollTo(0, scrollPosition);
+
   }
+
+  // Close noProfileModal when the close button is clicked
+  let closeNoProfileButton = noProfileModal.querySelector('.close');
+  closeNoProfileButton.addEventListener('click', function () {
+      noProfileModal.style.display = 'none';
+  });
+
+  // Close modal when an element with the 'continue' class is clicked
+  noProfileModal.addEventListener('click', function (event) {
+    if (event.target.classList.contains('continue')) {
+      noProfileModal.style.display = 'none';
+    }
+  });
+
+   // Close modal when clicking outside the modal
+  window.addEventListener('click', function (event) {
+  if (event.target === noProfileModal) {
+    noProfileModal.style.display = 'none';
+  }
+});
 });
 });

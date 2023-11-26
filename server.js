@@ -292,6 +292,7 @@ function userJoin(chatusername, username, room, _id, socketID) {
 // run when client connects
 io.on("connection", async ( socket) => {
 
+
     const userTimeZone = socket.request.session.userTimeZone;
     const userLang = socket.request.session.userLang;
     const guestID = socket.request.session.guestID;
