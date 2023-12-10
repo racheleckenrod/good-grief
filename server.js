@@ -221,9 +221,11 @@ io.use(async (socket, next) => {
   }
 
   if (socket.request.user) {
-    socket.chatusername = socket.request.user.userName;
+    console.log("YES socket.request.user")
+    // socket.chatusername = socket.request.user.userName;
   } else {
-    socket.chatusername = socket.request.session.guestUser.username;
+    console.log("NO socket.request.user")
+    // socket.chatusername = socket.request.session.guestUser.username;
   }
   // console.log("socket.chatusername=", socket.chatuserName)
 
