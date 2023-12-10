@@ -223,13 +223,13 @@ io.use(async (socket, next) => {
   if (socket.request.user) {
     socket.chatusername = socket.request.user.userName;
   } else {
-    socket.chatusername = socket.request.session.guestUser.userName;
+    socket.chatusername = socket.request.session.guestUser.username;
   }
-  console.log("socket.chatuser=", socket.chatusername)
+  // console.log("socket.chatusername=", socket.chatuserName)
 
   const session = socket.request.session;
   session.save();
-  console.log("Big check session=", session, "end")
+  console.log("Big check session=", session, "end", socket.request.session)
   
   next();
 });
@@ -459,7 +459,6 @@ io.on("connection", async ( socket) => {
 //Setup Routes For Which The Server Is Listening
 
 app.use("/", mainRoutes);
-// app.use("/consent", consentRoutes);
 app.use("/post", postRoutes);
 app.use("/comment", commentRoutes);
 app.use("/chat/:room", chatRoutes);
