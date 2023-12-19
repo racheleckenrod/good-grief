@@ -220,71 +220,23 @@ io.use(async (socket, next) => {
     console.log("emitted cookie?", newGuestUser.guestID)
   }
 
+console.log("$$$$$$$$$$$$$$$$$TEST socket.request.session", socket.request.session)
   if (socket.request.user) {
+    console.log("YES socket.request.user")
     socket.chatusername = socket.request.user.userName;
   } else {
+    console.log("NO socket.request.user", socket.request.session.guestUser.userName)
     socket.chatusername = socket.request.session.guestUser.userName;
   }
-  console.log("socket.chatuser=", socket.chatusername)
+  console.log("socket.chatusername=", socket.chatusername)
 
   const session = socket.request.session;
   session.save();
   console.log("Big check session=", session, "end")
-  
+  console.log("@@@@@@@2socket.chatusername=", socket.chatusername)
+
   next();
 });
-// io.use(async (socket, next) => {
-//   const userTimeZone = socket.handshake.query.userTimeZone;
-//   const userLang = socket.handshake.query.userLang;
-//   console.log("io.use userLang=", userLang, userTimeZone);
-
-//   socket.request.session.userTimeZone = userTimeZone;
-//   socket.request.session.userLang = userLang;
-
- 
-//   // check for guestID cookie
-//   const guestIDCookie = socket.handshake.headers.cookie
-//     .split('; ')
-//     .find((cookie) => cookie.startsWith('guestID='));
-
-//   if (guestIDCookie) {
-//     const guestID = guestIDCookie.split('=')[1];
-//     socket.request.session.guestID = guestID;
-//     console.log("if guestIDCookie socket.request.session.guestID=", socket.request.session.guestID)
-    
-//     const guestUser = await Guest.findOne({ guestUserID: guestID });
-
-//     if (guestUser) {
-//       socket.request.session.guestUser = guestUser
-//       // socket.data = { guestUser: guestUser }
-//     }
-//   } else {
-//     // generate new guestID
-//     const newGuestUser = await generateGuestID(socket.request.session.timeZone, socket.request.session.userLang);
-//     socket.request.session.guestUser = newGuestUser
-//     socket.request.session.guestID = newGuestUser.guestID
-//     // socket.data = { guestUser: newGuestUser };
-    
-//     // emit new guestID to client to set a cookie
-//     socket.emit('setCookie', newGuestUser.guestID);
-//     console.log("emitted cookie?", newGuestUser.guestID)
-//   }
-
-//   if (socket.request.user) {
-//     console.log("YES socket.request.user")
-//     // socket.chatusername = socket.request.user.userName;
-//   } else {
-//     console.log("NO socket.request.user")
-//     // socket.chatusername = socket.request.session.guestUser.username;
-//   }
-//   // console.log("socket.chatusername=", socket.chatuserName)
-
-//   const session = socket.request.session;
-//   session.save();
-//   console.log("Big check session=", session, "end", socket.request.session)
-  
-//   next();
-// });
 
 // create a Nodemailer transporter
 const transporter = nodemailer.createTransport({
@@ -351,16 +303,16 @@ io.on("connection", async ( socket) => {
     const userStatus = socket.request.session.status;
     socket.emit('setStatus', userStatus)
 
-    Guest.findOneAndUpdate(
-      { guestUserID: guestID },
-      { $set: { timezone: userTimeZone }},
-      { new: true },
-      (err) => {
-        if (err) {
-          console.error(err);
-        } 
-      }
-    );
+    // Guest.findOneAndUpdate(
+    //   { guestUserID: guestID },
+    //   { $set: { timezone: userTimeZone }},
+    //   { new: true },
+    //   (err) => {
+    //     if (err) {
+    //       console.error(err);
+    //     } 
+    //   }
+    // );
 
     
         // Runs when client disconnects
